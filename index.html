@@ -1,772 +1,681 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ritesh Portfolio</title>
-  <!--
-         - favicon
-         -->
-  <link rel="shortcut icon" href="./assets/images/logo.ico" type="image/x-icon">
-  <!--
-         - custom css link
-         -->
-  <link rel="stylesheet" href="./assets/css/style.css">
-  <!--
-         - google font link
-         -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Elite Workspace</title>
+    <style>
+        /* --- THEME --- */
+        :root {
+            --bg-color: #0f172a;
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --modal-bg: #1e293b;
+            --text-main: #e2e8f0;
+            --text-muted: #94a3b8;
+            --accent: #3b82f6;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --blocked: #ef4444;
+            --progress: #3b82f6;
+            --border: #334155;
+            --input-bg: #020617;
+            --shadow: rgba(0,0,0,0.5);
+            --toast-bg: #1e293b;
+        }
+
+        body.light-mode {
+            --bg-color: #f8fafc; --sidebar-bg: #ffffff; --card-bg: #ffffff; --modal-bg: #ffffff;
+            --text-main: #0f172a; --text-muted: #64748b; --accent: #2563eb; --border: #e2e8f0;
+            --input-bg: #f1f5f9; --shadow: rgba(0,0,0,0.1); --toast-bg: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        /* --- BUTTONS --- */
+        .btn { border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
+        .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); background: var(--input-bg); }
+
+        .btn-add-dashed {
+            width: 100%; background: transparent; border: 2px dashed var(--border); color: var(--text-muted);
+            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; text-align: center; margin-top: 15px;
+        }
+        .btn-add-dashed:hover { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.05); }
+
+        .btn-add-task {
+            width: 100%; background: transparent; border: none; border-top: 1px dashed var(--border);
+            color: var(--text-muted); padding: 10px; cursor: pointer; text-align: left; font-size: 0.85rem;
+            transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+        }
+        .btn-add-task:hover { color: var(--accent); background: var(--input-bg); padding-left: 15px; }
+
+        .icon-btn {
+            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
+            width: 36px; height: 36px; border-radius: 6px; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        }
+        .icon-btn:hover { background: var(--card-bg); color: var(--text-main); border-color: var(--accent); }
+        .icon-btn svg { width: 18px; height: 18px; }
+
+        /* --- LAYOUTS --- */
+        .hidden { display: none !important; }
+        
+        #dashboard-view { width: 100%; height: 100%; overflow-y: auto; padding: 40px; box-sizing: border-box; }
+        .dashboard-header { max-width: 1000px; margin: 0 auto 30px auto; display: flex; justify-content: space-between; align-items: center; }
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
+        .project-card {
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
+            transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 200px; box-shadow: 0 4px 6px -1px var(--shadow);
+        }
+        .project-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: var(--text-main); }
+        .card-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; flex: 1;}
+        .new-project-card { border: 2px dashed var(--border); background: transparent; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); box-shadow: none; }
+        .new-project-card:hover { border-color: var(--accent); color: var(--accent); }
+
+        /* Tracker */
+        #tracker-view { display: flex; width: 100%; height: 100%; }
+        .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; transition: transform 0.3s ease; }
+        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
+        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
+        
+        .epic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px var(--shadow); overflow: hidden; }
+        .epic-header { padding: 12px 20px; background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
+        
+        /* TASK ITEM STYLING */
+        .task-item { 
+            padding: 12px 20px; 
+            border-bottom: 1px solid var(--border); 
+            display: flex; 
+            flex-direction: column; /* Changed to column for better badge layout */
+            cursor: pointer; 
+            border-left: 4px solid transparent; 
+            transition: background 0.1s; 
+        }
+        .task-item:last-child { border-bottom: none; }
+        .task-item:hover { background-color: rgba(0,0,0,0.02); }
+        
+        .task-row-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 5px; }
+        .task-title { flex: 1; font-size: 0.95rem; line-height: 1.4; display: flex; align-items: center; gap: 8px;}
+        
+        /* Status Colors */
+        .status-done { border-left-color: var(--success) !important; opacity: 0.6; }
+        .status-in-progress { border-left-color: var(--progress) !important; background: rgba(59,130,246,0.05); }
+        .status-blocked { border-left-color: var(--blocked) !important; background: rgba(239,68,68,0.1); } /* Red Tint */
+        
+        .phase-item { padding: 12px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
+        .phase-item:hover { background-color: var(--bg-color); }
+        .phase-item.active { background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent); }
+        .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--success); width: 0%; }
+        
+        .mini-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.2s; }
+        .phase-item:hover .mini-actions, .epic-header:hover .mini-actions, .task-item:hover .mini-actions { opacity: 1; }
+        .mini-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; }
+        .mini-btn:hover { color: var(--accent); transform: scale(1.2); }
+        .mini-btn.del:hover { color: var(--danger); }
+
+        /* Badges */
+        .task-badges { display: flex; gap: 6px; font-size: 0.75rem; flex-wrap: wrap; }
+        .badge { padding: 2px 8px; border-radius: 4px; background: rgba(125,125,125,0.1); border:1px solid var(--border); display: flex; align-items: center; gap: 4px;}
+        .badge-blocked { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.1); font-weight: bold; }
+        .badge-date { color: var(--text-muted); }
+        
+        /* GitHub Icon */
+        .git-icon-svg { width: 16px; height: 16px; fill: currentColor; color: var(--text-main); opacity: 0.7; }
+        .git-icon-svg:hover { color: var(--accent); opacity: 1; }
+
+        /* --- MODALS --- */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; backdrop-filter: blur(3px); }
+        .modal { background: var(--modal-bg); border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: 0 20px 50px var(--shadow); }
+        .modal-lg { width: 900px; max-width: 100%; max-height: 95vh; }
+        .modal-sm { width: 400px; max-width: 100%; }
+        .modal-body { padding: 20px; overflow-y: auto; }
+        
+        .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: span 2; }
+        select, input[type="text"], input[type="datetime-local"], textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
+        body.light-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0); cursor: pointer; }
+        body:not(.light-mode) input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+        .dod-list { background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px; }
+        .dod-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.9rem; }
+        .dod-item input { margin-right: 10px; width: 16px; height: 16px; }
+        .dev-log-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .dev-log-box { height: 70px; font-size: 0.85rem; font-family: monospace; resize: none; }
+        .modal-timer { background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--accent); margin-bottom: 15px;}
+        .timer-display { font-size: 2rem; font-weight: bold; font-family: monospace; margin: 10px 0; }
+        .prompt-content { padding: 25px; text-align: center; }
+        .prompt-input { width: 100%; margin: 15px 0; padding: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); border-radius: 6px; text-align: left; }
+        .prompt-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
+
+        .toolbar { display: flex; gap: 5px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
+        .toolbar .icon-btn { flex: 1; }
+
+        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 100; background: var(--accent); color: white; border: none; padding: 8px; border-radius: 4px; }
+        @media (max-width: 900px) {
+            .mobile-menu-btn { display: block; }
+            .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 90; transform: translateX(-100%); }
+            .sidebar.active { transform: translateX(0); }
+            .task-grid, .dev-log-grid { grid-template-columns: 1fr; }
+            #dashboard-view { padding: 20px; }
+        }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
+        .toast { background: var(--toast-bg); color: var(--text-main); padding: 12px 20px; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--accent); animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+    </style>
 </head>
-
 <body>
-  <!--
-         - #MAIN
-         -->
-  <main>
-    <!--
-            - #SIDEBAR
-            -->
-    <aside class="sidebar" data-sidebar>
-      <div class="sidebar-info">
-        <figure class="avatar-box">
-          <img src="./assets/images/my-avatar.png" alt="Ritesh Pandey" width="80">
-        </figure>
-        <div class="info-content">
-          <h1 class="name" title="Ritesh Pandey">Ritesh Pandey</h1>
-          <p class="title">Java developer</p>
-        </div>
-        <button class="info_more-btn" data-sidebar-btn>
-          <span>Show Contacts</span>
-          <ion-icon name="chevron-down"></ion-icon>
-        </button>
-      </div>
-      <div class="sidebar-info_more">
-        <div class="separator"></div>
-        <ul class="contacts-list">
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="mail-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
-              <a href="mailto:riteshpandey427@gmail.com" class="contact-link">riteshpandey427@gmail.com</a>
-            </div>
-          </li>
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="phone-portrait-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Phone</p>
-              <a href="tel:+12133522795" class="contact-link">+91 9118754790</a>
-            </div>
-          </li>
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="calendar-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Birthday</p>
-              <time datetime="1982-06-23">Jan 15, 1998</time>
-            </div>
-          </li>
-          <li class="contact-item">
-            <div class="icon-box">
-              <ion-icon name="location-outline"></ion-icon>
-            </div>
-            <div class="contact-info">
-              <p class="contact-title">Location</p>
-              <address>Varanasi, India</address>
-            </div>
-          </li>
-        </ul>
-        <div class="separator"></div>
-        <ul class="social-list">
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-facebook"></ion-icon>
-            </a>
-          </li>
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-twitter"></ion-icon>
-            </a>
-          </li>
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-instagram"></ion-icon>
-            </a>
-          </li>
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-linkedin"></ion-icon>
-            </a>
-          </li>
-          <li class="social-item">
-            <a href="#" class="social-link">
-              <ion-icon name="logo-snapchat"></ion-icon>
-            </a>
-          </li>
-        </ul>
-      </div>
-    </aside>
-    <!--
-            - #main-content
-            -->
-    <div class="main-content">
-      <!--
-               - #NAVBAR
-               -->
-      <nav class="navbar">
-        <ul class="navbar-list">
-          <li class="navbar-item">
-            <button class="navbar-link  active" data-nav-link>About</button>
-          </li>
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Resume</button>
-          </li>
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Portfolio</button>
-          </li>
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Blog</button>
-          </li>
-          <li class="navbar-item">
-            <button class="navbar-link" data-nav-link>Contact</button>
-          </li>
-        </ul>
-      </nav>
-      <!--
-               - #ABOUT
-               -->
-      <article class="about  active" data-page="about">
-        <header>
-          <h2 class="h2 article-title">About me</h2>
-        </header>
-        <section class="about-text">
-          <p>
-            Highly motivated Java Developer with 4.5 years of experience in Java, Spring Boot, Microservices and SQL.
-            Skilled in building scalable,
-            high-performance applications with a focus on user experience. Seeking a challenging role to contribute to
-            robust software solutions
-            using modern technologies.
-          </p>
-          <p>
-            My job is to build your Java web apps so that it is functional and user-friendly but at the same time
-            attractive.
-            Moreover, I
-            add personal touch to your product and make sure that is eye-catching and easy to use. My aim is to bring
-            across your
-            message and identity in the most creative way. I created Java design for many famous brand companies.
-          </p>
-        </section>
-        <!--
-                  - service
-                  -->
-        <section class="service">
-          <h3 class="h3 service-title">What i'm doing</h3>
-          <ul class="service-list">
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-design.svg
-                              " alt="design icon" width="40">
-              </div>
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Development</h4>
-                <p class="service-item-text">
-                  The most modern and high-quality design made at a professional level.
-                </p>
-              </div>
-            </li>
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-dev.svg" alt="Java development icon" width="40">
-              </div>
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Java developer</h4>
-                <p class="service-item-text">
-                  High-quality development of sites at the professional level.
-                </p>
-              </div>
-            </li>
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-app.svg" alt="mobile app icon" width="40">
-              </div>
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Mobile apps</h4>
-                <p class="service-item-text">
-                  Professional development of applications for Android.
-                </p>
-              </div>
-            </li>
-            <li class="service-item">
-              <div class="service-icon-box">
-                <img src="./assets/images/icon-photo.svg" alt="camera icon" width="40">
-              </div>
-              <div class="service-content-box">
-                <h4 class="h4 service-item-title">Photography</h4>
-                <p class="service-item-text">
-                  I make high-quality photos of any category at a professional level.
-                </p>
-              </div>
-            </li>
-          </ul>
-        </section>
-        <!--
-                  - testimonials
-                  -->
-        <section class="testimonials">
-          <h3 class="h3 testimonials-title">Friends</h3>
-          <ul class="testimonials-list has-scrollbar">
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-1.png" alt="Priyansh Pandey" width="60" data-testimonials-avatar>
-                </figure>
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Priyansh Pandey</h4>
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Manager in HDFC life.
-                  </p>
-                </div>
-              </div>
-            </li>
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-2.png" alt="Bharti Lekhak" width="60" data-testimonials-avatar>
-                </figure>
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Bharti Lekhak</h4>
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Softwar Engineer at Fujitsu
-                  </p>
-                </div>
-              </div>
-            </li>
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-3.png" alt="Shalu Singh" width="60" data-testimonials-avatar>
-                </figure>
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Shalu Singh</h4>
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Analyst in HCL.
-                  </p>
-                </div>
-              </div>
-            </li>
-            <li class="testimonials-item">
-              <div class="content-card" data-testimonials-item>
-                <figure class="testimonials-avatar-box">
-                  <img src="./assets/images/avatar-4.png" alt="Abhsihek Singh" width="60" data-testimonials-avatar>
-                </figure>
-                <h4 class="h4 testimonials-item-title" data-testimonials-title>Abhsihek Singh</h4>
-                <div class="testimonials-text" data-testimonials-text>
-                  <p>
-                    Tester in MyMaster11.
-                  </p>
-                </div>
-              </div>
-            </li>
-          </ul>
-        </section>
-        <!--
-                  - testimonials modal
-                  -->
-        <div class="modal-container" data-modal-container>
-          <div class="overlay" data-overlay></div>
-          <section class="testimonials-modal">
-            <button class="modal-close-btn" data-modal-close-btn>
-              <ion-icon name="close-outline"></ion-icon>
-            </button>
-            <div class="modal-img-wrapper">
-              <figure class="modal-avatar-box">
-                <img src="./assets/images/avatar-1.png" alt="Daniel lewis" width="80" data-modal-img>
-              </figure>
-              <img src="./assets/images/icon-quote.svg" alt="quote icon">
-            </div>
-            <div class="modal-content">
-              <h4 class="h3 modal-title" data-modal-title>Daniel lewis</h4>
-              <time datetime="2021-06-14">14 June, 2021</time>
-              <div data-modal-text>
-                <p>
-                  Richard was hired to create a corporate identity. We were very pleased with the work done. She has a
-                  lot of experience
-                  and is very concerned about the needs of client. Lorem ipsum dolor sit amet, ullamcous cididt
-                  consectetur adipiscing
-                  elit, seds do et eiusmod tempor incididunt ut laborels dolore magnarels alia.
-                </p>
-              </div>
-            </div>
-          </section>
-        </div>
-        <!--
-                  - clients
-                  -->
-        <section class="clients">
-          <h3 class="h3 clients-title">Clients</h3>
-          <ul class="clients-list has-scrollbar">
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-1-color.png" alt="client logo">
-              </a>
-            </li>
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-2-color.png" alt="client logo">
-              </a>
-            </li>
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-3-color.png" alt="client logo">
-              </a>
-            </li>
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-4-color.png" alt="client logo">
-              </a>
-            </li>
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-5-color.png" alt="client logo">
-              </a>
-            </li>
-            <li class="clients-item">
-              <a href="#">
-                <img src="./assets/images/logo-6-color.png" alt="client logo">
-              </a>
-            </li>
-          </ul>
-        </section>
-      </article>
-      <!--
-               - #RESUME
-               -->
-      <article class="resume" data-page="resume">
-        <header>
-          <h2 class="h2 article-title">Resume</h2>
-        </header>
-        <section class="timeline">
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
-            </div>
-            <h3 class="h3">Education</h3>
-          </div>
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Master of Computer Application</h4>
-              <span>2018 — 2020</span>
-              <p class="timeline-text">Abdul Kalam Technical University, Lucknow — 81.6%</p>
-            </li>
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Bachelor of Computer Applications</h4>
-              <span>2015 — 2018</span>
-              <p class="timeline-text">Mahatma Gandhi Kashi Vidyapith, Varanasi — 69.6%</p>
-            </li>
 
+    <div id="toast-container"></div>
 
-          </ol>
-        </section>
-        <section class="timeline">
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <ion-icon name="book-outline"></ion-icon>
+    <div id="dashboard-view">
+        <div class="dashboard-header">
+            <div>
+                <h1 style="margin:0;">Elite Workspace</h1>
+                <p style="margin:5px 0 0 0; color:var(--text-muted);">Manage your microservices & roadmaps</p>
             </div>
-            <h3 class="h3">Experience</h3>
-          </div>
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Lead Software Engineer - Capgemini</h4>
-              <span>May 2025 – Present</span>
-              <p class="timeline-text">Completed Java, Spring Boot, and Microservices training via Udemy and Capgemini
-                platforms. Achieved HackerRank certifications in Java and REST API.</p>
-            </li>
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Application Developer - IBM</h4>
-              <span>July 2023 – May 2025</span>
-              <p class="timeline-text">Worked on Airtel billing & order systems. Developed custom schedulers, APIs,
-                frontend components, and integrations using Spring Boot, Hibernate, React, and SQL/MongoDB.</p>
-            </li>
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">System Engineer - TCS</h4>
-              <span>Aug 2021 – June 2023</span>
-              <p class="timeline-text">Built foreclosure process, customer messaging, and 50+ reports using Java,
-                Spring, JasperReports, and SQL. Optimized code and resolved over 95% of bugs in SLA.</p>
-            </li>
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">Software Engineer Trainee - JK Technosoft Ltd.</h4>
-              <span>Feb 2020 – June 2021</span>
-              <p class="timeline-text">Trained on Java and Progress 4GL. Debugged and maintained applications. Worked
-                with Oracle DB and supported senior engineers.</p>
-            </li>
-          </ol>
-        </section>
-        <section class="skill">
-          <h3 class="h3 skills-title">My skills</h3>
-          <ul class="skills-list content-card">
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">Java 8+</h5>
-                <data value="80">80%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
-              </div>
-            </li>
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">Springboot</h5>
-                <data value="80">80%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
-              </div>
-            </li>
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">Microservices</h5>
-                <data value="70">70%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 70%;"></div>
-              </div>
-            </li>
-            <li class="skills-item">
-              <div class="title-wrapper">
-                <h5 class="h5">SQL</h5>
-                <data value="80">80%</data>
-              </div>
-              <div class="skill-progress-bg">
-                <div class="skill-progress-fill" style="width: 80%;"></div>
-              </div>
-            </li>
-          </ul>
-        </section>
-      </article>
-      <!--
-               - #PORTFOLIO
-               -->
-      <article class="portfolio" data-page="portfolio">
-        <header>
-          <h2 class="h2 article-title">Portfolio</h2>
-        </header>
-        <section class="projects">
-          <ul class="filter-list">
-            <li class="filter-item">
-              <button class="active" data-filter-btn>All</button>
-            </li>
-            <li class="filter-item">
-              <button data-filter-btn>web design</button>
-            </li>
-            <li class="filter-item">
-              <button data-filter-btn>Applications</button>
-            </li>
-            <li class="filter-item">
-              <button data-filter-btn>web development</button>
-            </li>
-          </ul>
-          <div class="filter-select-box">
-            <button class="filter-select" data-select>
-              <div class="select-value" data-selecct-value>Select category</div>
-              <div class="select-icon">
-                <ion-icon name="chevron-down"></ion-icon>
-              </div>
-            </button>
-            <ul class="select-list">
-              <li class="select-item">
-                <button data-select-item>All</button>
-              </li>
-              <li class="select-item">
-                <button data-select-item>Web design</button>
-              </li>
-              <li class="select-item">
-                <button data-select-item>Applications</button>
-              </li>
-              <li class="select-item">
-                <button data-select-item>Web development</button>
-              </li>
-            </ul>
-          </div>
-          <ul class="project-list">
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-1.jpg" alt="finance" loading="lazy">
-                </figure>
-                <h3 class="project-title">Finance</h3>
-                <p class="project-category">Web development</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="web development">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-2.png" alt="orizon" loading="lazy">
-                </figure>
-                <h3 class="project-title">Orizon</h3>
-                <p class="project-category">Web development</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="web design">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-3.jpg" alt="fundo" loading="lazy">
-                </figure>
-                <h3 class="project-title">Fundo</h3>
-                <p class="project-category">Web design</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-4.png" alt="brawlhalla" loading="lazy">
-                </figure>
-                <h3 class="project-title">Brawlhalla</h3>
-                <p class="project-category">Applications</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="Java design">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-5.png" alt="dsm." loading="lazy">
-                </figure>
-                <h3 class="project-title">DSM</h3>
-                <p class="project-category">Java WebApp</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="Java design">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-6.png" alt="metaspark" loading="lazy">
-                </figure>
-                <h3 class="project-title">MetaSpark</h3>
-                <p class="project-category">Java design</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="Java development">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-7.png" alt="summary" loading="lazy">
-                </figure>
-                <h3 class="project-title">Summary</h3>
-                <p class="project-category">Java development</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="applications">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-8.jpg" alt="task manager" loading="lazy">
-                </figure>
-                <h3 class="project-title">Task Manager</h3>
-                <p class="project-category">Applications</p>
-              </a>
-            </li>
-            <li class="project-item  active" data-filter-item data-category="Java development">
-              <a href="#">
-                <figure class="project-img">
-                  <div class="project-item-icon-box">
-                    <ion-icon name="eye-outline"></ion-icon>
-                  </div>
-                  <img src="./assets/images/project-9.png" alt="arrival" loading="lazy">
-                </figure>
-                <h3 class="project-title">Arrival</h3>
-                <p class="project-category">Java development</p>
-              </a>
-            </li>
-          </ul>
-        </section>
-      </article>
-      <!--
-               - #BLOG
-               -->
-      <article class="blog" data-page="blog">
-        <header>
-          <h2 class="h2 article-title">Blog</h2>
-        </header>
-        <section class="blog-posts">
-          <ul class="blog-posts-list">
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-1.jpg" alt="Design conferences in 2022" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">Design conferences in 2022</h3>
-                  <p class="blog-text">
-                    Veritatis et quasi architecto beatae vitae dicta sunt, explicabo.
-                  </p>
-                </div>
-              </a>
-            </li>
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-2.jpg" alt="Best fonts every designer" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">Best fonts every designer</h3>
-                  <p class="blog-text">
-                    Sed ut perspiciatis, nam libero tempore, cum soluta nobis est eligendi.
-                  </p>
-                </div>
-              </a>
-            </li>
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-3.jpg" alt="Design digest #80" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">Design digest #80</h3>
-                  <p class="blog-text">
-                    Excepteur sint occaecat cupidatat no proident, quis nostrum exercitationem ullam corporis suscipit.
-                  </p>
-                </div>
-              </a>
-            </li>
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-4.jpg" alt="UI interactions of the week" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">UI interactions of the week</h3>
-                  <p class="blog-text">
-                    Enim ad minim veniam, consectetur adipiscing elit, quis nostrud exercitation ullamco laboris nisi.
-                  </p>
-                </div>
-              </a>
-            </li>
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-5.jpg" alt="The forgotten art of spacing" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">The forgotten art of spacing</h3>
-                  <p class="blog-text">
-                    Maxime placeat, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                  </p>
-                </div>
-              </a>
-            </li>
-            <li class="blog-post-item">
-              <a href="#">
-                <figure class="blog-banner-box">
-                  <img src="./assets/images/blog-6.jpg" alt="Design digest #79" loading="lazy">
-                </figure>
-                <div class="blog-content">
-                  <div class="blog-meta">
-                    <p class="blog-category">Design</p>
-                    <span class="dot"></span>
-                    <time datetime="2022-02-23">Fab 23, 2022</time>
-                  </div>
-                  <h3 class="h3 blog-item-title">Design digest #79</h3>
-                  <p class="blog-text">
-                    Optio cumque nihil impedit uo minus quod maxime placeat, velit esse cillum.
-                  </p>
-                </div>
-              </a>
-            </li>
-          </ul>
-        </section>
-      </article>
-      <!--
-               - #CONTACT
-               -->
-      <article class="contact" data-page="contact">
-        <header>
-          <h2 class="h2 article-title">Contact</h2>
-        </header>
-        <section class="mapbox" data-mapbox>
-          <figure>
-            <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d199666.5651251294!2d-121.58334177520186!3d38.56165006739519!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x809ac672b28397f9%3A0x921f6aaa74197fdb!2sSacramento%2C%20CA%2C%20USA!5e0!3m2!1sen!2sbd!4v1647608789441!5m2!1sen!2sbd"
-              width="400" height="300" loading="lazy"></iframe>
-          </figure>
-        </section>
-        <section class="contact-form">
-          <h3 class="h3 form-title">Contact Form</h3>
-          <form action="#" class="form" data-form>
-            <div class="input-wrapper">
-              <input type="text" name="fullname" class="form-input" placeholder="Full name" required data-form-input>
-              <input type="email" name="email" class="form-input" placeholder="Email address" required data-form-input>
+            <div style="display: flex; gap: 10px;">
+                <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌗</button>
+                <button class="btn btn-outline" onclick="exportWorkspace()">Backup</button>
+                <button class="btn btn-outline" onclick="document.getElementById('ws-upload').click()">Restore</button>
+                <input type="file" id="ws-upload" class="hidden" accept=".json" onchange="importWorkspace(this)">
             </div>
-            <textarea name="message" class="form-input" placeholder="Your Message" required data-form-input></textarea>
-            <button class="form-btn" type="submit" disabled data-form-btn>
-              <ion-icon name="paper-plane"></ion-icon>
-              <span>Send Message</span>
-            </button>
-          </form>
-        </section>
-      </article>
+        </div>
+        <div class="project-grid" id="project-grid">
+            <div class="project-card new-project-card" onclick="document.getElementById('plan-upload').click()">
+                <div style="font-size:3rem; margin-bottom:10px;">+</div>
+                <div>Import Project JSON</div>
+                <input type="file" id="plan-upload" class="hidden" accept=".json" onchange="importNewProject(this)">
+            </div>
+        </div>
     </div>
-  </main>
-  <!--
-         - custom js link
-         -->
-  <script src="./assets/js/script.js"></script>
-  <!--
-         - ionicon link
-         -->
-  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
-  <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
-</body>
 
+    <div id="tracker-view" class="hidden">
+        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+        
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                    <button class="icon-btn" onclick="closeProject()" title="Back to Dashboard">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                    </button>
+                    <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌗</button>
+                </div>
+                
+                <h2 id="project-title" style="font-size:1.2rem; margin:0 0 5px 0; word-break:break-word;">Project</h2>
+                <div style="font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between;">
+                    <span>Progress</span><span id="total-percent">0%</span>
+                </div>
+                <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" id="total-bar"></div></div>
+
+                <div class="toolbar">
+                    <button class="icon-btn" onclick="exportCurrentProject()" title="Export JSON">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    </button>
+                    <button class="icon-btn" onclick="document.getElementById('proj-upload').click()" title="Import JSON">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                    </button>
+                    <button class="icon-btn" onclick="promptSecurityCheck('RESET')" title="Reset Progress" style="color:var(--warning); border-color:var(--warning);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                    </button>
+                    <button class="icon-btn" onclick="promptSecurityCheck('DELETE')" title="Delete Project" style="color:var(--danger); border-color:var(--danger);">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                    </button>
+                    <input type="file" id="proj-upload" class="hidden" accept=".json" onchange="importCurrentProject(this)">
+                </div>
+            </div>
+            <ul class="phase-list" id="phase-list"></ul>
+            <div style="padding:20px;">
+                <button class="btn-add-dashed" onclick="addPhase()">+ Add Phase</button>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <h1 id="current-phase-title" style="margin-top:0;">Select Phase</h1>
+            <div id="epics-container"></div>
+            <button class="btn-add-dashed" onclick="addEpic()">+ Add Epic</button>
+            <div style="height:50px;"></div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="task-modal" onclick="closeModal('task-modal')">
+        <div class="modal modal-lg" onclick="event.stopPropagation()">
+            <div style="padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
+                <input type="text" id="m-task-title" style="background:transparent; border:none; color:var(--accent); font-size:1.2rem; font-weight:bold; width:80%;">
+                <button class="mini-btn" style="font-size:1.5rem;" onclick="closeModal('task-modal')">×</button>
+            </div>
+            <div class="modal-body task-grid">
+                <div>
+                    <label style="font-size:0.8rem; color:var(--text-muted);">STATUS</label>
+                    <select id="m-status" onchange="toggleBlocker()">
+                        <option value="TODO">To Do</option>
+                        <option value="IN_PROGRESS">In Progress</option>
+                        <option value="BLOCKED">Blocked</option>
+                        <option value="DONE">Done</option>
+                    </select>
+                    
+                    <div id="m-blocker-wrap" class="hidden">
+                        <label style="font-size:0.8rem; color:var(--danger);">BLOCKER REASON</label>
+                        <input type="text" id="m-blocker">
+                    </div>
+
+                    <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:10px;">DEFINITION OF DONE</label>
+                    <div class="dod-list">
+                        <label class="dod-item"><input type="checkbox" id="dod-code"> Code Implemented</label>
+                        <label class="dod-item"><input type="checkbox" id="dod-test"> Unit Tests Passed</label>
+                        <label class="dod-item"><input type="checkbox" id="dod-edge"> Edge Cases Handled</label>
+                        <label class="dod-item"><input type="checkbox" id="dod-clean"> Formatting/Linting</label>
+                    </div>
+
+                    <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:10px;">POMODOROS (25m)</label>
+                    <div style="display:flex; gap:10px; align-items:center;">
+                        <button class="btn btn-outline" onclick="adjPomo(-1)">-</button>
+                        <span id="m-pomo-val" style="font-weight:bold; font-size:1.2rem;">0</span>
+                        <button class="btn btn-outline" onclick="adjPomo(1)">+</button>
+                    </div>
+                </div>
+                
+                <div>
+                     <div class="modal-timer">
+                        <div style="font-size:0.8rem; color:var(--text-muted);">FOCUS TIMER</div>
+                        <div class="timer-display" id="timer-display">25:00</div>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn btn-primary" style="flex:1" onclick="toggleTimer()" id="timer-btn">Start</button>
+                            <button class="btn btn-outline" style="flex:1" onclick="resetTimer()">Reset</button>
+                        </div>
+                    </div>
+
+                    <label style="font-size:0.8rem; color:var(--text-muted);">GIT LINK (Shows Icon)</label>
+                    <input type="text" id="m-git" placeholder="https://github.com/...">
+                    
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div><label style="font-size:0.8rem; color:var(--text-muted);">START</label><input type="datetime-local" id="m-start"></div>
+                        <div><label style="font-size:0.8rem; color:var(--text-muted);">DUE</label><input type="datetime-local" id="m-due"></div>
+                    </div>
+                </div>
+
+                <div class="full-width">
+                    <label style="font-size:0.8rem; color:var(--text-muted);">DEV LOG (RESUME FUEL)</label>
+                    <div class="dev-log-grid">
+                        <textarea id="log-prob" class="dev-log-box" placeholder="❓ Problem Faced"></textarea>
+                        <textarea id="log-cause" class="dev-log-box" placeholder="🔍 Root Cause"></textarea>
+                        <textarea id="log-sol" class="dev-log-box" placeholder="🛠 Solution"></textarea>
+                        <textarea id="log-learn" class="dev-log-box" placeholder="📈 Trade-off / Learning"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="padding:20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
+                <button class="btn btn-primary" onclick="saveTaskChanges()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="prompt-modal">
+        <div class="modal modal-sm">
+            <div class="prompt-content">
+                <h3 id="p-title" style="margin-top:0; color:var(--accent);">Input</h3>
+                <input type="text" id="p-input" class="prompt-input">
+                <div class="prompt-buttons">
+                    <button class="btn btn-outline" onclick="closeModal('prompt-modal')">Cancel</button>
+                    <button class="btn btn-primary" id="p-confirm">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal modal-sm">
+            <div class="prompt-content">
+                <h3 id="c-title" style="margin-top:0; color:var(--warning);">Confirm</h3>
+                <p id="c-msg" style="color:var(--text-muted);">Are you sure?</p>
+                <div class="prompt-buttons">
+                    <button class="btn btn-outline" onclick="closeModal('confirm-modal')">Cancel</button>
+                    <button class="btn btn-danger" id="c-confirm">Yes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="security-modal">
+        <div class="modal modal-sm">
+            <div class="prompt-content">
+                <h3 id="sec-title" style="margin-top:0; color:var(--danger);">Security Check</h3>
+                <p style="color:var(--text-muted); font-size:0.9rem;">Type project name to confirm:</p>
+                <code id="sec-name" style="display:block; margin:10px 0; font-weight:bold; color:var(--text-main);"></code>
+                <input type="text" id="sec-input" class="prompt-input">
+                <div class="prompt-buttons">
+                    <button class="btn btn-outline" onclick="closeModal('security-modal')">Cancel</button>
+                    <button class="btn btn-danger" id="sec-confirm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- STATE ---
+        let library = { projects: [] };
+        let activeProject = null;
+        let currentPhaseIdx = 0;
+        let editingKey = null;
+        let pendingAction = null;
+
+        // --- INIT ---
+        async function init() {
+            if(localStorage.getItem('elite_theme') === 'light') document.body.classList.add('light-mode');
+            const stored = localStorage.getItem('elite_workspace_v1');
+            if (stored) try { library = JSON.parse(stored); } catch(e){}
+            try {
+                const res = await fetch('project_plan.json');
+                if(res.ok) {
+                    const plan = await res.json();
+                    if(Array.isArray(plan)) {
+                        const defId = 'proj_local_def';
+                        const exists = library.projects.find(p => p.id === defId);
+                        if(!exists) {
+                            library.projects.unshift({ id: defId, name: "Local Project", created: Date.now(), plan: plan, progress: {} });
+                            save();
+                        } else { exists.plan = plan; save(); }
+                    }
+                }
+            } catch(e){}
+            renderDashboard();
+        }
+
+        // --- CORE ---
+        function save() { localStorage.setItem('elite_workspace_v1', JSON.stringify(library)); }
+        function showToast(msg, type='info') {
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<span>${type==='success'?'✔':type==='error'?'✖':'ℹ'}</span> ${msg}`;
+            document.getElementById('toast-container').appendChild(t);
+            setTimeout(() => { t.remove(); }, 3000);
+        }
+        function toggleTheme() { document.body.classList.toggle('light-mode'); localStorage.setItem('elite_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); }
+        function download(content, name) { const a = document.createElement('a'); const f = new Blob([content], {type:'text/json'}); a.href = URL.createObjectURL(f); a.download = name; a.click(); }
+
+        // --- DASHBOARD ---
+        function renderDashboard() {
+            document.getElementById('dashboard-view').classList.remove('hidden');
+            document.getElementById('tracker-view').classList.add('hidden');
+            const grid = document.getElementById('project-grid');
+            const addCard = grid.lastElementChild;
+            grid.innerHTML = '';
+            library.projects.forEach(p => {
+                let total=0, done=0;
+                p.plan.forEach((ph, pI) => ph.epics.forEach((e, eI) => e.tasks.forEach((t, tI) => {
+                    total++;
+                    const key = `${ph.id}-e${eI}-t${tI}`;
+                    if(p.progress && p.progress[key]?.status === 'DONE') done++;
+                })));
+                const pct = total===0?0:Math.round((done/total)*100);
+                const card = document.createElement('div');
+                card.className = 'project-card';
+                card.innerHTML = `<div><div class="card-title">${p.name}</div><div class="card-desc">${p.plan.length} Phases • ${pct}% Complete</div></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="openProject('${p.id}')">Open</button>`;
+                grid.appendChild(card);
+            });
+            grid.appendChild(addCard);
+        }
+
+        function importNewProject(input) {
+            const f = input.files[0]; if(!f) return;
+            const r = new FileReader();
+            r.onload = (e) => {
+                try {
+                    const plan = JSON.parse(e.target.result);
+                    if(!Array.isArray(plan)) throw new Error("Invalid");
+                    customPrompt("Project Name:", f.name.replace('.json','')).then(name => {
+                        if(name) { library.projects.push({ id:'p'+Date.now(), name, created:Date.now(), plan, progress:{} }); save(); renderDashboard(); showToast("Imported", "success"); }
+                    });
+                } catch(e) { showToast("Error", "error"); }
+                input.value='';
+            };
+            r.readAsText(f);
+        }
+        function importWorkspace(input) { const f = input.files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { try { const d = JSON.parse(e.target.result); if(d.projects) { library = d; save(); renderDashboard(); showToast("Restored", "success"); } } catch(e) { showToast("Invalid", "error"); } input.value=''; }; r.readAsText(f); }
+        function exportWorkspace() { download(JSON.stringify(library), 'backup.json'); showToast("Exported", "success"); }
+
+        // --- TRACKER ---
+        function openProject(id) {
+            activeProject = library.projects.find(p => p.id === id);
+            if(!activeProject) return;
+            document.getElementById('project-title').innerText = activeProject.name;
+            currentPhaseIdx = 0;
+            document.getElementById('dashboard-view').classList.add('hidden');
+            document.getElementById('tracker-view').classList.remove('hidden');
+            renderSidebar();
+            renderContent();
+        }
+        function closeProject() { activeProject = null; renderDashboard(); }
+
+        function renderSidebar() {
+            const list = document.getElementById('phase-list');
+            list.innerHTML = '';
+            let total=0, done=0;
+            activeProject.plan.forEach((ph, idx) => {
+                let pTotal=0, pDone=0;
+                ph.epics.forEach((e, eIdx) => e.tasks.forEach((t, tIdx) => {
+                    const key = `${ph.id}-e${eIdx}-t${tIdx}`;
+                    total++; pTotal++;
+                    if(activeProject.progress[key]?.status === 'DONE') { done++; pDone++; }
+                }));
+                const pct = pTotal===0?0:Math.round((pDone/pTotal)*100);
+                const li = document.createElement('li');
+                li.className = `phase-item ${idx === currentPhaseIdx ? 'active' : ''}`;
+                li.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:600;">${ph.title}</span>
+                        <div class="mini-actions">
+                            <button class="mini-btn" onclick="editPhase(${idx}, event)">✎</button>
+                            <button class="mini-btn del" onclick="deletePhase(${idx}, event)">🗑</button>
+                        </div>
+                    </div>
+                    <div style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;"><span>Progress</span><span>${pct}%</span></div>
+                    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+                `;
+                li.onclick = () => { currentPhaseIdx = idx; renderSidebar(); renderContent(); };
+                list.appendChild(li);
+            });
+            const totalPct = total===0?0:Math.round((done/total)*100);
+            document.getElementById('total-percent').innerText = `${totalPct}%`;
+            document.getElementById('total-bar').style.width = `${totalPct}%`;
+        }
+
+        function renderContent() {
+            const container = document.getElementById('epics-container');
+            container.innerHTML = '';
+            if(!activeProject.plan[currentPhaseIdx]) { document.getElementById('current-phase-title').innerText = "Empty Project"; return; }
+            const phase = activeProject.plan[currentPhaseIdx];
+            document.getElementById('current-phase-title').innerText = phase.title;
+
+            phase.epics.forEach((epic, eIdx) => {
+                const card = document.createElement('div');
+                card.className = 'epic-card';
+                let tasksHtml = '';
+                
+                epic.tasks.forEach((task, tIdx) => {
+                    const key = `${phase.id}-e${eIdx}-t${tIdx}`;
+                    const s = activeProject.progress[key] || {};
+                    let badges = '';
+                    if(s.status === 'BLOCKED') badges += `<span class="badge badge-blocked">BLOCKED</span>`;
+                    if(s.due) badges += `<span class="badge badge-date">📅 ${new Date(s.due).toLocaleDateString(undefined, {month:'numeric', day:'numeric'})}</span>`;
+                    if(s.pomo) badges += `<span class="badge">🍅 ${s.pomo}</span>`;
+                    
+                    let gitLink = '';
+                    if(s.gitRef && s.gitRef.startsWith('http')) {
+                        gitLink = `<a href="${s.gitRef}" target="_blank" onclick="event.stopPropagation()" title="Open Git"><svg class="git-icon-svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>`;
+                    }
+
+                    tasksHtml += `
+                        <li class="task-item ${s.status === 'DONE' ? 'status-done' : s.status === 'IN_PROGRESS' ? 'status-in-progress' : s.status === 'BLOCKED' ? 'status-blocked' : ''}" onclick="openTaskModal('${key}', '${task.replace(/'/g,"\\'")}')">
+                            <div style="flex:1">
+                                <div class="task-row-top">
+                                    <div class="task-title">
+                                        <span style="${s.status==='DONE'?'text-decoration:line-through; color:var(--text-muted)':''}">${task}</span>
+                                        ${s.status==='DONE'?'<span>✅</span>':''}
+                                        ${gitLink}
+                                    </div>
+                                    <div class="mini-actions">
+                                        <button class="mini-btn" onclick="renameTask(${eIdx}, ${tIdx}, '${task.replace(/'/g,"\\'")}', event)">✎</button>
+                                        <button class="mini-btn del" onclick="deleteTaskItem(${eIdx}, ${tIdx}, event)">🗑</button>
+                                    </div>
+                                </div>
+                                <div class="task-badges">${badges}</div>
+                            </div>
+                        </li>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="epic-header">
+                        <span>${epic.title}</span>
+                        <div class="mini-actions">
+                            <button class="mini-btn" onclick="editEpic(${eIdx})">✎</button>
+                            <button class="mini-btn del" onclick="deleteEpic(${eIdx})">🗑</button>
+                        </div>
+                    </div>
+                    <ul class="task-list">${tasksHtml}</ul>
+                    <button class="btn-add-task" onclick="addTask(${eIdx})">+ Add Task</button>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- MODALS & LOGIC ---
+        function customPrompt(title, val='') {
+            return new Promise(resolve => {
+                document.getElementById('p-title').innerText = title;
+                const inp = document.getElementById('p-input'); inp.value = val;
+                document.getElementById('prompt-modal').style.display = 'flex'; inp.focus();
+                const clean = () => { document.getElementById('prompt-modal').style.display='none'; document.getElementById('p-confirm').onclick = null; };
+                document.getElementById('p-confirm').onclick = () => { clean(); resolve(inp.value); };
+                inp.onkeydown = (e) => { if(e.key==='Enter') document.getElementById('p-confirm').click(); };
+            });
+        }
+        function customConfirm(title, msg) {
+            return new Promise(resolve => {
+                document.getElementById('c-title').innerText = title; document.getElementById('c-msg').innerText = msg;
+                document.getElementById('confirm-modal').style.display='flex';
+                const clean = () => { document.getElementById('confirm-modal').style.display='none'; document.getElementById('c-confirm').onclick=null; };
+                document.getElementById('c-confirm').onclick = () => { clean(); resolve(true); };
+            });
+        }
+        function closeModal(id) { document.getElementById(id).style.display='none'; }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // --- EDIT ---
+        async function addPhase() { const t = await customPrompt("Phase Title"); if(t) { activeProject.plan.push({id:'p'+Date.now(), title:t, epics:[]}); save(); renderSidebar(); showToast("Phase Added", "success"); }}
+        async function editPhase(i, e) { e.stopPropagation(); const t = await customPrompt("Edit Phase", activeProject.plan[i].title); if(t) { activeProject.plan[i].title=t; save(); renderSidebar(); renderContent(); showToast("Updated", "success"); }}
+        async function deletePhase(i, e) { e.stopPropagation(); if(await customConfirm("Delete Phase?", "Permanent?")) { activeProject.plan.splice(i,1); save(); renderSidebar(); renderContent(); showToast("Deleted", "success"); }}
+        
+        async function addEpic() { const t = await customPrompt("Epic Title"); if(t) { activeProject.plan[currentPhaseIdx].epics.push({title:t, tasks:[]}); save(); renderContent(); showToast("Added", "success"); }}
+        async function editEpic(i) { const t = await customPrompt("Edit Epic", activeProject.plan[currentPhaseIdx].epics[i].title); if(t) { activeProject.plan[currentPhaseIdx].epics[i].title=t; save(); renderContent(); showToast("Updated", "success"); }}
+        async function deleteEpic(i) { if(await customConfirm("Delete Epic?", "Permanent?")) { activeProject.plan[currentPhaseIdx].epics.splice(i,1); save(); renderContent(); showToast("Deleted", "success"); }}
+
+        async function addTask(eI) { const t = await customPrompt("New Task"); if(t) { activeProject.plan[currentPhaseIdx].epics[eI].tasks.push(t); save(); renderContent(); renderSidebar(); showToast("Added", "success"); }}
+        async function renameTask(eI, tI, old, e) { e.stopPropagation(); const t = await customPrompt("Rename Task", old); if(t) { activeProject.plan[currentPhaseIdx].epics[eI].tasks[tI] = t; save(); renderContent(); showToast("Updated", "success"); }}
+        async function deleteTaskItem(eI, tI, e) { e.stopPropagation(); if(await customConfirm("Delete Task?", "Permanent?")) { activeProject.plan[currentPhaseIdx].epics[eI].tasks.splice(tI,1); save(); renderContent(); renderSidebar(); showToast("Deleted", "success"); }}
+
+        // --- TASK DETAIL ---
+        function openTaskModal(key, title) {
+            editingKey = key;
+            if(!activeProject.progress[key]) activeProject.progress[key] = { status:'TODO', logs:{}, dod:{} };
+            const s = activeProject.progress[key];
+            
+            document.getElementById('m-task-title').value = title;
+            document.getElementById('m-status').value = s.status;
+            document.getElementById('m-git').value = s.gitRef || '';
+            document.getElementById('m-start').value = s.start || '';
+            document.getElementById('m-due').value = s.due || '';
+            document.getElementById('m-blocker').value = s.blocker || '';
+            
+            document.getElementById('log-prob').value = s.logs.prob || '';
+            document.getElementById('log-sol').value = s.logs.sol || '';
+            
+            document.getElementById('dod-code').checked = s.dod.code || false;
+            document.getElementById('dod-test').checked = s.dod.test || false;
+            document.getElementById('dod-clean').checked = s.dod.clean || false;
+            
+            document.getElementById('m-pomo-val').innerText = s.pomo || 0;
+            
+            toggleBlocker();
+            document.getElementById('task-modal').style.display = 'flex';
+        }
+
+        function toggleBlocker() { document.getElementById('m-blocker-wrap').className = document.getElementById('m-status').value === 'BLOCKED' ? '' : 'hidden'; }
+        function saveTaskChanges() {
+            const s = activeProject.progress[editingKey];
+            s.status = document.getElementById('m-status').value;
+            s.gitRef = document.getElementById('m-git').value;
+            s.start = document.getElementById('m-start').value;
+            s.due = document.getElementById('m-due').value;
+            s.blocker = document.getElementById('m-blocker').value;
+            s.logs = { prob: document.getElementById('log-prob').value, sol: document.getElementById('log-sol').value };
+            s.dod = { code: document.getElementById('dod-code').checked, test: document.getElementById('dod-test').checked, clean: document.getElementById('dod-clean').checked };
+            s.pomo = parseInt(document.getElementById('m-pomo-val').innerText);
+            
+            const newTitle = document.getElementById('m-task-title').value;
+            // Note: To update title in plan array requires parsing key or storing indices. 
+            // Simplified: Just saving state for now. To rename title properly use the list edit button.
+            
+            if(s.status === 'DONE' && (!s.dod.code || !s.dod.test)) { showToast("Code/Tests required", "error"); s.status = "IN_PROGRESS"; }
+            
+            save(); renderContent(); renderSidebar(); closeModal('task-modal'); showToast("Saved", "success");
+        }
+
+        function promptSecurityCheck(type) {
+            pendingAction = type;
+            document.getElementById('sec-title').innerText = type==='DELETE'?"Delete Project":"Reset";
+            document.getElementById('sec-name').innerText = activeProject.name;
+            document.getElementById('sec-input').value = '';
+            document.getElementById('security-modal').style.display='flex';
+        }
+        document.getElementById('sec-confirm').onclick = () => {
+            if(document.getElementById('sec-input').value === activeProject.name) {
+                if(pendingAction==='DELETE') { library.projects = library.projects.filter(p=>p.id!==activeProject.id); save(); closeProject(); }
+                else { activeProject.progress={}; save(); renderContent(); renderSidebar(); }
+                closeModal('security-modal');
+            } else showToast("Name mismatch", "error");
+        };
+
+        function exportCurrentProject() { download(JSON.stringify(activeProject), 'project.json'); showToast("Exported", "success"); }
+        function importCurrentProject(input) {
+            const f = input.files[0]; if(!f) return;
+            const r = new FileReader();
+            r.onload = (e) => {
+                try {
+                    const d = JSON.parse(e.target.result);
+                    if(d.plan && confirm("Overwrite?")) { activeProject.plan = d.plan; activeProject.progress = d.progress||{}; save(); renderSidebar(); renderContent(); showToast("Updated", "success"); }
+                } catch(e) { showToast("Error", "error"); }
+                input.value='';
+            };
+            r.readAsText(f);
+        }
+
+        function adjPomo(n) { const el = document.getElementById('m-pomo-val'); let v = parseInt(el.innerText) + n; if(v < 0) v = 0; el.innerText = v; }
+        
+        let timerInterval, timeLeft = 25 * 60, isRunning = false;
+        function toggleTimer() {
+            const btn = document.getElementById('timer-btn');
+            if (isRunning) { clearInterval(timerInterval); isRunning = false; btn.innerText = "Start"; }
+            else { isRunning = true; btn.innerText = "Pause"; timerInterval = setInterval(() => { if (timeLeft > 0) { timeLeft--; document.getElementById('timer-display').innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`; document.title = `(${Math.floor(timeLeft/60)}:${(timeLeft%60).toString().padStart(2,'0')})`; } else { clearInterval(timerInterval); isRunning = false; showToast("Done!", "success"); timeLeft = 25*60; btn.innerText = "Start"; adjPomo(1); } }, 1000); }
+        }
+        function resetTimer() { clearInterval(timerInterval); isRunning = false; timeLeft = 25 * 60; document.getElementById('timer-display').innerText = "25:00"; document.getElementById('timer-btn').innerText = "Start"; }
+
+        init();
+    </script>
+</body>
 </html>

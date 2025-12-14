@@ -1,0 +1,406 @@
+[
+    {
+      "id": "p0",
+      "title": "PHASE 0 — PROJECT SETUP & STANDARDS (WEEK 0)",
+      "epics": [
+        {
+          "title": "EPIC 0.1 — Planning & Standards",
+          "tasks": [
+            "Finalize microservices list",
+            "Define responsibility of each service (one-line rule)",
+            "Define sync (REST) vs async (Kafka) communication rules",
+            "Freeze tech stack versions (Java, Spring Boot, Kafka, Redis, DB)",
+            "Define standard API response format",
+            "Define standard error response format",
+            "Define logging format and correlation ID strategy",
+            "Define environment variable strategy (no hardcoding)"
+          ]
+        },
+        {
+          "title": "EPIC 0.2 — Repo & Tooling",
+          "tasks": [
+            "Create Git repository",
+            "Setup branch strategy (main, develop, feature/*)",
+            "Define commit message convention",
+            "Setup code formatting rules",
+            "Add initial README with project overview",
+            "Done Criteria: Repo exists and first commit pushed",
+            "Done Criteria: Standards documented"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "title": "PHASE 1 — FOUNDATION & COMMON MODULE (WEEK 1)",
+      "epics": [
+        {
+          "title": "EPIC 1.1 — Multi-Module Maven Setup",
+          "tasks": [
+            "Create parent Maven project",
+            "Create common module",
+            "Configure dependency management",
+            "Configure Java 17",
+            "Configure Spring Boot parent"
+          ]
+        },
+        {
+          "title": "EPIC 1.2 — Common Utilities",
+          "tasks": [
+            "Create global exception handler",
+            "Create standard API response wrapper",
+            "Create custom exception hierarchy",
+            "Add common constants",
+            "Configure logging (Logback)",
+            "Add correlation ID support"
+          ]
+        },
+        {
+          "title": "EPIC 1.3 — Docker Base Setup",
+          "tasks": [
+            "Create Dockerfile template for services",
+            "Create base docker-compose.yml",
+            "Configure PostgreSQL container",
+            "Configure Redis container",
+            "Configure Kafka & Zookeeper containers",
+            "Done Criteria: All infra starts locally",
+            "Done Criteria: Common module reused by services"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "title": "PHASE 2 — AUTHENTICATION & SECURITY (WEEK 2)",
+      "epics": [
+        {
+          "title": "EPIC 2.1 — Auth Service Core",
+          "tasks": [
+            "Create Auth Service Spring Boot project",
+            "Create user credential entity",
+            "Implement registration API",
+            "Implement login API",
+            "Implement password hashing (BCrypt)",
+            "Generate JWT access token",
+            "Generate refresh token"
+          ]
+        },
+        {
+          "title": "EPIC 2.2 — Security Filters",
+          "tasks": [
+            "Implement custom JWT authentication filter",
+            "Implement token validation logic",
+            "Configure role-based authorization",
+            "Secure APIs with method-level security"
+          ]
+        },
+        {
+          "title": "EPIC 2.3 — Redis Integration",
+          "tasks": [
+            "Store refresh tokens in Redis",
+            "Implement token blacklist",
+            "Handle logout functionality"
+          ]
+        },
+        {
+          "title": "EPIC 2.4 — Tests & Swagger",
+          "tasks": [
+            "Write controller tests for auth APIs",
+            "Write token validation tests",
+            "Configure Swagger with JWT support",
+            "Done Criteria: Auth flow works end-to-end"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "title": "PHASE 3 — API GATEWAY (WEEK 3)",
+      "epics": [
+        {
+          "title": "EPIC 3.1 — Gateway Setup",
+          "tasks": [
+            "Create Spring Cloud Gateway project",
+            "Configure service routes",
+            "Register gateway with Eureka"
+          ]
+        },
+        {
+          "title": "EPIC 3.2 — Gateway Security",
+          "tasks": [
+            "Implement JWT validation at gateway",
+            "Add request header propagation",
+            "Add correlation ID filter"
+          ]
+        },
+        {
+          "title": "EPIC 3.3 — Rate Limiting",
+          "tasks": [
+            "Implement Redis-based rate limiting",
+            "Configure per-API rate limits",
+            "Test rate limiting behavior",
+            "Done Criteria: All traffic flows via gateway"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "title": "PHASE 4 — USER & PRODUCT SERVICES (WEEK 4)",
+      "epics": [
+        {
+          "title": "EPIC 4.1 — User Service",
+          "tasks": [
+            "Create User Service project",
+            "Design user profile schema",
+            "Implement profile APIs",
+            "Implement address management APIs",
+            "Add validations"
+          ]
+        },
+        {
+          "title": "EPIC 4.2 — Product Service",
+          "tasks": [
+            "Create Product Service project",
+            "Design product & category schema",
+            "Implement product CRUD APIs",
+            "Implement search APIs",
+            "Implement pagination & sorting"
+          ]
+        },
+        {
+          "title": "EPIC 4.3 — Swagger & Tests",
+          "tasks": [
+            "Document APIs using Swagger",
+            "Write controller tests",
+            "Done Criteria: Clean APIs with docs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "title": "PHASE 5 — INVENTORY SERVICE (WEEK 5)",
+      "epics": [
+        {
+          "title": "EPIC 5.1 — Inventory Core",
+          "tasks": [
+            "Create Inventory Service project",
+            "Design stock entity",
+            "Implement optimistic locking using @Version"
+          ]
+        },
+        {
+          "title": "EPIC 5.2 — Inventory APIs",
+          "tasks": [
+            "Implement reserve stock API",
+            "Implement release stock API",
+            "Implement stock availability API"
+          ]
+        },
+        {
+          "title": "EPIC 5.3 — Redis & Concurrency",
+          "tasks": [
+            "Cache stock data in Redis",
+            "Handle cache invalidation",
+            "Write concurrency tests",
+            "Done Criteria: No overselling"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p6",
+      "title": "PHASE 6 — ORDER SERVICE (WEEK 6)",
+      "epics": [
+        {
+          "title": "EPIC 6.1 — Order Core",
+          "tasks": [
+            "Create Order Service project",
+            "Design order & order item schema",
+            "Define order state machine"
+          ]
+        },
+        {
+          "title": "EPIC 6.2 — Order APIs",
+          "tasks": [
+            "Implement create order API",
+            "Implement get order API",
+            "Implement cancel order API",
+            "Add idempotency handling"
+          ]
+        },
+        {
+          "title": "EPIC 6.3 — Kafka Producer",
+          "tasks": [
+            "Publish OrderCreated event to Kafka",
+            "Write unit tests for producer",
+            "Done Criteria: Orders transactional & event-driven"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p7",
+      "title": "PHASE 7 — KAFKA & ASYNC FLOW (WEEK 7)",
+      "epics": [
+        {
+          "title": "EPIC 7.1 — Kafka Infrastructure",
+          "tasks": [
+            "Define Kafka topics",
+            "Define partition strategy",
+            "Define consumer groups"
+          ]
+        },
+        {
+          "title": "EPIC 7.2 — Consumers & Retries",
+          "tasks": [
+            "Implement OrderCreated consumer",
+            "Implement retry mechanism",
+            "Implement Dead Letter Topic handling"
+          ]
+        },
+        {
+          "title": "EPIC 7.3 — Kafka Testing",
+          "tasks": [
+            "Write embedded Kafka tests",
+            "Validate consumer behavior",
+            "Done Criteria: Async flow stable"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p8",
+      "title": "PHASE 8 — PAYMENT SERVICE & SAGA (WEEK 8)",
+      "epics": [
+        {
+          "title": "EPIC 8.1 — Payment Service",
+          "tasks": [
+            "Create Payment Service project",
+            "Consume OrderCreated events",
+            "Implement simulated payment processing"
+          ]
+        },
+        {
+          "title": "EPIC 8.2 — Saga & Compensation",
+          "tasks": [
+            "Publish PaymentSuccess event",
+            "Publish PaymentFailed event",
+            "Implement inventory rollback logic"
+          ]
+        },
+        {
+          "title": "EPIC 8.3 — Scheduler & ShedLock",
+          "tasks": [
+            "Implement payment timeout scheduler",
+            "Configure ShedLock with Redis",
+            "Done Criteria: No stuck orders"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p9",
+      "title": "PHASE 9 — NOTIFICATION & SCHEDULERS (WEEK 9)",
+      "epics": [
+        {
+          "title": "EPIC 9.1 — Notification Service",
+          "tasks": [
+            "Create Notification Service project",
+            "Consume Kafka events",
+            "Send mock email/SMS notifications"
+          ]
+        },
+        {
+          "title": "EPIC 9.2 — Scheduled Jobs",
+          "tasks": [
+            "Auto-cancel unpaid orders",
+            "Cleanup expired data",
+            "Done Criteria: Notifications triggered correctly"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p10",
+      "title": "PHASE 10 — REDIS ADVANCED PATTERNS (WEEK 10)",
+      "epics": [
+        {
+          "title": "EPIC 10.1 — Idempotency",
+          "tasks": [
+            "Implement idempotency keys",
+            "Prevent duplicate API execution"
+          ]
+        },
+        {
+          "title": "EPIC 10.2 — Distributed Locks",
+          "tasks": [
+            "Implement Redis-based distributed lock",
+            "Protect critical sections",
+            "Done Criteria: Duplicate-safe APIs"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p11",
+      "title": "PHASE 11 — TESTING & RESILIENCE (WEEK 11)",
+      "epics": [
+        {
+          "title": "EPIC 11.1 — Testcontainers",
+          "tasks": [
+            "Setup PostgreSQL Testcontainer",
+            "Setup Kafka Testcontainer",
+            "Setup Redis Testcontainer"
+          ]
+        },
+        {
+          "title": "EPIC 11.2 — Failure Scenarios",
+          "tasks": [
+            "Simulate Kafka downtime",
+            "Simulate DB failure",
+            "Verify retry & recovery"
+          ]
+        },
+        {
+          "title": "EPIC 11.3 — Circuit Breaker",
+          "tasks": [
+            "Integrate Resilience4j",
+            "Configure circuit breaker rules",
+            "Done Criteria: System survives failures"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p12",
+      "title": "PHASE 12 — FINALIZATION & DOCUMENTATION (WEEK 12)",
+      "epics": [
+        {
+          "title": "EPIC 12.1 — Dockerization",
+          "tasks": [
+            "Dockerize all services",
+            "Finalize docker-compose",
+            "Verify full stack startup"
+          ]
+        },
+        {
+          "title": "EPIC 12.2 — Documentation",
+          "tasks": [
+            "Create architecture diagram",
+            "Create event flow diagram",
+            "Finalize README"
+          ]
+        },
+        {
+          "title": "EPIC 12.3 — Resume Prep",
+          "tasks": [
+            "Prepare resume bullets",
+            "Document challenges & trade-offs",
+            "Done Criteria: Resume-ready project"
+          ]
+        }
+      ]
+    }
+ ]
