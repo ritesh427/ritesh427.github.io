@@ -1,8 +1,4 @@
-{
-  "id": "proj_local_def",
-  "name": "Local Project",
-  "created": 1765715552084,
-  "plan": [
+[
     {
       "id": "p0",
       "title": "PHASE 0 — PROJECT SETUP & STANDARDS (WEEK 0)",
@@ -407,41 +403,4 @@
         }
       ]
     }
-  ],
-  "progress": {
-    "p0-e0-t0": {
-      "status": "BLOCKED",
-      "logs": {
-        "prob": "",
-        "sol": ""
-      },
-      "dod": {
-        "code": false,
-        "test": false,
-        "clean": false
-      },
-      "gitRef": "",
-      "start": "",
-      "due": "",
-      "blocker": "",
-      "pomo": 0
-    },
-    "p0-e0-t2": {
-      "status": "TODO",
-      "logs": {
-        "prob": "",
-        "sol": ""
-      },
-      "dod": {
-        "code": true,
-        "test": true,
-        "clean": false
-      },
-      "gitRef": "",
-      "start": "",
-      "due": "",
-      "blocker": "",
-      "pomo": 0
-    }
-  }
-}
+ ]
