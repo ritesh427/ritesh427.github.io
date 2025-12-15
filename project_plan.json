@@ -32,48 +32,53 @@
         }
       ]
     },
+   {
+  "id": "p1",
+  "title": "PHASE 1 — CORE PLATFORM FOUNDATION (WEEK 1)",
+  "epics": [
     {
-      "id": "p1",
-      "title": "PHASE 1 — FOUNDATION & COMMON MODULE (WEEK 1)",
-      "epics": [
-        {
-          "id": "p1-e1",
-          "title": "EPIC 1.1 — Multi-Module Maven Setup",
-          "tasks": [
-            "Create parent Maven project",
-            "Create common module",
-            "Centralize dependency management",
-            "Configure Java 17 toolchain",
-            "Configure Spring Boot parent BOM"
-          ]
-        },
-        {
-          "id": "p1-e2",
-          "title": "EPIC 1.2 — Common Utilities",
-          "tasks": [
-            "Create global exception handler",
-            "Create standard API response wrapper",
-            "Create custom exception hierarchy",
-            "Add shared constants and enums",
-            "Configure Logback logging",
-            "Implement MDC-based correlation ID filter"
-          ]
-        },
-        {
-          "id": "p1-e3",
-          "title": "EPIC 1.3 — Infrastructure via Docker",
-          "tasks": [
-            "Create reusable Dockerfile template",
-            "Create base docker-compose.yml",
-            "Configure PostgreSQL container",
-            "Configure Redis container",
-            "Configure Kafka and Zookeeper containers",
-            "Done Criteria: All infrastructure starts locally",
-            "Done Criteria: Common module reused by services"
-          ]
-        }
+      "id": "p1-e1",
+      "title": "EPIC 1.1 — Service Skeleton & Base Configuration",
+      "tasks": [
+        "Create base Spring Boot service template",
+        "Define standard package structure",
+        "Configure application.yml with profile support (local, dev)",
+        "Enable Actuator with health and readiness probes",
+        "Implement global exception handler (@ControllerAdvice)",
+        "Implement standard API response wrapper",
+        "Configure logging format and log levels",
+        "Implement MDC-based correlation ID filter"
       ]
     },
+    {
+      "id": "p1-e2",
+      "title": "EPIC 1.2 — Core Infrastructure Services",
+      "tasks": [
+        "Create Spring Cloud Config Server",
+        "Configure Git-backed centralized configuration",
+        "Create Eureka Service Registry",
+        "Enable service registration and discovery",
+        "Create Spring Cloud Gateway",
+        "Configure gateway routing via Config Server",
+        "Implement correlation ID propagation through Gateway"
+      ]
+    },
+    {
+      "id": "p1-e3",
+      "title": "EPIC 1.3 — Shared Libraries & Cross-Cutting Concerns",
+      "tasks": [
+        "Create shared common module",
+        "Move BaseResponse and ErrorResponse to common module",
+        "Define custom exception hierarchy",
+        "Standardize validation error responses",
+        "Add shared constants and utility classes",
+        "Create centralized logging utilities",
+        "Add basic OpenAPI (Swagger) configuration"
+      ]
+    }
+  ]
+}
+,
     {
       "id": "p2",
       "title": "PHASE 2 — AUTHENTICATION & SECURITY (WEEK 2)",
