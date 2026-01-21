@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Java Backend Roadmap 2026</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    :root {
+      --primary: #0ea5e9;
+      --bg: #0b1120;
+      --card: #1e293b;
+      --border: #334155;
+      --text: #f1f5f9;
+      --text-dim: #94a3b8;
+      --accent: #10b981;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      padding: 20px;
+    }
+
+    .container { max-width: 900px; margin: 0 auto; }
+
+    header { text-align: center; padding: 3rem 0; }
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(90deg, #38bdf8, #818cf8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    /* Progress Tracker */
+    .progress-bar-container {
+      position: sticky;
+      top: 10px;
+      z-index: 1000;
+      background: var(--card);
+      padding: 15px;
+      border-radius: 12px;
+      border: 1px solid var(--primary);
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Search */
+    .search-container { margin-bottom: 25px; position: relative; }
+    #searchInput {
+      width: 100%;
+      padding: 14px 14px 14px 45px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: white;
+      font-size: 1rem;
+    }
+    .search-icon { position: absolute; left: 15px; top: 16px; color: var(--text-dim); }
+
+    /* Single Column Cards */
+    .roadmap-section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 15px;
+      overflow: hidden;
+    }
+
+    .section-header {
+      padding: 20px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .section-header:hover { background: rgba(255,255,255,0.05); }
+
+    .header-left { display: flex; align-items: center; gap: 15px; font-weight: 700; font-size: 1.1rem; }
+    .header-left i { color: var(--primary); width: 25px; text-align: center; font-size: 1.2rem; }
+
+    .section-content { 
+      display: none; /* Initial State: Closed */
+      padding: 10px 20px 20px 60px;
+      border-top: 1px solid var(--border);
+    }
+
+    ul { list-style: none; }
+    li {
+      display: flex;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    input[type="checkbox"] {
+      width: 19px;
+      height: 19px;
+      margin-top: 4px;
+      cursor: pointer;
+      accent-color: var(--accent);
+    }
+
+    label { cursor: pointer; color: var(--text-dim); flex: 1; }
+    input:checked + label { text-decoration: line-through; color: #4b5563; }
+
+    .chevron { transition: 0.3s; color: var(--text-dim); }
+    .roadmap-section.open .chevron { transform: rotate(180deg); color: var(--primary); }
+    .roadmap-section.open .section-content { display: block; }
+
+    .badge-must { background: #dc2626; color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem; margin-left: 10px; }
+
+    @media (max-width: 600px) {
+        .section-content { padding-left: 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <h1>Java Backend Roadmap 2026</h1>
+    <p style="color: var(--text-dim)">Strict Topic Checklist for Senior Engineers</p>
+  </header>
+
+  <div class="progress-bar-container">
+    <div style="font-weight: bold; color: var(--primary);">Progress: <span id="percent">0</span>%</div>
+    <div style="font-size: 0.9rem;"><span id="count">0</span> / <span id="total">0</span> Completed</div>
+  </div>
+
+  <div class="search-container">
+    <i class="fas fa-search search-icon"></i>
+    <input type="text" id="searchInput" placeholder="Search topics (e.g. Kafka, JVM, Spring)..."/>
+  </div>
+
+  <div id="roadmap">
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-shield-halved"></i> 1. Core Java <span class="badge-must">NON-NEGOTIABLE</span></div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c1_1"><label for="c1_1">Java 8–25 features: Streams API, Lambda expressions, Optional, Records, Sealed classes, Pattern matching (switch expressions, instanceof), Text blocks, Helpful NullPointerExceptions</label></li>
+          <li><input type="checkbox" id="c1_2"><label for="c1_2">Virtual Threads (Project Loom), Structured Concurrency, Scoped Values (Java 21+)</label></li>
+          <li><input type="checkbox" id="c1_3"><label for="c1_3">OOP principles in depth: SOLID, DRY, KISS, YAGNI, composition over inheritance</label></li>
+          <li><input type="checkbox" id="c1_4"><label for="c1_4">Collections Framework: List (ArrayList, LinkedList), Set (HashSet, TreeSet, LinkedHashSet), Map (HashMap, LinkedHashMap, TreeMap, ConcurrentHashMap), Queue, Deque — internal working, time complexity, load factor, resizing</label></li>
+          <li><input type="checkbox" id="c1_5"><label for="c1_5">Generics: Wildcards, bounded types, type erasure</label></li>
+          <li><input type="checkbox" id="c1_6"><label for="c1_6">Exception Handling: Checked vs Unchecked, custom exceptions, try-with-resources, multi-catch, suppressed exceptions</label></li>
+          <li><input type="checkbox" id="c1_7"><label for="c1_7">JVM Internals: Heap structure (Young/Old Gen, Metaspace), Stack, PC Register, JVM memory areas, JIT compilation, class loading</label></li>
+          <li><input type="checkbox" id="c1_8"><label for="c1_8">Garbage Collection: Types (Serial, Parallel, CMS, G1, ZGC, Shenandoah), GC tuning flags, pause times, throughput</label></li>
+          <li><input type="checkbox" id="c1_9"><label for="c1_9">Memory Management: Escape analysis, allocation, object lifecycle, memory leaks detection</label></li>
+          <li><input type="checkbox" id="c1_10"><label for="c1_10">Immutability: final, Collections.unmodifiable*, immutable objects design, benefits in concurrency</label></li>
+          <li><input type="checkbox" id="c1_11"><label for="c1_11">equals(), hashCode(), compareTo()/Comparator, contract rules, common pitfalls</label></li>
+          <li><input type="checkbox" id="c1_12"><label for="c1_12">Serialization/Deserialization: Serializable, Externalizable, serialVersionUID, transient, JSON alternatives (Jackson, Gson)</label></li>
+          <li><input type="checkbox" id="c1_13"><label for="c1_13">Added: Java Modules (JPMS — module-info.java), Annotations (custom, meta), Reflection (pros/cons, performance)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-cogs"></i> 2. Concurrency & Multithreading</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c2_1"><label for="c2_1">Thread, Runnable, Callable, Thread lifecycle</label></li>
+          <li><input type="checkbox" id="c2_2"><label for="c2_2">ExecutorService, ThreadPoolExecutor, ForkJoinPool</label></li>
+          <li><input type="checkbox" id="c2_3"><label for="c2_3">CompletableFuture, then* methods, exceptionally, allOf/anyOf</label></li>
+          <li><input type="checkbox" id="c2_4"><label for="c2_4">Synchronization: synchronized blocks/methods, intrinsic locks</label></li>
+          <li><input type="checkbox" id="c2_5"><label for="c2_5">Locks: ReentrantLock, ReadWriteLock, StampedLock</label></li>
+          <li><input type="checkbox" id="c2_6"><label for="c2_6">Volatile, Atomic classes (AtomicInteger, etc.), VarHandle</label></li>
+          <li><input type="checkbox" id="c2_7"><label for="c2_7">ThreadLocal, InheritableThreadLocal</label></li>
+          <li><input type="checkbox" id="c2_8"><label for="c2_8">Concurrency issues: Deadlock, Livelock, Starvation, Race conditions</label></li>
+          <li><input type="checkbox" id="c2_9"><label for="c2_9">Java Memory Model (JMM): Happens-before, visibility, ordering</label></li>
+          <li><input type="checkbox" id="c2_10"><label for="c2_10">Concurrent collections: ConcurrentHashMap, CopyOnWriteArrayList, BlockingQueue implementations</label></li>
+          <li><input type="checkbox" id="c2_11"><label for="c2_11">Added: Structured Concurrency (Java 21+), Virtual Threads usage patterns, pinning issues</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-leaf"></i> 3. Spring Ecosystem (BACKBONE)</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c3_1"><label for="c3_1">Spring Core: IoC container, Dependency Injection (constructor/setter), Bean scopes, lifecycle callbacks (@PostConstruct, @PreDestroy)</label></li>
+          <li><input type="checkbox" id="c3_2"><label for="c3_2">Spring Boot: Auto-configuration, starters, embedded servers, @SpringBootApplication</label></li>
+          <li><input type="checkbox" id="c3_3"><label for="c3_3">Spring MVC / WebFlux: Controllers, @RestController, RequestMapping variants, Handler methods</label></li>
+          <li><input type="checkbox" id="c3_4"><label for="c3_4">Spring Security: Authentication/Authorization, Security filters chain, method security</label></li>
+          <li><input type="checkbox" id="c3_5"><label for="c3_5">Spring Data JPA: Repositories, @Query, Specifications, Auditing</label></li>
+          <li><input type="checkbox" id="c3_6"><label for="c3_6">Spring AOP: Aspects, Pointcuts, Advices, @Transactional</label></li>
+          <li><input type="checkbox" id="c3_7"><label for="c3_7">Spring Validation: Bean Validation (Jakarta), @Valid, custom validators</label></li>
+          <li><input type="checkbox" id="c3_8"><label for="c3_8">Spring Profiles, @ConfigurationProperties, externalized config</label></li>
+          <li><input type="checkbox" id="c3_9"><label for="c3_9">Spring Scheduler / Task Executor</label></li>
+          <li><input type="checkbox" id="c3_10"><label for="c3_10">Spring Actuator: Endpoints, metrics, health checks</label></li>
+          <li><input type="checkbox" id="c3_11"><label for="c3_11">Added: Spring Boot 3+ (Jakarta EE migration), GraalVM Native Image support, Micrometer for observability</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-network-wired"></i> 4. Microservices & Distributed Systems</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c4_1"><label for="c4_1">Microservices principles: Bounded contexts, independent deployability</label></li>
+          <li><input type="checkbox" id="c4_2"><label for="c4_2">Service Discovery: Eureka, Consul, Kubernetes service discovery</label></li>
+          <li><input type="checkbox" id="c4_3"><label for="c4_3">API Gateway: Spring Cloud Gateway, filters, routing</label></li>
+          <li><input type="checkbox" id="c4_4"><label for="c4_4">Load Balancing: Client-side (Ribbon), Server-side</label></li>
+          <li><input type="checkbox" id="c4_5"><label for="c4_5">Resilience: Circuit Breaker (Resilience4j), Retry, Bulkhead, Time limiter</label></li>
+          <li><input type="checkbox" id="c4_6"><label for="c4_6">Rate Limiting / Throttling</label></li>
+          <li><input type="checkbox" id="c4_7"><label for="c4_7">Distributed Tracing: Sleuth + Zipkin/Jaeger, OpenTelemetry</label></li>
+          <li><input type="checkbox" id="c4_8"><label for="c4_8">Saga Pattern: Choreography vs Orchestration, compensating transactions</label></li>
+          <li><input type="checkbox" id="c4_9"><label for="c4_9">Event-Driven Architecture: Event sourcing, CQRS basics</label></li>
+          <li><input type="checkbox" id="c4_10"><label for="c4_10">Idempotency, Outbox pattern, Transactional outbox</label></li>
+          <li><input type="checkbox" id="c4_11"><label for="c4_11">CAP Theorem, eventual consistency, BASE</label></li>
+          <li><input type="checkbox" id="c4_12"><label for="c4_12">Added: Service Mesh (Istio/Linkerd basics), Contract testing (Pact), API composition</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-database"></i> 5. Databases (SQL + NoSQL)</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c5_1"><label for="c5_1">SQL: MySQL, PostgreSQL (JSONB, extensions), Oracle — advanced indexing (BTREE, GIN, BRIN), composite keys</label></li>
+          <li><input type="checkbox" id="c5_2"><label for="c5_2">Joins (inner/outer), subqueries, window functions, CTEs</label></li>
+          <li><input type="checkbox" id="c5_3"><label for="c5_3">Transactions: ACID, distributed transactions (2PC/XA)</label></li>
+          <li><input type="checkbox" id="c5_4"><label for="c5_4">Isolation Levels: Read uncommitted → Serializable, anomalies</label></li>
+          <li><input type="checkbox" id="c5_5"><label for="c5_5">Query Optimization: EXPLAIN, indexes, covering indexes, statistics</label></li>
+          <li><input type="checkbox" id="c5_6"><label for="c5_6">Stored Procedures / Functions (basics)</label></li>
+          <li><input type="checkbox" id="c5_7"><label for="c5_7">NoSQL: MongoDB (aggregation pipeline), Redis (data structures, pub/sub), Cassandra (partitioning, consistency), DynamoDB (optional)</label></li>
+          <li><input type="checkbox" id="c5_8"><label for="c5_8">Added: Sharding strategies, replication, write-heavy vs read-heavy patterns</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-link"></i> 6. ORM & Persistence</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c6_1"><label for="c6_1">JPA / Hibernate: Entity states, caching (1st/2nd level), fetch strategies</label></li>
+          <li><input type="checkbox" id="c6_2"><label for="c6_2">Lazy vs Eager loading, N+1 problem solutions (JOIN FETCH, EntityGraph)</label></li>
+          <li><input type="checkbox" id="c6_3"><label for="c6_3">Second Level Cache (Ehcache, Infinispan)</label></li>
+          <li><input type="checkbox" id="c6_4"><label for="c6_4">Query optimization: Criteria API, JPQL vs native queries</label></li>
+          <li><input type="checkbox" id="c6_5"><label for="c6_5">Pagination (Pageable), batch processing (@BatchSize)</label></li>
+          <li><input type="checkbox" id="c6_6"><label for="c6_6">Added: Flyway / Liquibase for migrations, read replicas routing</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-comment-dots"></i> 7. Messaging & Streaming</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c7_1"><label for="c7_1">Kafka: Topics, partitions, consumer groups, offsets, exactly-once semantics</label></li>
+          <li><input type="checkbox" id="c7_2"><label for="c7_2">RabbitMQ: Exchanges (direct/topic/fanout), queues, acknowledgments</label></li>
+          <li><input type="checkbox" id="c7_3"><label for="c7_3">JMS / ActiveMQ (legacy)</label></li>
+          <li><input type="checkbox" id="c7_4"><label for="c7_4">Event ordering guarantees, dead letter queues/topics</label></li>
+          <li><input type="checkbox" id="c7_5"><label for="c7_5">At-least-once / at-most-once / exactly-once delivery</label></li>
+          <li><input type="checkbox" id="c7_6"><label for="c7_6">Added: Kafka Streams, ksqlDB basics, message schemas (Avro, Protobuf)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-bolt"></i> 8. Caching</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c8_1"><label for="c8_1">Redis: String, Hash, List, Set operations, pub/sub, Lua scripts</label></li>
+          <li><input type="checkbox" id="c8_2"><label for="c8_2">In-memory: Caffeine, Ehcache</label></li>
+          <li><input type="checkbox" id="c8_3"><label for="c8_3">Eviction policies (LRU, LFU), TTL/expiration</label></li>
+          <li><input type="checkbox" id="c8_4"><label for="c8_4">Write-through, write-behind, cache-aside</label></li>
+          <li><input type="checkbox" id="c8_5"><label for="c8_5">Cache consistency (invalidate on update), stamp coupling</label></li>
+          <li><input type="checkbox" id="c8_6"><label for="c8_6">Distributed cache pitfalls</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-lock"></i> 9. Security & Authentication</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c9_1"><label for="c9_1">OAuth 2.0 / OpenID Connect flows</label></li>
+          <li><input type="checkbox" id="c9_2"><label for="c9_2">JWT: Structure, signing, refresh tokens, claims</label></li>
+          <li><input type="checkbox" id="c9_3"><label for="c9_3">Spring Security: Filters, AuthenticationManager, UserDetailsService</label></li>
+          <li><input type="checkbox" id="c9_4"><label for="c9_4">CSRF, CORS, XSS, clickjacking protections</label></li>
+          <li><input type="checkbox" id="c9_5"><label for="c9_5">RBAC / ABAC, method-level security</label></li>
+          <li><input type="checkbox" id="c9_6"><label for="c9_6">Encryption: Symmetric/Asymmetric, hashing (BCrypt, Argon2)</label></li>
+          <li><input type="checkbox" id="c9_7"><label for="c9_7">API keys, mTLS basics</label></li>
+          <li><input type="checkbox" id="c9_8"><label for="c9_8">Added: Zero-trust principles, secret management (Vault)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-cloud"></i> 10. Cloud & DevOps</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c10_1"><label for="c10_1">Containerization: Docker, multi-stage builds, Docker Compose</label></li>
+          <li><input type="checkbox" id="c10_2"><label for="c10_2">Orchestration: Kubernetes (Pods, Deployments, Services, ConfigMaps, Helm basics)</label></li>
+          <li><input type="checkbox" id="c10_3"><label for="c10_3">AWS core: EC2, S3, RDS/Aurora, Lambda, IAM, ECS/EKS</label></li>
+          <li><input type="checkbox" id="c10_4"><label for="c10_4">CI/CD: GitHub Actions, Jenkins pipelines, ArgoCD basics</label></li>
+          <li><input type="checkbox" id="c10_5"><label for="c10_5">Deployment strategies: Blue-Green, Canary, Rolling</label></li>
+          <li><input type="checkbox" id="c10_6"><label for="c10_6">Added: Infrastructure as Code (Terraform basics), Serverless (Spring Cloud Function)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-chart-line"></i> 11. Observability & Monitoring</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c11_1"><label for="c11_1">Metrics: Prometheus + Micrometer, Grafana dashboards</label></li>
+          <li><input type="checkbox" id="c11_2"><label for="c11_2">Distributed Tracing: OpenTelemetry, Jaeger/Zipkin</label></li>
+          <li><input type="checkbox" id="c11_3"><label for="c11_3">Logging: SLF4J + Logback, structured logging, ELK/EFK stack</label></li>
+          <li><input type="checkbox" id="c11_4"><label for="c11_4">Alerting, SLO/SLI, error budgets</label></li>
+          <li><input type="checkbox" id="c11_5"><label for="c11_5">Added: Log correlation (traceId/spanId), exception tracking (Sentry)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-vial"></i> 12. Testing</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c12_1"><label for="c12_1">Unit: JUnit 5, Assertions, parameterized tests</label></li>
+          <li><input type="checkbox" id="c12_2"><label for="c12_2">Mocking: Mockito, @MockBean</label></li>
+          <li><input type="checkbox" id="c12_3"><label for="c12_3">Integration: @SpringBootTest, TestRestTemplate / WebTestClient</label></li>
+          <li><input type="checkbox" id="c12_4"><label for="c12_4">Testcontainers for DB/messaging</label></li>
+          <li><input type="checkbox" id="c12_5"><label for="c12_5">Contract testing: Pact, Spring Cloud Contract</label></li>
+          <li><input type="checkbox" id="c12_6"><label for="c12_6">API testing: RestAssured</label></li>
+          <li><input type="checkbox" id="c12_7"><label for="c12_7">Code coverage, mutation testing basics</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-code"></i> 13. API Design & Documentation</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c13_1"><label for="c13_1">REST principles, HATEOAS basics</label></li>
+          <li><input type="checkbox" id="c13_2"><label for="c13_2">HTTP methods, status codes, headers</label></li>
+          <li><input type="checkbox" id="c13_3"><label for="c13_3">Versioning (URI, header, media type)</label></li>
+          <li><input type="checkbox" id="c13_4"><label for="c13_4">Pagination, filtering, sorting, HATEOAS</label></li>
+          <li><input type="checkbox" id="c13_5"><label for="c13_5">OpenAPI / Swagger, Springdoc</label></li>
+          <li><input type="checkbox" id="c13_6"><label for="c13_6">Backward/forward compatibility</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-code-fork"></i> 14. Build & Version Control</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c14_1"><label for="c14_1">Git: Branching (Git Flow, trunk-based), rebase vs merge, cherry-pick</label></li>
+          <li><input type="checkbox" id="c14_2"><label for="c14_2">Build tools: Maven (POM, plugins), Gradle (build scripts, dependency management)</label></li>
+          <li><input type="checkbox" id="c14_3"><label for="c14_3">Semantic Versioning, dependency updates (Dependabot)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-diagram-project"></i> 15. System Design (INTERVIEW KILLER)</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c15_1"><label for="c15_1">High-Level Design (HLD): URL shortener, notification system, rate limiter</label></li>
+          <li><input type="checkbox" id="c15_2"><label for="c15_2">Low-Level Design (LLD): Classes, interfaces, design patterns usage</label></li>
+          <li><input type="checkbox" id="c15_3"><label for="c15_3">Scalability: Horizontal/vertical, sharding, partitioning</label></li>
+          <li><input type="checkbox" id="c15_4"><label for="c15_4">Load estimation, QPS, storage needs</label></li>
+          <li><input type="checkbox" id="c15_5"><label for="c15_5">Caching strategy, database choice, consistency vs availability</label></li>
+          <li><input type="checkbox" id="c15_6"><label for="c15_6">Fault tolerance: Retry, timeout, fallback</label></li>
+          <li><input type="checkbox" id="c15_7"><label for="c15_7">Added: Common patterns (API gateway, sidecar, ambassador)</label></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="roadmap-section">
+      <div class="section-header">
+        <div class="header-left"><i class="fas fa-award"></i> 16. Bonus (Differentiators for Seniors)</div>
+        <i class="fas fa-chevron-down chevron"></i>
+      </div>
+      <div class="section-content">
+        <ul>
+          <li><input type="checkbox" id="c16_1"><label for="c16_1">Reactive Programming: Project Reactor, Spring WebFlux</label></li>
+          <li><input type="checkbox" id="c16_2"><label for="c16_2">GraphQL (with Spring Boot)</label></li>
+          <li><input type="checkbox" id="c16_3"><label for="c16_3">gRPC (protobuf, unary/streaming)</label></li>
+          <li><input type="checkbox" id="c16_4"><label for="c16_4">Domain-Driven Design (DDD): Aggregates, entities, value objects, repositories</label></li>
+          <li><input type="checkbox" id="c16_5"><label for="c16_5">Clean / Hexagonal / Ports & Adapters Architecture</label></li>
+          <li><input type="checkbox" id="c16_6"><label for="c16_6">Design Patterns: GoF (Singleton, Factory, Builder, Observer, Strategy, etc.), enterprise patterns</label></li>
+          <li><input type="checkbox" id="c16_7"><label for="c16_7">Performance profiling: VisualVM, JProfiler, async-profiler</label></li>
+          <li><input type="checkbox" id="c16_8"><label for="c16_8">AI integration basics (Spring AI, embeddings)</label></li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  // Select all headers and sections
+  const headers = document.querySelectorAll('.section-header');
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  const totalEl = document.getElementById('total');
+  const countEl = document.getElementById('count');
+  const percentEl = document.getElementById('percent');
+
+  totalEl.innerText = checkboxes.length;
+
+  // Dropdown Logic
+  headers.forEach(header => {
+    header.addEventListener('click', () => {
+      const section = header.parentElement;
+      section.classList.toggle('open');
+    });
+  });
+
+  // Progress Tracker Logic
+  function updateProgress() {
+    const checked = document.querySelectorAll('input[type="checkbox"]:checked').length;
+    const percentage = Math.round((checked / checkboxes.length) * 100);
+    
+    countEl.innerText = checked;
+    percentEl.innerText = percentage;
+
+    // Save state to local storage
+    const checkedIds = Array.from(checkboxes).filter(cb => cb.checked).map(cb => cb.id);
+    localStorage.setItem('java_roadmap_state', JSON.stringify(checkedIds));
+  }
+
+  // Load state
+  const savedState = JSON.parse(localStorage.getItem('java_roadmap_state') || '[]');
+  checkboxes.forEach(cb => {
+    if(savedState.includes(cb.id)) cb.checked = true;
+    cb.addEventListener('change', updateProgress);
+  });
+
+  // Search Logic
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    const term = e.target.value.toLowerCase();
+    document.querySelectorAll('.roadmap-section').forEach(section => {
+      const text = section.innerText.toLowerCase();
+      if(text.includes(term)) {
+        section.style.display = 'block';
+        if(term.length > 2) section.classList.add('open');
+      } else {
+        section.style.display = 'none';
+      }
+    });
+  });
+
+  updateProgress();
+</script>
+
+</body>
+</html>
