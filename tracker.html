@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>60-Day SD Tracker | Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-card: #cbd5e1;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --accent: #2563eb;
+            --success: #16a34a;
+            --must: #ef4444; 
+            --medium: #f59e0b; 
+            --low: #94a3b8;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0b0f1a;
+            --bg-header: #161b22;
+            --bg-card: #161b22;
+            --text-main: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-card: #30363d;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --accent: #58a6ff;
+            --success: #238636;
+        }
+
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg-body); color: var(--text-main); margin: 0; padding: 20px; transition: 0.3s; }
+        .container { max-width: 1300px; margin: 0 auto; }
+
+        .top-nav {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            border: 1px solid var(--border-card);
+            background: var(--bg-header);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn:hover { border-color: var(--accent); }
+
+        .dashboard-header {
+            background: var(--bg-header); border: 1px solid var(--border-card);
+            padding: 20px; border-radius: 12px; margin-bottom: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 10px; z-index: 1000;
+            box-shadow: 0 4px 10px var(--shadow);
+        }
+
+        .search-box { background: var(--bg-body); border: 1px solid var(--border-card); padding: 10px; border-radius: 6px; color: var(--text-main); width: 220px; }
+        
+        .prog-radial {
+            width: 75px; height: 75px; border-radius: 50%;
+            background: conic-gradient(var(--success) 0%, var(--border-card) 0%);
+            display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid var(--border-card);
+        }
+
+        .phase-box { background: var(--bg-card); border: 1px solid var(--border-card); border-radius: 12px; padding: 20px; margin-bottom: 30px; }
+        h2 { color: var(--accent); font-size: 1.1rem; border-bottom: 1px solid var(--border-card); padding-bottom: 10px; margin-top: 0; }
+        
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; font-size: 11px; color: var(--text-secondary); padding: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 14px 12px; border-bottom: 1px solid var(--border-card); font-size: 14px; }
+
+        .lec-pill { background: var(--bg-body); padding: 3px 8px; border-radius: 6px; border: 1px solid var(--border-card); font-family: monospace; font-size: 12px; color: var(--accent); }
+        .prio-badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; text-transform: uppercase; }
+        .prio-must { background: rgba(248, 81, 73, 0.15); color: #f85149; border: 1px solid #f85149; }
+        .prio-medium { background: rgba(210, 153, 34, 0.15); color: #d29922; border: 1px solid #d29922; }
+        .prio-low { background: rgba(139, 148, 158, 0.15); color: var(--text-secondary); border: 1px solid var(--text-secondary); }
+
+        .row-done { opacity: 0.25; filter: grayscale(1); transition: 0.3s; }
+        input[type="checkbox"] { width: 20px; height: 20px; cursor: pointer; accent-color: var(--success); }
+    </style>
+</head>
+<body>
+
+<div class="top-nav">
+    <a href="syllabus_reference.html" class="btn">📖 Syllabus Reference</a>
+    <button class="btn" id="themeBtn">🌙 Toggle Mode</button>
+</div>
+
+<div class="container">
+    <div class="dashboard-header">
+        <div>
+            <h1 style="margin:0; font-size: 22px;">🛠️ 60-Day System Design Tracker</h1>
+            <p id="countdown" style="margin:5px 0 0 0; font-size: 13px; color: var(--text-secondary);"></p>
+        </div>
+        <input type="text" id="search" class="search-box" placeholder="Search Topic..." onkeyup="filter()">
+        <div class="prog-radial" id="prog-text">0%</div>
+    </div>
+
+    <div id="main-content"></div>
+</div>
+
+<script>
+// Data Store (Priority & Time)
+const masterData = {
+    1: {p:"medium", t:"1 hr"}, 2: {p:"must", t:"3-4 hrs"}, 3: {p:"medium", t:"1 hr"}, 4: {p:"must", t:"2-3 hrs"}, 5: {p:"must", t:"2-3 hrs"},
+    6: {p:"medium", t:"1-2 hrs"}, 7: {p:"must", t:"3 hrs"}, 8: {p:"must", t:"2-3 days"}, 9: {p:"low", t:"30 min"}, 10: {p:"must", t:"2 days"},
+    11: {p:"medium", t:"2 hrs"}, 12: {p:"medium", t:"1-2 hrs"}, 13: {p:"low", t:"30 min"}, 14: {p:"medium", t:"1 hr"}, 15: {p:"must", t:"1-2 days"},
+    16: {p:"low", t:"30 min"}, 17: {p:"medium", t:"1-2 hrs"}, 18: {p:"must", t:"5-6 hrs"}, 19: {p:"medium", t:"1 hr"}, 20: {p:"medium", t:"1 hr"},
+    21: {p:"must", t:"2-3 days"}, 22: {p:"must", t:"2-3 hrs"}, 23: {p:"medium", t:"1-2 hrs"}, 24: {p:"low", t:"30 min"}, 25: {p:"low", t:"30 min"},
+    26: {p:"medium", t:"2 hrs"}, 27: {p:"low", t:"30 min"}, 28: {p:"low", t:"30 min"}, 29: {p:"low", t:"30 min"}, 30: {p:"low", t:"30 min"},
+    31: {p:"medium", t:"1-2 hrs"}, 32: {p:"low", t:"30 min"}, 33: {p:"medium", t:"1 hr"}, 34: {p:"low", t:"30 min"}, 35: {p:"low", t:"30 min"},
+    36: {p:"low", t:"30 min"}, 37: {p:"must", t:"1 day"}, 38: {p:"low", t:"30 min"}, 39: {p:"medium", t:"1 hr"}, 40: {p:"must", t:"2 hrs"},
+    41: {p:"must", t:"2-3 hrs"}, 42: {p:"must", t:"3-4 hrs"}, 43: {p:"must", t:"2 hrs"}, 44: {p:"must", t:"2 hrs"}, 45: {p:"must", t:"1-2 days"},
+    46: {p:"medium", t:"1-2 hrs"}, 47: {p:"must", t:"4-5 hrs"}, 48: {p:"must", t:"2 hrs"}, 49: {p:"must", t:"1-2 days"}, 50: {p:"must", t:"3-4 hrs"},
+    51: {p:"must", t:"2 hrs"}, 52: {p:"must", t:"2 hrs"}, 53: {p:"must", t:"1-2 days"}, 54: {p:"medium", t:"1 hr"}, 55: {p:"must", t:"2 hrs"},
+    56: {p:"must", t:"3-4 hrs"}, 57: {p:"must", t:"3-4 hrs"}, 58: {p:"must", t:"2-3 hrs"}, 59: {p:"medium", t:"2 hrs"}, 60: {p:"medium", t:"2 hrs"},
+    61: {p:"medium", t:"1-2 hrs"}, 62: {p:"medium", t:"1 hr"}, 63: {p:"medium", t:"2 hrs"}, 64: {p:"medium", t:"1 hr"}, 65: {p:"must", t:"2 hrs"},
+    66: {p:"medium", t:"1 hr"}, 67: {p:"medium", t:"1 hr"}, 68: {p:"medium", t:"1 hr"}, 69: {p:"low", t:"30-45 min"}, 70: {p:"must", t:"2-3 hrs"},
+    71: {p:"medium", t:"1-2 hrs"}, 72: {p:"must", t:"2 hrs"}, 73: {p:"medium", t:"1 hr"}, 74: {p:"must", t:"1-2 hrs"}, 75: {p:"must", t:"1-2 hrs"},
+    "Rev": {p:"medium", t:"2-4 hrs"}, "Mock": {p:"must", t:"1-2 hrs"}, "Mix": {p:"medium", t:"2 hrs"}, "FINAL": {p:"must", t:"3 hrs"}
+};
+
+// Original roadmapData exactly as provided
+const roadmapData = [
+    { phase: "PHASE 1 — LLD + PATTERNS (Day 1–20)", days: [
+        { d: 1, l: "1", t: "LLD Intro, IS-A / HAS-A", p: "Create class examples", o: "OOP clarity" },
+        { d: 2, l: "2", t: "SOLID", p: "Refactor bad code", o: "SOLID mastery" },
+        { d: 3, l: "3", t: "LSP", p: "Fix violation example", o: "Deep understanding" },
+        { d: 4, l: "4", t: "Strategy", p: "Payment system", o: "Replace if-else" },
+        { d: 5, l: "5", t: "Observer", p: "Notification system", o: "Pub-sub clarity" },
+        { d: 6, l: "6", t: "Decorator", p: "Add logging/feature", o: "Dynamic behavior" },
+        { d: 7, l: "Rev", t: "Revision", p: "Re-code Strategy + Observer", o: "Retention" },
+        { d: 8, l: "7", t: "Factory", p: "Order factory system", o: "Object creation" },
+        { d: 9, l: "7", t: "Abstract Factory", p: "Multi-product factory", o: "Advanced factory" },
+        { d: 10, l: "12", t: "Chain of Responsibility", p: "Approval system", o: "Request flow" },
+        { d: 11, l: "14", t: "Proxy", p: "Access control layer", o: "Proxy usage" },
+        { d: 12, l: "17", t: "State", p: "Vending machine", o: "State transitions" },
+        { d: 13, l: "22", t: "Builder", p: "Complex object", o: "Clean construction" },
+        { d: 14, l: "19", t: "Composite", p: "File system tree", o: "Hierarchy design" },
+        { d: 15, l: "Rev", t: "Revision", p: "Mini project (use 2–3 patterns)", o: "Pattern usage" },
+        { d: "16-17", l: "8", t: "Parking Lot", p: "FULL Java implementation", o: "LLD interview ready" },
+        { d: "18-19", l: "10", t: "Elevator System", p: "Core logic + design", o: "Scheduling logic" },
+        { d: 20, l: "Rev", t: "Revision", p: "Rebuild Parking Lot", o: "Confidence" }
+    ]},
+    { phase: "PHASE 2 — LLD CASE STUDIES (Day 21–30)", days: [
+        { d: "21-22", l: "21", t: "Splitwise", p: "FULL implementation", o: "Real-world modeling" },
+        { d: 23, l: "15", t: "BookMyShow", p: "Design only", o: "Ticketing flow" },
+        { d: 24, l: "18", t: "ATM", p: "Code basic flow", o: "State + flow" },
+        { d: 25, l: "11", t: "Car Rental", p: "Design", o: "Object modeling" },
+        { d: 26, l: "37", t: "Payment Gateway", p: "Design + flow", o: "Payment lifecycle" },
+        { d: 27, l: "26", t: "Inventory System", p: "Design", o: "Product mgmt" },
+        { d: 28, l: "Rev", t: "Revision", p: "Rebuild Splitwise", o: "Mastery" },
+        { d: 29, l: "Mix", t: "Compare 3 designs", p: "Trade-offs", o: "Trade-offs" },
+        { d: 30, l: "Mock", t: "Explain 1 design", p: "Mock Session", o: "Interview readiness" }
+    ]},
+    { phase: "PHASE 3 — HLD BASICS (Day 31–40)", days: [
+        { d: 31, l: "39", t: "Network", p: "Notes", o: "Fundamentals" },
+        { d: 32, l: "40", t: "CAP", p: "Examples", o: "Trade-offs" },
+        { d: 33, l: "41", t: "Microservices", p: "Map your project", o: "Architecture clarity" },
+        { d: 34, l: "42", t: "SAGA", p: "Apply in project", o: "Transactions" },
+        { d: 35, l: "43", t: "Scaling", p: "Estimate traffic", o: "Scaling logic" },
+        { d: 36, l: "44", t: "Consistent Hashing", p: "Draw diagrams", o: "Load distribution" },
+        { d: "37-38", l: "45", t: "URL Shortener", p: "Design fully", o: "HLD foundation" },
+        { d: 39, l: "46", t: "Estimation", p: "Practice QPS calc", o: "Interview skill" },
+        { d: 40, l: "48", t: "SQL vs NoSQL", p: "Compare use cases", o: "DB decision" }
+    ]},
+    { phase: "PHASE 4 — CORE DISTRIBUTED SYSTEMS (Day 41–50)", days: [
+        { d: 41, l: "47", t: "Key-Value Store", p: "Design", o: "Storage systems" },
+        { d: "42-43", l: "49", t: "WhatsApp", p: "Design system", o: "Real-world HLD" },
+        { d: 44, l: "50", t: "Rate Limiter", p: "Implement (Java)", o: "Critical skill" },
+        { d: 45, l: "51", t: "Idempotency", p: "API design", o: "Reliability" },
+        { d: 46, l: "52", t: "High Availability", p: "Draw architecture", o: "Fault tolerance" },
+        { d: 47, l: "53", t: "Kafka", p: "Use in project", o: "Event-driven" },
+        { d: 48, l: "56", t: "Cache", p: "Add caching logic", o: "Performance" },
+        { d: 49, l: "55", t: "Load Balancer", p: "Compare algorithms", o: "Traffic mgmt" },
+        { d: 50, l: "54", t: "Proxy", p: "Reverse proxy setup idea", o: "Routing" }
+    ]},
+    { phase: "PHASE 5 — ADVANCED SYSTEM DESIGN (Day 51–60)", days: [
+        { d: 51, l: "57", t: "Transactions (2PC/SAGA)", p: "Map flows", o: "Consistency" },
+        { d: 52, l: "58", t: "Indexing", p: "DB query optimization", o: "Performance" },
+        { d: 53, l: "59", t: "Concurrency", p: "Solve race condition", o: "Thread safety" },
+        { d: 54, l: "60", t: "2PL", p: "Locking examples", o: "DB control" },
+        { d: 55, l: "61-63", t: "OAuth + JWT", p: "Secure API design", o: "Auth mastery" },
+        { d: 56, l: "65", t: "API Gateway", p: "Design gateway", o: "Microservices" },
+        { d: 57, l: "66", t: "Service Mesh", p: "Understand flow", o: "Advanced infra" },
+        { d: 58, l: "70", t: "Dual Write", p: "Solve consistency", o: "Event-driven" },
+        { d: 59, l: "72-75", t: "Retry, Circuit Breaker", p: "Add resilience", o: "Fault handling" },
+        { d: 60, l: "FINAL", t: "Mock Design", p: "Design E-commerce", o: "Interview ready" }
+    ]}
+];
+
+function getTargetDate(dayNum) {
+    const start = new Date('2026-04-01');
+    const actualDay = parseInt(dayNum.toString().split('-')[0]);
+    start.setDate(start.getDate() + (actualDay - 1));
+    return start.toLocaleDateString('en-GB', { day: '2-digit', month: 'short' });
+}
+
+function render() {
+    const main = document.getElementById('main-content');
+    main.innerHTML = '';
+    roadmapData.forEach((phase, pIdx) => {
+        const section = document.createElement('div');
+        section.className = 'phase-box';
+        section.innerHTML = `<h2>${phase.phase}</h2>
+            <table>
+                <thead><tr><th>✔</th><th>Day</th><th>Lec #</th><th>Topic</th><th>Priority</th><th>Time</th><th>Practice Task</th></tr></thead>
+                <tbody></tbody>
+            </table>`;
+        const tbody = section.querySelector('tbody');
+        
+        phase.days.forEach((item, iIdx) => {
+            const id = `check-${pIdx}-${iIdx}`;
+            const done = localStorage.getItem(id) === 'true';
+            const meta = masterData[item.l] || {p:"low", t:"30 min"};
+            
+            const tr = document.createElement('tr');
+            tr.id = `row-${id}`;
+            if(done) tr.className = 'row-done';
+            
+            tr.innerHTML = `
+                <td><input type="checkbox" id="${id}" ${done ? 'checked' : ''} onchange="toggle('${id}', '${meta.p}')"></td>
+                <td><b>Day ${item.d}</b><br><small style="color:var(--text-secondary)">${getTargetDate(item.d)}</small></td>
+                <td><span class="lec-pill">${item.l === 'Rev' ? 'REV' : 'Lec ' + item.l}</span></td>
+                <td><strong>${item.t}</strong></td>
+                <td><span class="prio-badge prio-${meta.p}">${meta.p}</span></td>
+                <td style="color:var(--accent); font-weight:bold">${meta.t}</td>
+                <td><small>${item.p}</small></td>
+            `;
+            tbody.appendChild(tr);
+        });
+        main.appendChild(section);
+    });
+    updateProgress();
+}
+
+function toggle(id, prio) {
+    const checked = document.getElementById(id).checked;
+    localStorage.setItem(id, checked);
+    document.getElementById(`row-${id}`).classList.toggle('row-done', checked);
+    if(checked && prio === 'must') confetti({ particleCount: 150, spread: 60, colors:['#f85149', '#58a6ff'] });
+    updateProgress();
+}
+
+function updateProgress() {
+    const total = document.querySelectorAll('input[type="checkbox"]').length;
+    const done = document.querySelectorAll('input[type="checkbox"]:checked').length;
+    const perc = Math.round((done/total)*100);
+    const rad = document.getElementById('prog-text');
+    rad.innerText = perc + '%';
+    rad.style.background = `conic-gradient(var(--success) ${perc}%, var(--border-card) 0%)`;
+}
+
+function filter() {
+    const q = document.getElementById('search').value.toLowerCase();
+    document.querySelectorAll('tr:not(thead tr)').forEach(tr => {
+        tr.style.display = tr.innerText.toLowerCase().includes(q) ? "" : "none";
+    });
+}
+
+// THEME TOGGLE LOGIC
+const themeBtn = document.getElementById('themeBtn');
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+themeBtn.addEventListener('click', toggleTheme);
+
+function updateCountdown() {
+    const diff = new Date('2026-04-01') - new Date();
+    const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+    document.getElementById('countdown').innerText = days > 0 ? `🔥 Starts in ${days} days (April 1st)` : "🚀 CHALLENGE IN PROGRESS";
+}
+
+render();
+updateCountdown();
+</script>
+</body>
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Syllabus Catalog | System Design 60</title>
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --bg-header: #ffffff;
+            --bg-card: #ffffff;
+            --text-main: #1e293b;
+            --text-secondary: #64748b;
+            --border-card: #cbd5e1;
+            --shadow: rgba(0, 0, 0, 0.05);
+            --lld-border: #16a34a;
+            --hld-border: #2563eb;
+            --must-bg: #fee2e2;
+            --med-bg: #fef3c7;
+            --low-bg: #f1f5f9;
+        }
+
+        [data-theme="dark"] {
+            --bg-body: #0b0f1a;
+            --bg-header: #161b22;
+            --bg-card: #161b22;
+            --text-main: #c9d1d9;
+            --text-secondary: #8b949e;
+            --border-card: #30363d;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --must-bg: rgba(248, 81, 73, 0.15);
+            --med-bg: rgba(210, 153, 34, 0.15);
+            --low-bg: rgba(139, 148, 158, 0.15);
+        }
+
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-body); padding: 20px; color: var(--text-main); transition: 0.3s; }
+        
+        .nav-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            border: 1px solid var(--border-card);
+            background: var(--bg-header);
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header { 
+            background: var(--bg-header); 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 2px 10px var(--shadow); 
+            margin-bottom: 25px; 
+            position: sticky; 
+            top: 10px; 
+            z-index: 100;
+            border: 1px solid var(--border-card);
+        }
+
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+        input, select { 
+            padding: 10px; 
+            border: 1px solid var(--border-card); 
+            border-radius: 6px; 
+            background: var(--bg-body);
+            color: var(--text-main);
+        }
+        
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .card { 
+            background: var(--bg-card); 
+            padding: 18px; 
+            border-radius: 10px; 
+            border-top: 5px solid var(--border-card); 
+            box-shadow: 0 4px 6px var(--shadow);
+            transition: 0.2s;
+        }
+        .card:hover { transform: translateY(-4px); }
+        .card.lld { border-top-color: var(--lld-border); }
+        .card.hld { border-top-color: var(--hld-border); }
+        
+        .prio-tag { font-size: 10px; font-weight: 800; padding: 3px 10px; border-radius: 20px; text-transform: uppercase; }
+        .must { background: var(--must-bg); color: #f85149; }
+        .medium { background: var(--med-bg); color: #d29922; }
+        .low { background: var(--low-bg); color: var(--text-secondary); }
+        
+        .lec-pill { font-size: 11px; color: var(--accent); background: rgba(88, 166, 255, 0.1); padding: 2px 6px; border-radius: 4px; margin-bottom: 8px; display: inline-block; }
+        .topic { font-weight: bold; font-size: 1.1em; margin-bottom: 10px; display: block; }
+        .todo { font-size: 13px; color: var(--text-secondary); border-top: 1px solid var(--border-card); margin-top: 12px; padding-top: 12px; }
+    </style>
+</head>
+<body>
+
+<div class="nav-bar">
+    <a href="tracker.html" class="btn">⬅ Back to 60-Day Tracker</a>
+    <button class="btn" id="themeBtn">🌙 Toggle Mode</button>
+</div>
+
+<div class="header">
+    <h1>📚 Course Catalog (Lec 1-75)</h1>
+    <div class="controls">
+        <input type="text" id="search" placeholder="Search topics or Lec #..." onkeyup="filter()">
+        <select id="filterPrio" onchange="filter()">
+            <option value="all">All Priorities</option>
+            <option value="must">🔥 Must Study</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low (Skim)</option>
+        </select>
+        <select id="filterSec" onchange="filter()">
+            <option value="all">All Sections</option>
+            <option value="lld">LLD Only</option>
+            <option value="hld">HLD Only</option>
+        </select>
+    </div>
+</div>
+
+<div class="grid" id="container"></div>
+
+<script>
+// DATA remains exactly as you provided
+const data = [
+    {l:1, t:"LLD Intro, IS-A/HAS-A", p:"medium", time:"1 hr", d:"OOP examples", s:"lld"},
+    {l:2, t:"SOLID Principles", p:"must", time:"3-4 hrs", d:"Refactor bad code", s:"lld"},
+    {l:3, t:"LSP (Liskov)", p:"medium", time:"1 hr", d:"Fix violation examples", s:"lld"},
+    {l:4, t:"Strategy Pattern", p:"must", time:"2-3 hrs", d:"Implement Payment Strategy", s:"lld"},
+    {l:5, t:"Observer Pattern", p:"must", time:"2-3 hrs", d:"Pub-Sub notification system", s:"lld"},
+    {l:6, t:"Decorator Pattern", p:"medium", time:"1-2 hrs", d:"Pizza/Coffee toppings code", s:"lld"},
+    {l:7, t:"Factory + Abstract Factory", p:"must", time:"3 hrs", d:"Object creation logic", s:"lld"},
+    {l:8, t:"Parking Lot", p:"must", time:"2-3 days", d:"Full Java implementation", s:"lld"},
+    {l:9, t:"Tic Tac Toe", p:"low", time:"30 min", d:"Logic skim", s:"lld"},
+    {l:10, t:"Elevator System", p:"must", time:"2 days", d:"Request scheduling logic", s:"lld"},
+    {l:11, t:"Car Rental", p:"medium", time:"2 hrs", d:"Object modeling", s:"lld"},
+    {l:12, t:"Chain of Responsibility", p:"medium", time:"1-2 hrs", d:"Logger/ATM dispenser", s:"lld"},
+    {l:13, t:"Snake & Ladder", p:"low", time:"30 min", d:"Quick logic check", s:"lld"},
+    {l:14, t:"Proxy Pattern", p:"medium", time:"1 hr", d:"Access control examples", s:"lld"},
+    {l:15, t:"BookMyShow", p:"must", time:"1-2 days", d:"Booking & Concurrency", s:"lld"},
+    {l:16, t:"Null Object", p:"low", time:"30 min", d:"Skim concept", s:"lld"},
+    {l:17, t:"State Pattern", p:"medium", time:"1-2 hrs", d:"Vending machine states", s:"lld"},
+    {l:18, t:"ATM Design", p:"must", time:"5-6 hrs", d:"State Pattern & Transaction", s:"lld"},
+    {l:19, t:"Composite Pattern", p:"medium", time:"1 hr", d:"File/Directory structure", s:"lld"},
+    {l:20, t:"Adapter Pattern", p:"medium", time:"1 hr", d:"Legacy code wrapper", s:"lld"},
+    {l:21, t:"Splitwise", p:"must", time:"2-3 days", d:"Expense splitting algorithms", s:"lld"},
+    {l:22, t:"Builder Pattern", p:"must", time:"2-3 hrs", d:"Complex object creation", s:"lld"},
+    {l:23, t:"Cricbuzz", p:"medium", time:"1-2 hrs", d:"Live score updates design", s:"lld"},
+    {l:24, t:"Facade Pattern", p:"low", time:"30 min", d:"Skim wrapper concept", s:"lld"},
+    {l:25, t:"Bridge Pattern", p:"low", time:"30 min", d:"Skim abstract-impl split", s:"lld"},
+    {l:26, t:"Inventory System", p:"medium", time:"2 hrs", d:"Product/Warehouse design", s:"lld"},
+    {l:27, t:"Flyweight Pattern", p:"low", time:"30 min", d:"Memory optimization skim", s:"lld"},
+    {l:28, t:"Command Pattern", p:"low", time:"30 min", d:"Remote control example", s:"lld"},
+    {l:29, t:"Iterator Pattern", p:"low", time:"30 min", d:"Skim traversal", s:"lld"},
+    {l:30, t:"Mediator Pattern", p:"low", time:"30 min", d:"Chatroom logic skim", s:"lld"},
+    {l:31, t:"Coupons System", p:"medium", time:"1-2 hrs", d:"Strategy for discounts", s:"lld"},
+    {l:32, t:"Visitor Pattern", p:"low", time:"30 min", d:"Operation on objects skim", s:"lld"},
+    {l:33, t:"MVC", p:"medium", time:"1 hr", d:"Web flow understanding", s:"lld"},
+    {l:34, t:"Memento", p:"low", time:"30 min", d:"Undo-redo logic skim", s:"lld"},
+    {l:35, t:"Template Method", p:"low", time:"30 min", d:"Algorithm skeleton skim", s:"lld"},
+    {l:36, t:"Interpreter", p:"low", time:"30 min", d:"Expression parsing skim", s:"lld"},
+    {l:37, t:"Payment Gateway", p:"must", time:"1 day", d:"Transaction lifecycle & Webhooks", s:"lld"},
+    {l:38, t:"Object Pool", p:"low", time:"30 min", d:"Resource reuse skim", s:"lld"},
+    {l:39, t:"Network Protocols", p:"medium", time:"1 hr", d:"HTTP/TCP/Websockets", s:"hld"},
+    {l:40, t:"CAP Theorem", p:"must", time:"2 hrs", d:"Consistency vs Availability", s:"hld"},
+    {l:41, t:"Microservices", p:"must", time:"2-3 hrs", d:"Service decomposition", s:"hld"},
+    {l:42, t:"SAGA Pattern", p:"must", time:"3-4 hrs", d:"Distributed Transactions", s:"hld"},
+    {l:43, t:"Scale 0 to Million", p:"must", time:"2 hrs", d:"Horizontal vs Vertical", s:"hld"},
+    {l:44, t:"Consistent Hashing", p:"must", time:"2 hrs", d:"Node ring & virtual nodes", s:"hld"},
+    {l:45, t:"URL Shortener", p:"must", time:"1-2 days", d:"Hashing & Base62", s:"hld"},
+    {l:46, t:"Back-of-envelope Estimation", p:"medium", time:"1-2 hrs", d:"QPS & Storage math", s:"hld"},
+    {l:47, t:"Key-Value Store", p:"must", time:"4-5 hrs", d:"DynamoDB/Redis internals", s:"hld"},
+    {l:48, t:"SQL vs NoSQL", p:"must", time:"2 hrs", d:"Schema vs Flex", s:"hld"},
+    {l:49, t:"WhatsApp Design", p:"must", time:"1-2 days", d:"Real-time chat & Status", s:"hld"},
+    {l:50, t:"Rate Limiter", p:"must", time:"3-4 hrs", d:"Token bucket/Leaky bucket", s:"hld"},
+    {l:51, t:"Idempotency", p:"must", time:"2 hrs", d:"API design for safety", s:"hld"},
+    {l:52, t:"High Availability", p:"must", time:"2 hrs", d:"Replication & Failover", s:"hld"},
+    {l:53, t:"Kafka", p:"must", time:"1-2 days", d:"Partitions & Consumer groups", s:"hld"},
+    {l:54, t:"Proxy vs Reverse Proxy", p:"medium", time:"1 hr", d:"Nginx/Load balancing", s:"hld"},
+    {l:55, t:"Load Balancer", p:"must", time:"2 hrs", d:"Hashing vs Round Robin", s:"hld"},
+    {l:56, t:"Caching", p:"must", time:"3-4 hrs", d:"Write-through vs Write-back", s:"hld"},
+    {l:57, t:"Transactions (2PC/SAGA)", p:"must", time:"3-4 hrs", d:"Distributed Locking", s:"hld"},
+    {l:58, t:"Indexing", p:"must", time:"2-3 hrs", d:"B-Trees & LSM Trees", s:"hld"},
+    {l:59, t:"Concurrency", p:"medium", time:"2 hrs", d:"Race conditions & Semaphores", s:"hld"},
+    {l:60, t:"Two Phase Locking", p:"medium", time:"2 hrs", d:"Pessimistic vs Optimistic", s:"hld"},
+    {l:61, t:"OAuth", p:"medium", time:"1-2 hrs", d:"Authorization flows", s:"hld"},
+    {l:62, t:"Encryption", p:"medium", time:"1 hr", d:"Symmetric vs Asymmetric", s:"hld"},
+    {l:63, t:"JWT", p:"medium", time:"2 hrs", d:"Token structure & security", s:"hld"},
+    {l:64, t:"Thundering Herd", p:"medium", time:"1 hr", d:"Cache stampede solutions", s:"hld"},
+    {l:65, t:"API Gateway", p:"must", time:"2 hrs", d:"Auth, Rate-limiting, Routing", s:"hld"},
+    {l:66, t:"Service Mesh", p:"medium", time:"1 hr", d:"Istio/Sidecar concept", s:"hld"},
+    {l:67, t:"DNS", p:"medium", time:"1 hr", d:"Resolution & Hierarchy", s:"hld"},
+    {l:68, t:"Microservice Split", p:"medium", time:"1 hr", d:"Domain Driven Design", s:"hld"},
+    {l:69, t:"Security Attacks", p:"low", time:"30 min", d:"XSS/SQLi awareness", s:"hld"},
+    {l:70, t:"Dual Write Problem", p:"must", time:"2-3 hrs", d:"Outbox pattern / CDC", s:"hld"},
+    {l:71, t:"Service Discovery", p:"medium", time:"1-2 hrs", d:"Zookeeper/Consul", s:"hld"},
+    {l:72, t:"Rate Limiter Algorithms", p:"must", time:"2 hrs", d:"Sliding window log/counter", s:"hld"},
+    {l:73, t:"Bulkhead Pattern", p:"medium", time:"1 hr", d:"Isolation of failures", s:"hld"},
+    {l:74, t:"Retry Pattern", p:"must", time:"1-2 hrs", d:"Exponential backoff", s:"hld"},
+    {l:75, t:"Circuit Breaker", p:"must", time:"1-2 hrs", d:"Resilience4j concept", s:"hld"}
+];
+
+function render(items) {
+    const container = document.getElementById('container');
+    container.innerHTML = '';
+    items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = `card ${item.s}`;
+        card.innerHTML = `
+            <span class="lec-pill">Lec ${item.l} • ${item.time}</span>
+            <span class="topic">${item.t}</span>
+            <span class="prio-tag ${item.p}">${item.p === 'must' ? '🔥 Must' : item.p}</span>
+            <div class="todo"><strong>Task:</strong> ${item.d}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function filter() {
+    const search = document.getElementById('search').value.toLowerCase();
+    const prio = document.getElementById('filterPrio').value;
+    const sec = document.getElementById('filterSec').value;
+    
+    const filtered = data.filter(i => {
+        const matchSearch = i.t.toLowerCase().includes(search) || i.l.toString() === search;
+        const matchPrio = prio === 'all' || i.p === prio;
+        const matchSec = sec === 'all' || i.s === sec;
+        return matchSearch && matchPrio && matchSec;
+    });
+    render(filtered);
+}
+
+// THEME SYNC LOGIC
+const themeBtn = document.getElementById('themeBtn');
+
+function toggleTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+}
+
+// Initial Load Theme
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+themeBtn.addEventListener('click', toggleTheme);
+render(data);
+</script>
+</body>
+</html>
