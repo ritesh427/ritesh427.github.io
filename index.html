@@ -2,683 +2,1113 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Elite Workspace</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kafka & EDA Mastery Handbook</title>
+    <!-- Mermaid for Diagrams -->
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <!-- Prism for Code Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-java.min.js"></script>
     <style>
-        /* --- THEME --- */
         :root {
-            --bg-color: #0f172a;
-            --sidebar-bg: #1e293b;
-            --card-bg: #1e293b;
-            --modal-bg: #1e293b;
-            --text-main: #e2e8f0;
-            --text-muted: #94a3b8;
-            --accent: #3b82f6;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --blocked: #ef4444;
-            --progress: #3b82f6;
-            --border: #334155;
-            --input-bg: #020617;
-            --shadow: rgba(0,0,0,0.5);
-            --toast-bg: #1e293b;
+            --bg-color: #0b0e14;
+            --sidebar-bg: #12161f;
+            --card-bg: #1c212b;
+            --text-color: #adbac7;
+            --text-bright: #cdd9e5;
+            --kafka-orange: #ff9900;
+            --kafka-gradient: linear-gradient(135deg, #ff9900 0%, #ff6600 100%);
+            --arch-blue: #539bf5;
+            --note-yellow: #c69026;
+            --warn-red: #e5534b;
+            --success-green: #57ab5a;
+            --interview-purple: #b083f0;
+            --border-color: #444c56;
+            --nav-width: 280px;
         }
 
-        body.light-mode {
-            --bg-color: #f8fafc; --sidebar-bg: #ffffff; --card-bg: #ffffff; --modal-bg: #ffffff;
-            --text-main: #0f172a; --text-muted: #64748b; --accent: #2563eb; --border: #e2e8f0;
-            --input-bg: #f1f5f9; --shadow: rgba(0,0,0,0.1); --toast-bg: #ffffff;
-        }
+        * { box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
-            color: var(--text-main);
+            color: var(--text-color);
+            line-height: 1.7;
             margin: 0;
             display: flex;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Navigation */
+        #sidebar {
+            width: var(--nav-width);
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid var(--border-color);
             height: 100vh;
-            overflow: hidden;
-            transition: background-color 0.3s, color 0.3s;
+            position: fixed;
+            left: 0;
+            top: 0;
+            overflow-y: auto;
+            padding: 30px 20px;
+            transition: transform 0.3s ease;
+            z-index: 1001;
         }
 
-        /* --- BUTTONS --- */
-        .btn { border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 8px;}
-        .btn-primary { background: var(--accent); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-muted); }
-        .btn-outline:hover { border-color: var(--text-main); color: var(--text-main); background: var(--input-bg); }
-
-        .btn-add-dashed {
-            width: 100%; background: transparent; border: 2px dashed var(--border); color: var(--text-muted);
-            padding: 12px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.2s; text-align: center; margin-top: 15px;
+        #sidebar.closed {
+            transform: translateX(-100%);
         }
-        .btn-add-dashed:hover { border-color: var(--accent); color: var(--accent); background: rgba(59, 130, 246, 0.05); }
 
-        .btn-add-task {
-            width: 100%; background: transparent; border: none; border-top: 1px dashed var(--border);
-            color: var(--text-muted); padding: 10px; cursor: pointer; text-align: left; font-size: 0.85rem;
-            transition: all 0.2s; display: flex; align-items: center; gap: 5px;
+        #sidebar h2 {
+            font-size: 1.1rem;
+            color: var(--text-bright);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .btn-add-task:hover { color: var(--accent); background: var(--input-bg); padding-left: 15px; }
 
-        .icon-btn {
-            background: transparent; border: 1px solid var(--border); color: var(--text-muted);
-            width: 36px; height: 36px; border-radius: 6px; cursor: pointer;
-            display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+        #sidebar h2::before {
+            content: '';
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background: var(--kafka-orange);
+            border-radius: 50%;
         }
-        .icon-btn:hover { background: var(--card-bg); color: var(--text-main); border-color: var(--accent); }
-        .icon-btn svg { width: 18px; height: 18px; }
 
-        /* --- LAYOUTS --- */
-        .hidden { display: none !important; }
-        
-        #dashboard-view { width: 100%; height: 100%; overflow-y: auto; padding: 40px; box-sizing: border-box; }
-        .dashboard-header { max-width: 1000px; margin: 0 auto 30px auto; display: flex; justify-content: space-between; align-items: center; }
-        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; max-width: 1000px; margin: 0 auto; }
-        .project-card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 20px;
-            transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; justify-content: space-between;
-            min-height: 200px; box-shadow: 0 4px 6px -1px var(--shadow);
+        #sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
         }
-        .project-card:hover { transform: translateY(-2px); border-color: var(--accent); }
-        .card-title { font-size: 1.2rem; font-weight: bold; margin-bottom: 5px; color: var(--text-main); }
-        .card-desc { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px; flex: 1;}
-        .new-project-card { border: 2px dashed var(--border); background: transparent; align-items: center; justify-content: center; cursor: pointer; color: var(--text-muted); box-shadow: none; }
-        .new-project-card:hover { border-color: var(--accent); color: var(--accent); }
 
-        /* Tracker */
-        #tracker-view { display: flex; width: 100%; height: 100%; }
-        .sidebar { width: 320px; background-color: var(--sidebar-bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; transition: transform 0.3s ease; }
-        .sidebar-header { padding: 20px; border-bottom: 1px solid var(--border); }
-        .main-content { flex: 1; padding: 30px; overflow-y: auto; }
-        
-        .epic-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 20px; box-shadow: 0 2px 4px var(--shadow); overflow: hidden; }
-        .epic-header { padding: 12px 20px; background: rgba(0,0,0,0.05); border-bottom: 1px solid var(--border); font-weight: 700; color: var(--accent); display: flex; justify-content: space-between; align-items: center; }
-        
-        /* TASK ITEM STYLING */
-        .task-item { 
-            padding: 12px 20px; 
-            border-bottom: 1px solid var(--border); 
-            display: flex; 
-            flex-direction: column; /* Changed to column for better badge layout */
-            cursor: pointer; 
-            border-left: 4px solid transparent; 
-            transition: background 0.1s; 
+        #sidebar ul li {
+            margin-bottom: 5px;
         }
-        .task-item:last-child { border-bottom: none; }
-        .task-item:hover { background-color: rgba(0,0,0,0.02); }
-        
-        .task-row-top { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 5px; }
-        .task-title { flex: 1; font-size: 0.95rem; line-height: 1.4; display: flex; align-items: center; gap: 8px;}
-        
-        /* Status Colors */
-        .status-done { border-left-color: var(--success) !important; opacity: 0.6; }
-        .status-in-progress { border-left-color: var(--progress) !important; background: rgba(59,130,246,0.05); }
-        .status-blocked { border-left-color: var(--blocked) !important; background: rgba(239,68,68,0.1); } /* Red Tint */
-        
-        .phase-item { padding: 12px 20px; border-bottom: 1px solid var(--border); cursor: pointer; transition: background 0.2s; }
-        .phase-item:hover { background-color: var(--bg-color); }
-        .phase-item.active { background-color: rgba(59, 130, 246, 0.1); border-left: 4px solid var(--accent); }
-        .progress-bar { height: 6px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
-        .progress-fill { height: 100%; background: var(--success); width: 0%; }
-        
-        .mini-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.2s; }
-        .phase-item:hover .mini-actions, .epic-header:hover .mini-actions, .task-item:hover .mini-actions { opacity: 1; }
-        .mini-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 2px; }
-        .mini-btn:hover { color: var(--accent); transform: scale(1.2); }
-        .mini-btn.del:hover { color: var(--danger); }
 
-        /* Badges */
-        .task-badges { display: flex; gap: 6px; font-size: 0.75rem; flex-wrap: wrap; }
-        .badge { padding: 2px 8px; border-radius: 4px; background: rgba(125,125,125,0.1); border:1px solid var(--border); display: flex; align-items: center; gap: 4px;}
-        .badge-blocked { color: var(--danger); border-color: var(--danger); background: rgba(239,68,68,0.1); font-weight: bold; }
-        .badge-date { color: var(--text-muted); }
-        
-        /* GitHub Icon */
-        .git-icon-svg { width: 16px; height: 16px; fill: currentColor; color: var(--text-main); opacity: 0.7; }
-        .git-icon-svg:hover { color: var(--accent); opacity: 1; }
-
-        /* --- MODALS --- */
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 1000; justify-content: center; align-items: center; padding: 10px; box-sizing: border-box; backdrop-filter: blur(3px); }
-        .modal { background: var(--modal-bg); border-radius: 12px; border: 1px solid var(--border); display: flex; flex-direction: column; box-shadow: 0 20px 50px var(--shadow); }
-        .modal-lg { width: 900px; max-width: 100%; max-height: 95vh; }
-        .modal-sm { width: 400px; max-width: 100%; }
-        .modal-body { padding: 20px; overflow-y: auto; }
-        
-        .task-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: span 2; }
-        select, input[type="text"], input[type="datetime-local"], textarea { width: 100%; background: var(--input-bg); border: 1px solid var(--border); color: var(--text-main); padding: 10px; border-radius: 6px; box-sizing: border-box; margin-bottom: 10px; }
-        body.light-mode input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(0); cursor: pointer; }
-        body:not(.light-mode) input[type="datetime-local"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-        .dod-list { background: var(--input-bg); padding: 10px; border-radius: 6px; border: 1px solid var(--border); margin-bottom: 10px; }
-        .dod-item { display: flex; align-items: center; margin-bottom: 5px; font-size: 0.9rem; }
-        .dod-item input { margin-right: 10px; width: 16px; height: 16px; }
-        .dev-log-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .dev-log-box { height: 70px; font-size: 0.85rem; font-family: monospace; resize: none; }
-        .modal-timer { background: rgba(0,0,0,0.1); padding: 15px; border-radius: 8px; text-align: center; border: 1px solid var(--accent); margin-bottom: 15px;}
-        .timer-display { font-size: 2rem; font-weight: bold; font-family: monospace; margin: 10px 0; }
-        .prompt-content { padding: 25px; text-align: center; }
-        .prompt-input { width: 100%; margin: 15px 0; padding: 10px; border: 1px solid var(--border); background: var(--input-bg); color: var(--text-main); border-radius: 6px; text-align: left; }
-        .prompt-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 15px; }
-
-        .toolbar { display: flex; gap: 5px; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border); }
-        .toolbar .icon-btn { flex: 1; }
-
-        .mobile-menu-btn { display: none; position: fixed; top: 15px; left: 15px; z-index: 100; background: var(--accent); color: white; border: none; padding: 8px; border-radius: 4px; }
-        @media (max-width: 900px) {
-            .mobile-menu-btn { display: block; }
-            .sidebar { position: fixed; left: 0; top: 0; bottom: 0; z-index: 90; transform: translateX(-100%); }
-            .sidebar.active { transform: translateX(0); }
-            .task-grid, .dev-log-grid { grid-template-columns: 1fr; }
-            #dashboard-view { padding: 20px; }
+        #sidebar ul li a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.9rem;
+            padding: 10px 15px;
+            display: block;
+            border-radius: 6px;
+            transition: all 0.2s ease;
         }
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; }
-        .toast { background: var(--toast-bg); color: var(--text-main); padding: 12px 20px; border-radius: 6px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); border-left: 4px solid var(--accent); animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
+
+        #sidebar ul li a:hover, #sidebar .active {
+            background-color: rgba(83, 155, 245, 0.1);
+            color: var(--arch-blue);
+            font-weight: 500;
+        }
+
+        /* Main Content */
+        #main-content {
+            margin-left: var(--nav-width);
+            padding: 60px 5%;
+            width: 100%;
+            max-width: 1200px;
+            transition: margin-left 0.3s ease;
+        }
+
+        #main-content.expanded {
+            margin-left: 0;
+        }
+
+        h1, h2, h3 {
+            color: var(--text-bright);
+            margin-top: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .module-header {
+            background: var(--sidebar-bg);
+            border: 1px solid var(--border-color);
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 50px;
+            border-left: 6px solid var(--kafka-orange);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .module-header h1 {
+            margin: 0;
+            color: var(--kafka-orange);
+            font-size: 1.8rem;
+        }
+
+        .module-header p {
+            margin-top: 10px;
+            font-size: 1.1rem;
+            color: var(--text-color);
+        }
+
+        /* Section Cards */
+        .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+        }
+
+        .card h2 {
+            margin-top: 0;
+            font-size: 1.3rem;
+            color: var(--arch-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Callouts */
+        .callout {
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+        }
+
+        .callout-title {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+
+        .callout-note { border-top: 4px solid var(--note-yellow); }
+        .callout-warn { border-top: 4px solid var(--warn-red); }
+        .callout-success { border-top: 4px solid var(--success-green); }
+        .callout-interview { border-top: 4px solid var(--interview-purple); }
+
+        /* Mobile Controls */
+        #mobile-nav-toggle {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--kafka-gradient);
+            color: white;
+            border: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+            z-index: 2000;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        /* Diagram Styling */
+        .diagram {
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            margin: 25px 0;
+            overflow-x: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            #sidebar {
+                transform: translateX(-100%);
+            }
+            #sidebar.open {
+                transform: translateX(0);
+            }
+            #main-content {
+                margin-left: 0;
+                padding: 40px 20px;
+            }
+            #mobile-nav-toggle {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: transparent;
+            z-index: 3000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--kafka-orange);
+            width: 0%;
+        }
     </style>
 </head>
 <body>
 
-    <div id="toast-container"></div>
+<div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+</div>
 
-    <div id="dashboard-view">
-        <div class="dashboard-header">
-            <div>
-                <h1 style="margin:0;">Elite Workspace</h1>
-                <p style="margin:5px 0 0 0; color:var(--text-muted);">Manage your microservices & roadmaps</p>
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">🌗</button>
-                <button class="icon-btn" onclick="window.location.href='java.html'" title="Java">Java</button>
-                <!-- <button class="icon-btn" onclick="window.location.href='profile.html'" title="Java">Profile</button> -->
-                <button class="icon-btn" onclick="window.location.href='tracker.html'" title="Java">Tracker</button>
-                <button class="btn btn-outline" onclick="exportWorkspace()">Backup</button>
-                <button class="btn btn-outline" onclick="document.getElementById('ws-upload').click()">Restore</button>
-                <input type="file" id="ws-upload" class="hidden" accept=".json" onchange="importWorkspace(this)">
+<button id="mobile-nav-toggle">☰</button>
+
+<div id="sidebar">
+    <h2>Kafka Mastery</h2>
+    <ul>
+        <li><a href="#module1" class="active">Module 1: EDA Fundamentals</a></li>
+        <li><a href="#module2">Module 2: Kafka Fundamentals</a></li>
+        <li><a href="#module3">Module 3: Deep Architecture</a></li>
+        <li><a href="#module4">Module 4: Topics & Partitions</a></li>
+        <li><a href="#module5">Module 5: Producers</a></li>
+        <li><a href="#module6">Module 6: Consumers</a></li>
+        <li><a href="#module7">Module 7: ZooKeeper & KRaft</a></li>
+        <li><a href="#module8">Module 8: Spring Boot + Kafka</a></li>
+        <li><a href="#module9">Module 9: Design Patterns</a></li>
+        <li><a href="#module10">Module 10: Kafka Streams</a></li>
+        <li><a href="#module11">Module 11: Advanced Kafka</a></li>
+        <li><a href="#module12">Module 12: Production Deployment</a></li>
+        <li><a href="#case-studies">Case Studies</a></li>
+        <li><a href="#failure-scenarios">Failure Scenarios</a></li>
+        <li><a href="#roadmap">Learning Roadmap</a></li>
+        <li><a href="#cheat-sheet">Cheat Sheet</a></li>
+        <li><a href="#interview-prep">Interview Prep</a></li>
+    </ul>
+</div>
+
+<div id="main-content">
+    <div id="module1">
+        <div class="module-header">
+            <h1>Module 1: Event Driven Architecture Fundamentals</h1>
+            <p>The paradigm shift from active requests to passive observations.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Simple Explanation</h2>
+            <p>Imagine a <strong>Coffee Shop</strong>. In a traditional system (Request-Response), you stand at the counter and wait for your coffee. You can't do anything else until the barista hands it to you. In an <strong>Event-Driven System</strong>, you place your order, get a buzzer (event), and go find a seat. When the coffee is ready, the buzzer goes off. You react to the "Coffee Ready" event when it happens, allowing both you and the barista to work independently.</p>
+        </div>
+
+        <div class="card">
+            <h2>2. Technical Explanation</h2>
+            <p>Event-Driven Architecture (EDA) is a software design pattern where the flow of the program is determined by events—significant changes in state. It consists of <strong>Event Producers</strong> (who detect and announce events) and <strong>Event Consumers</strong> (who wait for and react to them). Unlike synchronous REST calls, EDA is inherently <strong>asynchronous</strong> and <strong>decoupled</strong>.</p>
+        </div>
+
+        <div class="card">
+            <h2>3. Why this exists</h2>
+            <p>As systems grow, synchronous communication creates a "Distributed Monolith." If Service A calls Service B, and Service B is down, Service A fails too. EDA solves this by introducing a middleman (Broker) that stores events. Service A just says "Something happened," and moves on. This provides:</p>
+            <ul>
+                <li><strong>Loose Coupling:</strong> Services don't need to know who consumes their data.</li>
+                <li><strong>Scalability:</strong> You can add 10 consumers for one event without changing the producer.</li>
+                <li><strong>Resilience:</strong> If a consumer is down, it can process the events later when it recovers.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>4. Real Industry Example: Uber</h2>
+            <p>When you request a ride on Uber:</p>
+            <ol>
+                <li><strong>Event:</strong> <code>RideRequested</code> is emitted.</li>
+                <li><strong>Consumer 1 (Matching Service):</strong> Finds the nearest driver.</li>
+                <li><strong>Consumer 2 (Pricing Service):</strong> Calculates surge pricing.</li>
+                <li><strong>Consumer 3 (Notification Service):</strong> Sends push notifications.</li>
+            </ol>
+            <p>Each service operates independently. If the notification service lags, it doesn't stop the matching service from finding you a driver.</p>
+        </div>
+
+        <div class="card">
+            <h2>5. Architecture Diagram</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Producers
+        P1[Order Service]
+        P2[Payment Service]
+    end
+
+    subgraph Broker [Event Broker / Kafka]
+        T1((OrderTopic))
+        T2((PaymentTopic))
+    end
+
+    subgraph Consumers
+        C1[Inventory Service]
+        C2[Shipping Service]
+        C3[Analytics Service]
+    end
+
+    P1 -- "OrderPlaced" --> T1
+    P2 -- "PaymentProcessed" --> T2
+    T1 --> C1
+    T1 --> C2
+    T2 --> C2
+    T1 --> C3
+    T2 --> C3
+
+    style Broker fill:#f96,stroke:#333,stroke-width:2px
+    style T1 fill:#fff,stroke:#ff9900
+    style T2 fill:#fff,stroke:#ff9900
+                </pre>
             </div>
         </div>
-        <div class="project-grid" id="project-grid">
-            <div class="project-card new-project-card" onclick="document.getElementById('plan-upload').click()">
-                <div style="font-size:3rem; margin-bottom:10px;">+</div>
-                <div>Import Project JSON</div>
-                <input type="file" id="plan-upload" class="hidden" accept=".json" onchange="importNewProject(this)">
+
+        <div class="card">
+            <h2>6. Internal Working: The Event Lifecycle</h2>
+            <ol>
+                <li><strong>Occurrence:</strong> An action happens (e.g., User clicks 'Buy').</li>
+                <li><strong>Detection:</strong> The system captures the change.</li>
+                <li><strong>Publication:</strong> The event is sent to the Broker.</li>
+                <li><strong>Storage:</strong> The Broker persists the event (Durability).</li>
+                <li><strong>Consumption:</strong> Interested services poll for new events.</li>
+                <li><strong>Reaction:</strong> The consumer executes business logic based on the event.</li>
+            </ol>
+        </div>
+
+        <div class="card">
+            <h2>13. Interview Questions</h2>
+            <div class="callout callout-interview">
+                <strong>Q: What is the main difference between EDA and Request-Response?</strong>
+                <p><strong>A:</strong> Request-Response is synchronous and tightly coupled (sender waits for receiver). EDA is asynchronous and loosely coupled (sender emits event and continues, receiver reacts whenever ready).</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q: What is "Eventual Consistency" in EDA?</strong>
+                <p><strong>A:</strong> Since services process events at different times, the entire system might not be in sync at the exact same millisecond, but it will eventually reach a consistent state as all events are processed.</p>
             </div>
         </div>
     </div>
 
-    <div id="tracker-view" class="hidden">
-        <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+    <div id="module2">
+        <div class="module-header">
+            <h1>Module 2: Kafka Fundamentals</h1>
+            <p>The distributed, resilient, and high-performance backbone of modern EDA.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Simple Explanation</h2>
+            <p>Think of Kafka as a <strong>Giant, Permanent Inbox</strong> for every service in your company. Instead of sending emails directly to each other, services drop "letters" (messages) into specific "folders" (topics). These folders are saved on disk, so even if a service takes a nap (goes down), the letters are still there when it wakes up.</p>
+        </div>
+
+        <div class="card">
+            <h2>2. Technical Explanation</h2>
+            <p>Apache Kafka is a <strong>distributed event streaming platform</strong>. It acts as a distributed commit log. Every message sent to Kafka is appended to the end of a log and assigned a unique ID called an <strong>offset</strong>. It is designed to be fault-tolerant, scalable, and capable of handling trillions of events per day.</p>
+        </div>
+
+        <div class="card">
+            <h2>5. Architecture Diagram: Kafka Cluster</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Cluster [Kafka Cluster]
+        B1[Broker 1]
+        B2[Broker 2]
+        B3[Broker 3]
         
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                    <button class="icon-btn" onclick="closeProject()" title="Back to Dashboard">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
-                    </button>
-                    <button class="icon-btn" onclick="toggleTheme()" title="Theme">🌗</button>
-                </div>
-                
-                <h2 id="project-title" style="font-size:1.2rem; margin:0 0 5px 0; word-break:break-word;">Project</h2>
-                <div style="font-size:0.8rem; color:var(--text-muted); display:flex; justify-content:space-between;">
-                    <span>Progress</span><span id="total-percent">0%</span>
-                </div>
-                <div class="progress-bar" style="margin-top:5px;"><div class="progress-fill" id="total-bar"></div></div>
+        subgraph TopicA [Topic: 'Orders']
+            P0[Partition 0]
+            P1[Partition 1]
+            P2[Partition 2]
+        end
+    end
 
-                <div class="toolbar">
-                    <button class="icon-btn" onclick="exportCurrentProject()" title="Export JSON">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                    </button>
-                    <button class="icon-btn" onclick="document.getElementById('proj-upload').click()" title="Import JSON">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-                    </button>
-                    <button class="icon-btn" onclick="promptSecurityCheck('RESET')" title="Reset Progress" style="color:var(--warning); border-color:var(--warning);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-                    </button>
-                    <button class="icon-btn" onclick="promptSecurityCheck('DELETE')" title="Delete Project" style="color:var(--danger); border-color:var(--danger);">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
-                    </button>
-                    <input type="file" id="proj-upload" class="hidden" accept=".json" onchange="importCurrentProject(this)">
-                </div>
-            </div>
-            <ul class="phase-list" id="phase-list"></ul>
-            <div style="padding:20px;">
-                <button class="btn-add-dashed" onclick="addPhase()">+ Add Phase</button>
+    Producer1[Order Service] --> B1
+    Producer2[Payment Service] --> B2
+    
+    B1 --> Consumer1[Shipping Service]
+    B2 --> Consumer2[Inventory Service]
+    B3 --> Consumer3[Analytics Service]
+
+    style Cluster fill:#f5f5f5,stroke:#333,stroke-width:2px
+    style TopicA fill:#fff9f0,stroke:#ff9900
+                </pre>
             </div>
         </div>
 
-        <div class="main-content">
-            <h1 id="current-phase-title" style="margin-top:0;">Select Phase</h1>
-            <div id="epics-container"></div>
-            <button class="btn-add-dashed" onclick="addEpic()">+ Add Epic</button>
-            <div style="height:50px;"></div>
+        <div class="card">
+            <h2>7. Deep Internals: Core Components</h2>
+            <ul>
+                <li><strong>Brokers:</strong> The servers that form the cluster. They store the data and serve the clients.</li>
+                <li><strong>Topics:</strong> Logical categories for messages (e.g., 'user-signups').</li>
+                <li><strong>Partitions:</strong> Topics are split into partitions for scalability. Each partition is an ordered, immutable sequence of records.</li>
+                <li><strong>Offsets:</strong> The position of a message within a partition.</li>
+            </ul>
         </div>
     </div>
 
-    <div class="modal-overlay" id="task-modal" onclick="closeModal('task-modal')">
-        <div class="modal modal-lg" onclick="event.stopPropagation()">
-            <div style="padding:15px 20px; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
-                <input type="text" id="m-task-title" style="background:transparent; border:none; color:var(--accent); font-size:1.2rem; font-weight:bold; width:80%;">
-                <button class="mini-btn" style="font-size:1.5rem;" onclick="closeModal('task-modal')">×</button>
+    <div id="module3">
+        <div class="module-header" style="background: linear-gradient(90deg, var(--arch-blue), #0056b3);">
+            <h1>Module 3: Kafka Deep Architecture</h1>
+            <p>Under the hood: How Kafka achieves massive scale and zero data loss.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Leader Election & Replication</h2>
+            <p>In Kafka, every partition has one <strong>Leader</strong> and multiple <strong>Followers</strong>. All reads and writes go to the Leader. Followers simply replicate the data. If the Leader fails, one of the In-Sync Replicas (ISR) is automatically elected as the new Leader.</p>
+            <div class="callout callout-note">
+                <strong>ISR (In-Sync Replicas):</strong> The set of replicas that are "caught up" with the leader. Only these are eligible to become leaders.
             </div>
-            <div class="modal-body task-grid">
-                <div>
-                    <label style="font-size:0.8rem; color:var(--text-muted);">STATUS</label>
-                    <select id="m-status" onchange="toggleBlocker()">
-                        <option value="TODO">To Do</option>
-                        <option value="IN_PROGRESS">In Progress</option>
-                        <option value="BLOCKED">Blocked</option>
-                        <option value="DONE">Done</option>
-                    </select>
-                    
-                    <div id="m-blocker-wrap" class="hidden">
-                        <label style="font-size:0.8rem; color:var(--danger);">BLOCKER REASON</label>
-                        <input type="text" id="m-blocker">
-                    </div>
+        </div>
 
-                    <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:10px;">DEFINITION OF DONE</label>
-                    <div class="dod-list">
-                        <label class="dod-item"><input type="checkbox" id="dod-code"> Code Implemented</label>
-                        <label class="dod-item"><input type="checkbox" id="dod-test"> Unit Tests Passed</label>
-                        <label class="dod-item"><input type="checkbox" id="dod-edge"> Edge Cases Handled</label>
-                        <label class="dod-item"><input type="checkbox" id="dod-clean"> Formatting/Linting</label>
-                    </div>
+        <div class="card">
+            <h2>5. Architecture Diagram: Replication Flow</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+sequenceDiagram
+    participant P as Producer
+    participant L as Broker 1 (Leader)
+    participant F1 as Broker 2 (Follower)
+    participant F2 as Broker 3 (Follower)
 
-                    <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-top:10px;">POMODOROS (25m)</label>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <button class="btn btn-outline" onclick="adjPomo(-1)">-</button>
-                        <span id="m-pomo-val" style="font-weight:bold; font-size:1.2rem;">0</span>
-                        <button class="btn btn-outline" onclick="adjPomo(1)">+</button>
-                    </div>
-                </div>
-                
-                <div>
-                     <div class="modal-timer">
-                        <div style="font-size:0.8rem; color:var(--text-muted);">FOCUS TIMER</div>
-                        <div class="timer-display" id="timer-display">25:00</div>
-                        <div style="display:flex; gap:10px;">
-                            <button class="btn btn-primary" style="flex:1" onclick="toggleTimer()" id="timer-btn">Start</button>
-                            <button class="btn btn-outline" style="flex:1" onclick="resetTimer()">Reset</button>
-                        </div>
-                    </div>
-
-                    <label style="font-size:0.8rem; color:var(--text-muted);">GIT LINK (Shows Icon)</label>
-                    <input type="text" id="m-git" placeholder="https://github.com/...">
-                    
-                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                        <div><label style="font-size:0.8rem; color:var(--text-muted);">START</label><input type="datetime-local" id="m-start"></div>
-                        <div><label style="font-size:0.8rem; color:var(--text-muted);">DUE</label><input type="datetime-local" id="m-due"></div>
-                    </div>
-                </div>
-
-                <div class="full-width">
-                    <label style="font-size:0.8rem; color:var(--text-muted);">DEV LOG (RESUME FUEL)</label>
-                    <div class="dev-log-grid">
-                        <textarea id="log-prob" class="dev-log-box" placeholder="❓ Problem Faced"></textarea>
-                        <textarea id="log-cause" class="dev-log-box" placeholder="🔍 Root Cause"></textarea>
-                        <textarea id="log-sol" class="dev-log-box" placeholder="🛠 Solution"></textarea>
-                        <textarea id="log-learn" class="dev-log-box" placeholder="📈 Trade-off / Learning"></textarea>
-                    </div>
-                </div>
+    P->>L: Write Message (Offset 10)
+    L->>L: Commit to Local Log
+    par Replication
+        L->>F1: Fetch Request
+        F1->>F1: Write to Local Log
+        F1-->>L: ACK
+    and
+        L->>F2: Fetch Request
+        F2->>F2: Write to Local Log
+        F2-->>L: ACK
+    end
+    L->>P: Write Successful (ACK=all)
+                </pre>
             </div>
-            <div style="padding:20px; border-top:1px solid var(--border); display:flex; justify-content:flex-end; gap:10px;">
-                <button class="btn btn-primary" onclick="saveTaskChanges()">Save Changes</button>
+        </div>
+
+        <div class="card">
+            <h2>7. Deep Internals: Storage & Zero-Copy</h2>
+            <p>Kafka is fast because it treats the OS like a partner, not an obstacle:</p>
+            <ul>
+                <li><strong>Sequential I/O:</strong> It appends messages to the end of segment files. Disk seeks are expensive; sequential writes are as fast as network speeds.</li>
+                <li><strong>Page Cache:</strong> It relies heavily on the OS Page Cache rather than keeping objects in the JVM heap. This avoids GC overhead.</li>
+                <li><strong>Zero-Copy:</strong> Kafka uses the <code>sendfile</code> system call to move data directly from the disk buffer to the network card buffer, bypassing the application layer entirely.</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>13. Interview Questions</h2>
+            <div class="callout callout-interview">
+                <strong>Q: How does Kafka handle massive scale?</strong>
+                <p><strong>A:</strong> Through <strong>Partitioning</strong>. By splitting a topic into partitions, Kafka can spread the load across multiple brokers. Multiple consumers in a group can then read from these partitions in parallel.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q: What is the Role of the Controller?</strong>
+                <p><strong>A:</strong> The Controller is a broker responsible for managing states of partitions and replicas. It performs tasks like leader election when a broker fails.</p>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="prompt-modal">
-        <div class="modal modal-sm">
-            <div class="prompt-content">
-                <h3 id="p-title" style="margin-top:0; color:var(--accent);">Input</h3>
-                <input type="text" id="p-input" class="prompt-input">
-                <div class="prompt-buttons">
-                    <button class="btn btn-outline" onclick="closeModal('prompt-modal')">Cancel</button>
-                    <button class="btn btn-primary" id="p-confirm">OK</button>
-                </div>
+    <div id="module4">
+        <div class="module-header">
+            <h1>Module 4: Topics and Partitions</h1>
+            <p>The unit of parallelism and storage in Kafka.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Simple Explanation</h2>
+            <p>Imagine a <strong>Library</strong>. The library is the Cluster. A <strong>Topic</strong> is a specific "Genre" (e.g., Mystery). If the Mystery section gets too big, the librarian splits it into 3 <strong>Partitions</strong> (A-H, I-P, Q-Z) and puts them on different floors (Brokers). This way, three people can look for books at the same time.</p>
+        </div>
+
+        <div class="card">
+            <h2>4. Real Industry Example: E-commerce</h2>
+            <p>In an e-commerce system, you use <strong>Order ID</strong> as the partition key. This ensures that all events for <code>Order #123</code> (Created, Paid, Shipped) go to the same partition, preserving the <strong>strict order</strong> of operations for that specific order.</p>
+        </div>
+
+        <div class="card">
+            <h2>5. Architecture Diagram: Partition Strategy</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart LR
+    P[Producer] --> H{Hasher}
+    H -- "Key: Order123" --> P0[Partition 0]
+    H -- "Key: Order456" --> P1[Partition 1]
+    H -- "No Key" --> RR[Round Robin]
+    RR --> P2[Partition 2]
+
+    subgraph Topic ['Orders']
+        P0
+        P1
+        P2
+    end
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>7. Deep Internals: The Partitioning Logic</h2>
+            <ul>
+                <li><strong>Hashing:</strong> <code>hash(key) % number_of_partitions</code>. As long as partitions don't change, the same key always goes to the same partition.</li>
+                <li><strong>Ordering:</strong> Kafka only guarantees ordering <strong>within a partition</strong>, not across the entire topic.</li>
+                <li><strong>Imbalance/Skew:</strong> If one key (e.g., a "Celebrity" user) has 1000x more events than others, its partition becomes a bottleneck.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="module5">
+        <div class="module-header">
+            <h1>Module 5: Producers</h1>
+            <p>Ensuring data reaches Kafka safely and efficiently.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Acknowledgements (acks)</h2>
+            <p>How much "assurance" do you need that the message was saved?</p>
+            <ul>
+                <li><strong>acks=0:</strong> Fire and forget. No guarantee. Fastest.</li>
+                <li><strong>acks=1:</strong> Leader acknowledges. Medium safety.</li>
+                <li><strong>acks=all:</strong> Leader and all ISR acknowledge. Maximum safety (Zero data loss).</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>2. Idempotent Producers</h2>
+            <div class="callout callout-success">
+                <strong>Crucial for Reliability:</strong> If the network fails AFTER Kafka saves the message but BEFORE the Producer gets the ACK, the Producer will retry. Idempotency ensures Kafka recognizes the retry and doesn't save a duplicate message.
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>7. Deep Internals: Batching & Compression</h2>
+            <p>Producers don't send messages one-by-one. They group them into <strong>batches</strong> based on <code>batch.size</code> and <code>linger.ms</code>. This significantly reduces network overhead and increases throughput.</p>
+        </div>
+    </div>
+
+    <div id="module6">
+        <div class="module-header">
+            <h1>Module 6: Consumers</h1>
+            <p>Reading data at scale: The Consumer Group model.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Consumer Groups & Rebalancing</h2>
+            <p>A <strong>Consumer Group</strong> is a group of consumers that work together to read from a topic. Kafka ensures that each partition is assigned to exactly one consumer in the group. If a consumer dies, Kafka "rebalances" and gives its partitions to someone else.</p>
+        </div>
+
+        <div class="card">
+            <h2>5. Architecture Diagram: Consumer Group</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart TD
+    subgraph Topic ['Orders']
+        P0((P0))
+        P1((P1))
+        P2((P2))
+        P3((P3))
+    end
+
+    subgraph Group ['Order-Processors']
+        C1[Consumer A]
+        C2[Consumer B]
+    end
+
+    P0 --> C1
+    P1 --> C1
+    P2 --> C2
+    P3 --> C2
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>6. Internal Working: Offset Committing</h2>
+            <p>Consumers periodically "checkpoint" their progress by committing the <strong>offset</strong> they've last read to a special internal Kafka topic called <code>__consumer_offsets</code>. This allows them to resume from where they left off after a crash.</p>
+        </div>
+
+        <div class="card">
+            <h2>13. Interview Questions</h2>
+            <div class="callout callout-interview">
+                <strong>Q: What happens if you have more consumers than partitions?</strong>
+                <p><strong>A:</strong> The extra consumers will stay idle. Each partition can only be read by one consumer in a group to guarantee ordering.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q: What is a Rebalancing Storm?</strong>
+                <p><strong>A:</strong> When many consumers join/leave at once, or heartbeats fail, Kafka constantly stops and starts the assignment process, leading to zero progress (high latency).</p>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="confirm-modal">
-        <div class="modal modal-sm">
-            <div class="prompt-content">
-                <h3 id="c-title" style="margin-top:0; color:var(--warning);">Confirm</h3>
-                <p id="c-msg" style="color:var(--text-muted);">Are you sure?</p>
-                <div class="prompt-buttons">
-                    <button class="btn btn-outline" onclick="closeModal('confirm-modal')">Cancel</button>
-                    <button class="btn btn-danger" id="c-confirm">Yes</button>
-                </div>
+    <div id="module7">
+        <div class="module-header" style="background: linear-gradient(90deg, #333, #000);">
+            <h1>Module 7: ZooKeeper and KRaft</h1>
+            <p>The evolution of Kafka's Control Plane.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Why did ZooKeeper have to go?</h2>
+            <p>For years, Kafka relied on ZooKeeper to store metadata (broker list, topic configs, etc.). However, as clusters grew to millions of partitions, ZooKeeper became a bottleneck. The "Controller" broker had to sync with ZK, and during crashes, the cluster could be offline for minutes while a new leader was elected.</p>
+        </div>
+
+        <div class="card">
+            <h2>2. Enter KRaft (Kafka Raft)</h2>
+            <p>KRaft removes the external dependency on ZooKeeper. Kafka now manages its own metadata using a <strong>Metadata Quorum</strong>. The metadata is stored in an internal Kafka topic, and the controllers use the Raft consensus algorithm to stay in sync. This allows for nearly <strong>instantaneous leader election</strong> and support for millions of partitions.</p>
+        </div>
+    </div>
+
+    <div id="module8">
+        <div class="module-header" style="background: linear-gradient(90deg, #6db33f, #345f1f);">
+            <h1>Module 8: Spring Boot + Kafka</h1>
+            <p>Building production-grade Kafka applications with Spring.</p>
+        </div>
+
+        <div class="card">
+            <h2>14. Hands-on Code: Producer</h2>
+            <pre class="language-java"><code>@Service
+public class OrderProducer {
+    private static final String TOPIC = "orders";
+
+    @Autowired
+    private KafkaTemplate&lt;String, OrderEvent&gt; kafkaTemplate;
+
+    public void sendOrder(OrderEvent event) {
+        // Sending with a Key (Order ID) for partition ordering
+        kafkaTemplate.send(TOPIC, event.getOrderId(), event);
+    }
+}</code></pre>
+        </div>
+
+        <div class="card">
+            <h2>14. Hands-on Code: Consumer with DLQ</h2>
+            <pre class="language-java"><code>@Service
+public class OrderConsumer {
+
+    @RetryableTopic(
+        attempts = "3",
+        backoff = @Backoff(delay = 2000, multiplier = 2.0),
+        dltStrategy = DltStrategy.FAIL_ON_ERROR
+    )
+    @KafkaListener(topics = "orders", groupId = "order-group")
+    public void consume(OrderEvent event) {
+        if (event.getAmount() < 0) {
+            throw new RuntimeException("Invalid amount!");
+        }
+        System.out.println("Processing order: " + event.getOrderId());
+    }
+
+    @DltHandler
+    public void handleDlt(OrderEvent event) {
+        System.err.println("Sent to DLQ: " + event.getOrderId());
+    }
+}</code></pre>
+        </div>
+    </div>
+
+    <div id="module9">
+        <div class="module-header">
+            <h1>Module 9: Event Driven Design Patterns</h1>
+            <p>Solving distributed system challenges.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. The Saga Pattern (Choreography)</h2>
+            <p>How do you handle a transaction across multiple microservices? Instead of a global lock (which is impossible in distributed systems), each service performs its local transaction and emits an event. The next service reacts. If one fails, "Compensating Events" are emitted to undo previous steps.</p>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart LR
+    O[Order Service] -- "OrderCreated" --> P[Payment Service]
+    P -- "PaymentSuccess" --> I[Inventory Service]
+    I -- "StockReserved" --> S[Shipping Service]
+    
+    I -- "OutOfStock" --> P_Fail[Refund Payment]
+    P_Fail --> O_Fail[Cancel Order]
+
+    style O fill:#fff,stroke:#007bff
+    style P fill:#fff,stroke:#007bff
+    style I fill:#fff,stroke:#007bff
+    style P_Fail fill:#fdd,stroke:#f00
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>2. Transactional Outbox Pattern</h2>
+            <p>How do you guarantee that a database update and a Kafka message happen together? You write the message into an "Outbox" table in the <strong>same database transaction</strong> as your business data. A separate "Relay" process then polls the table and sends the message to Kafka.</p>
+            <div class="callout callout-success">
+                <strong>Solves the "Dual Write" problem:</strong> Never try to write to a DB and Kafka separately in code. One will eventually fail, leaving your system inconsistent.
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="security-modal">
-        <div class="modal modal-sm">
-            <div class="prompt-content">
-                <h3 id="sec-title" style="margin-top:0; color:var(--danger);">Security Check</h3>
-                <p style="color:var(--text-muted); font-size:0.9rem;">Type project name to confirm:</p>
-                <code id="sec-name" style="display:block; margin:10px 0; font-weight:bold; color:var(--text-main);"></code>
-                <input type="text" id="sec-input" class="prompt-input">
-                <div class="prompt-buttons">
-                    <button class="btn btn-outline" onclick="closeModal('security-modal')">Cancel</button>
-                    <button class="btn btn-danger" id="sec-confirm">Confirm</button>
-                </div>
+    <div id="module10">
+        <div class="module-header">
+            <h1>Module 10: Kafka Streams</h1>
+            <p>Real-time processing without a separate cluster.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. KStream vs KTable</h2>
+            <p><strong>KStream</strong> is an infinite stream of events (e.g., clicks). <strong>KTable</strong> is a view on those events, representing the current state (e.g., current user profile).</p>
+        </div>
+
+        <div class="card">
+            <h2>7. State Stores & RocksDB</h2>
+            <p>Kafka Streams can be "stateful" (e.g., counting orders per minute). It stores this state in local <strong>RocksDB</strong> instances on the broker's disk, backed up to a Kafka "changelog" topic for fault tolerance.</p>
+        </div>
+    </div>
+
+    <div id="module11">
+        <div class="module-header" style="background: linear-gradient(90deg, var(--interview-purple), #4b0082);">
+            <h1>Module 11: Advanced Kafka</h1>
+            <p>Exactly Once Semantics and Schema Management.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Exactly Once Semantics (EOS)</h2>
+            <p>By combining <strong>Idempotent Producers</strong> and <strong>Kafka Transactions</strong>, you can achieve "Exactly Once" processing. This means even if a service crashes midway, the input offset is only committed if the output is successfully written. Atomic!</p>
+        </div>
+
+        <div class="card">
+            <h2>2. Schema Registry & Avro</h2>
+            <p>In production, you can't just send random JSON. <strong>Schema Registry</strong> enforces a contract between Producer and Consumer. If a producer tries to send a message that breaks the schema (e.g., changing a field type), it's rejected. <strong>Avro</strong> is preferred for its compact binary format.</p>
+        </div>
+    </div>
+
+    <div id="module12">
+        <div class="module-header" style="background: linear-gradient(90deg, #555, #222);">
+            <h1>Module 12: Production Deployment</h1>
+            <p>Running Kafka at scale in the real world.</p>
+        </div>
+
+        <div class="card">
+            <h2>1. Monitoring & Metrics</h2>
+            <p>The most important metrics to watch:</p>
+            <ul>
+                <li><strong>Consumer Lag:</strong> Are your consumers falling behind?</li>
+                <li><strong>Under-replicated Partitions:</strong> Are your brokers failing?</li>
+                <li><strong>Active Controller Count:</strong> Should always be exactly 1.</li>
+            </ul>
+        </div>
+    </div>
+
+    <hr>
+
+    <div id="case-studies">
+        <h1>Architecture Case Studies</h1>
+        
+        <div class="card">
+            <h2>Case Study 1: E-commerce Order Flow</h2>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart TD
+    API[API Gateway] --> OS[Order Service]
+    OS -- "DB: Create Order" --> DB[(Postgres)]
+    OS -- "Produce: OrderCreated" --> K((Kafka))
+    
+    subgraph Consumers
+        PS[Payment Service]
+        IS[Inventory Service]
+        NS[Notification Service]
+        AS[Analytics Service]
+    end
+
+    K --> PS
+    K --> IS
+    K --> NS
+    K --> AS
+
+    PS -- "Produce: PaymentSuccess" --> K
+    IS -- "Produce: StockReserved" --> K
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Case Study 2: Banking Transaction System</h2>
+            <p><strong>Challenge:</strong> High consistency, auditability, and fraud detection.</p>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart LR
+    ATM[ATM/Mobile] --> TS[Transaction Service]
+    TS -- "Store Outbox" --> DB[(Main DB)]
+    CDC[Debezium CDC] -- "Read Log" --> DB
+    CDC -- "Emit: TransEvent" --> K((Kafka))
+
+    subgraph Analytics
+        Fraud[Fraud Detection]
+        Audit[Audit Service]
+        Ledger[General Ledger]
+    end
+
+    K --> Fraud
+    K --> Audit
+    K --> Ledger
+
+    Fraud -- "Emit: FraudAlert" --> K
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Case Study 3: Food Delivery (Real-time)</h2>
+            <p><strong>Challenge:</strong> Geo-spatial matching and real-time status updates.</p>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart TD
+    User[Customer App] --> OS[Order Service]
+    Driver[Driver App] --> LS[Location Service]
+    
+    LS -- "Emit: DriverLocation" --> K((Kafka))
+    OS -- "Emit: OrderPlaced" --> K
+    
+    subgraph Streams [Kafka Streams Processing]
+        Match[Geo-Matching Engine]
+    end
+    
+    K --> Match
+    Match -- "Emit: Assignment" --> K
+    K --> User
+    K --> Driver
+                </pre>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Case Study 4: Ride Booking (Uber Style)</h2>
+            <p><strong>Challenge:</strong> Massive surge handling and dynamic pricing.</p>
+            <div class="diagram">
+                <pre class="mermaid">
+flowchart LR
+    Rider --> RS[Request Service]
+    RS -- "RideRequested" --> K((Kafka))
+    
+    subgraph Elastic_Scale
+        P[Pricing Service]
+        M[Matching Service]
+        N[Notification Service]
+    end
+    
+    K --> P
+    K --> M
+    K --> N
+    
+    P -- "PriceUpdated" --> K
+    M -- "DriverMatched" --> K
+                </pre>
             </div>
         </div>
     </div>
 
-    <script>
-        // --- STATE ---
-        let library = { projects: [] };
-        let activeProject = null;
-        let currentPhaseIdx = 0;
-        let editingKey = null;
-        let pendingAction = null;
+    <div id="failure-scenarios">
+        <h1>Production Failure Scenarios</h1>
+        <div class="card">
+            <table style="width:100%; border-collapse: collapse;">
+                <tr style="border-bottom: 2px solid var(--border-color); text-align: left;">
+                    <th style="padding: 10px;">Scenario</th>
+                    <th style="padding: 10px;">Impact</th>
+                    <th style="padding: 10px;">Solution</th>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 10px;">Consumer Crash</td>
+                    <td style="padding: 10px;">Partitions unassigned</td>
+                    <td style="padding: 10px;">Auto-rebalance to other group members</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 10px;">Broker Out of Disk</td>
+                    <td style="padding: 10px;">Read/Write failure</td>
+                    <td style="padding: 10px;">Retention policy or move partitions</td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--border-color);">
+                    <td style="padding: 10px;">Message Too Large</td>
+                    <td style="padding: 10px;">Producer rejection</td>
+                    <td style="padding: 10px;">Increase <code>max.request.size</code> or use S3 pointers</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 
-        // --- INIT ---
-        async function init() {
-            if(localStorage.getItem('elite_theme') === 'light') document.body.classList.add('light-mode');
-            const stored = localStorage.getItem('elite_workspace_v1');
-            if (stored) try { library = JSON.parse(stored); } catch(e){}
-            try {
-                const res = await fetch('project_plan.json');
-                if(res.ok) {
-                    const plan = await res.json();
-                    if(Array.isArray(plan)) {
-                        const defId = 'proj_local_def';
-                        const exists = library.projects.find(p => p.id === defId);
-                        if(!exists) {
-                            library.projects.unshift({ id: defId, name: "Local Project", created: Date.now(), plan: plan, progress: {} });
-                            save();
-                        } else { exists.plan = plan; save(); }
+    <div id="roadmap">
+        <h1>Visual Learning Roadmap</h1>
+        <div class="diagram">
+            <pre class="mermaid">
+flowchart TD
+    B[Beginner: Fundamentals, Topics, CLI] --> I[Intermediate: Spring Boot, Producers, Consumers]
+    I --> A[Advanced: Rebalancing, Offset Mgmt, EOS]
+    A --> P[Production: Monitoring, Tuning, KRaft]
+    P --> Arch[Architect: Saga, Outbox, Schema Registry, Streams]
+    
+    style B fill:#fff,stroke:#3fb950
+    style I fill:#fff,stroke:#58a6ff
+    style A fill:#fff,stroke:#ff9900
+    style P fill:#fff,stroke:#f85149
+    style Arch fill:#fff,stroke:#bc8cff
+            </pre>
+        </div>
+    </div>
+
+    <div id="cheat-sheet">
+        <h1>Final Cheat Sheet</h1>
+        <div class="callout callout-success">
+            <ul>
+                <li><strong>Durability:</strong> Set <code>acks=all</code> and <code>min.insync.replicas=2</code>.</li>
+                <li><strong>Throughput:</strong> Increase <code>batch.size</code> and <code>linger.ms</code>.</li>
+                <li><strong>Ordering:</strong> Use a non-null key and don't change partition count.</li>
+                <li><strong>Safety:</strong> Enable <code>enable.idempotence=true</code>.</li>
+                <li><strong>Latency:</strong> Disable compression and reduce batch size.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="interview-prep">
+        <h1>Architect-Level Interview Prep</h1>
+        <div class="card">
+            <h2>Junior / Intermediate Level</h2>
+            <div class="callout callout-interview">
+                <strong>Q1: What is a Broker in Kafka?</strong>
+                <p><strong>A:</strong> A Broker is a single Kafka server that stores data and serves client requests. A collection of brokers forms a cluster.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q2: What is the difference between a Topic and a Partition?</strong>
+                <p><strong>A:</strong> A Topic is a logical category, while a Partition is the physical unit of storage and parallelism within that topic.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q3: How do you guarantee message ordering?</strong>
+                <p><strong>A:</strong> Use a non-null key so messages go to the same partition, and set <code>max.in.flight.requests.per.connection=1</code> (or use idempotence).</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q4: What is Consumer Lag?</strong>
+                <p><strong>A:</strong> The difference between the latest offset in the broker and the last offset read by the consumer. High lag means the consumer is falling behind.</p>
+            </div>
+
+            <h2>Senior / Architect Level</h2>
+            <div class="callout callout-interview">
+                <strong>Q5: How does Kafka handle "Zombies"?</strong>
+                <p><strong>A:</strong> Uses <code>TransactionalId</code> and <code>Producer Epoch</code>. New producers bump the epoch, causing older "zombie" producers to be rejected.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q6: Explain the "Dual Write" problem.</strong>
+                <p><strong>A:</strong> Occurs when trying to update a DB and send a Kafka message simultaneously. Solved by the Transactional Outbox Pattern.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q7: What is a Rebalancing Storm?</strong>
+                <p><strong>A:</strong> Frequent consumer group rebalances caused by slow processing, network issues, or heartbeats timeouts, leading to zero throughput.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q8: KRaft vs ZooKeeper - Why the change?</strong>
+                <p><strong>A:</strong> Scalability. KRaft moves metadata into Kafka itself, allowing for millions of partitions and faster leader election by removing ZK bottleneck.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q9: What is Zero-Copy in Kafka?</strong>
+                <p><strong>A:</strong> Using <code>sendfile()</code> to move data from disk buffer to network card buffer directly, bypassing the JVM and application layer for massive speed.</p>
+            </div>
+            <div class="callout callout-interview">
+                <strong>Q10: Explain Log Compaction.</strong>
+                <p><strong>A:</strong> A retention policy where Kafka keeps only the latest value for each key, useful for state restoration (e.g., KTables).</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="visual-summary">
+        <h1>The Kafka Ecosystem: Visual Summary</h1>
+        <div class="diagram">
+            <pre class="mermaid">
+mindmap
+  root((Kafka Ecosystem))
+    Storage
+      Partitions
+      Segments
+      Replicas
+    Clients
+      Producers
+      Consumers
+      Kafka Connect
+    Processing
+      Kafka Streams
+      ksqlDB
+    Patterns
+      Saga
+      Outbox
+      CQRS
+    Metadata
+      KRaft
+      Controller
+            </pre>
+        </div>
+    </div>
+
+    <footer style="margin-top: 100px; padding: 40px; border-top: 1px solid var(--border-color); text-align: center; color: var(--text-muted);">
+        <p>&copy; 2026 Kafka & EDA Mastery Handbook | Generated for Architect-Level Learning</p>
+    </footer>
+
+
+
+</div>
+
+<script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+
+    // Progress Bar and Scroll Spy Logic
+    window.onscroll = function() {
+        var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+        var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var scrolled = (winScroll / height) * 100;
+        document.getElementById("progressBar").style.width = scrolled + "%";
+
+        let sections = document.querySelectorAll('div[id^="module"], #case-studies, #failure-scenarios, #roadmap, #cheat-sheet, #interview-prep');
+        let scrollPos = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop;
+
+        sections.forEach(sec => {
+            if (sec.offsetTop <= (scrollPos + 100) && (sec.offsetTop + sec.offsetHeight) > (scrollPos + 100)) {
+                document.querySelectorAll('#sidebar a').forEach(a => {
+                    a.classList.remove('active');
+                    if (a.getAttribute('href') === '#' + sec.id) {
+                        a.classList.add('active');
                     }
-                }
-            } catch(e){}
-            renderDashboard();
-        }
-
-        // --- CORE ---
-        function save() { localStorage.setItem('elite_workspace_v1', JSON.stringify(library)); }
-        function showToast(msg, type='info') {
-            const t = document.createElement('div');
-            t.className = `toast ${type}`;
-            t.innerHTML = `<span>${type==='success'?'✔':type==='error'?'✖':'ℹ'}</span> ${msg}`;
-            document.getElementById('toast-container').appendChild(t);
-            setTimeout(() => { t.remove(); }, 3000);
-        }
-        function toggleTheme() { document.body.classList.toggle('light-mode'); localStorage.setItem('elite_theme', document.body.classList.contains('light-mode') ? 'light' : 'dark'); }
-        function download(content, name) { const a = document.createElement('a'); const f = new Blob([content], {type:'text/json'}); a.href = URL.createObjectURL(f); a.download = name; a.click(); }
-
-        // --- DASHBOARD ---
-        function renderDashboard() {
-            document.getElementById('dashboard-view').classList.remove('hidden');
-            document.getElementById('tracker-view').classList.add('hidden');
-            const grid = document.getElementById('project-grid');
-            const addCard = grid.lastElementChild;
-            grid.innerHTML = '';
-            library.projects.forEach(p => {
-                let total=0, done=0;
-                p.plan.forEach((ph, pI) => ph.epics.forEach((e, eI) => e.tasks.forEach((t, tI) => {
-                    total++;
-                    const key = `${ph.id}-e${eI}-t${tI}`;
-                    if(p.progress && p.progress[key]?.status === 'DONE') done++;
-                })));
-                const pct = total===0?0:Math.round((done/total)*100);
-                const card = document.createElement('div');
-                card.className = 'project-card';
-                card.innerHTML = `<div><div class="card-title">${p.name}</div><div class="card-desc">${p.plan.length} Phases • ${pct}% Complete</div></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><button class="btn btn-primary" style="width:100%; margin-top:15px;" onclick="openProject('${p.id}')">Open</button>`;
-                grid.appendChild(card);
-            });
-            grid.appendChild(addCard);
-        }
-
-        function importNewProject(input) {
-            const f = input.files[0]; if(!f) return;
-            const r = new FileReader();
-            r.onload = (e) => {
-                try {
-                    const plan = JSON.parse(e.target.result);
-                    if(!Array.isArray(plan)) throw new Error("Invalid");
-                    customPrompt("Project Name:", f.name.replace('.json','')).then(name => {
-                        if(name) { library.projects.push({ id:'p'+Date.now(), name, created:Date.now(), plan, progress:{} }); save(); renderDashboard(); showToast("Imported", "success"); }
-                    });
-                } catch(e) { showToast("Error", "error"); }
-                input.value='';
-            };
-            r.readAsText(f);
-        }
-        function importWorkspace(input) { const f = input.files[0]; if(!f) return; const r = new FileReader(); r.onload = (e) => { try { const d = JSON.parse(e.target.result); if(d.projects) { library = d; save(); renderDashboard(); showToast("Restored", "success"); } } catch(e) { showToast("Invalid", "error"); } input.value=''; }; r.readAsText(f); }
-        function exportWorkspace() { download(JSON.stringify(library), 'backup.json'); showToast("Exported", "success"); }
-
-        // --- TRACKER ---
-        function openProject(id) {
-            activeProject = library.projects.find(p => p.id === id);
-            if(!activeProject) return;
-            document.getElementById('project-title').innerText = activeProject.name;
-            currentPhaseIdx = 0;
-            document.getElementById('dashboard-view').classList.add('hidden');
-            document.getElementById('tracker-view').classList.remove('hidden');
-            renderSidebar();
-            renderContent();
-        }
-        function closeProject() { activeProject = null; renderDashboard(); }
-
-        function renderSidebar() {
-            const list = document.getElementById('phase-list');
-            list.innerHTML = '';
-            let total=0, done=0;
-            activeProject.plan.forEach((ph, idx) => {
-                let pTotal=0, pDone=0;
-                ph.epics.forEach((e, eIdx) => e.tasks.forEach((t, tIdx) => {
-                    const key = `${ph.id}-e${eIdx}-t${tIdx}`;
-                    total++; pTotal++;
-                    if(activeProject.progress[key]?.status === 'DONE') { done++; pDone++; }
-                }));
-                const pct = pTotal===0?0:Math.round((pDone/pTotal)*100);
-                const li = document.createElement('li');
-                li.className = `phase-item ${idx === currentPhaseIdx ? 'active' : ''}`;
-                li.innerHTML = `
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:600;">${ph.title}</span>
-                        <div class="mini-actions">
-                            <button class="mini-btn" onclick="editPhase(${idx}, event)">✎</button>
-                            <button class="mini-btn del" onclick="deletePhase(${idx}, event)">🗑</button>
-                        </div>
-                    </div>
-                    <div style="font-size:0.75rem; color:var(--text-muted); display:flex; justify-content:space-between;"><span>Progress</span><span>${pct}%</span></div>
-                    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-                `;
-                li.onclick = () => { currentPhaseIdx = idx; renderSidebar(); renderContent(); };
-                list.appendChild(li);
-            });
-            const totalPct = total===0?0:Math.round((done/total)*100);
-            document.getElementById('total-percent').innerText = `${totalPct}%`;
-            document.getElementById('total-bar').style.width = `${totalPct}%`;
-        }
-
-        function renderContent() {
-            const container = document.getElementById('epics-container');
-            container.innerHTML = '';
-            if(!activeProject.plan[currentPhaseIdx]) { document.getElementById('current-phase-title').innerText = "Empty Project"; return; }
-            const phase = activeProject.plan[currentPhaseIdx];
-            document.getElementById('current-phase-title').innerText = phase.title;
-
-            phase.epics.forEach((epic, eIdx) => {
-                const card = document.createElement('div');
-                card.className = 'epic-card';
-                let tasksHtml = '';
-                
-                epic.tasks.forEach((task, tIdx) => {
-                    const key = `${phase.id}-e${eIdx}-t${tIdx}`;
-                    const s = activeProject.progress[key] || {};
-                    let badges = '';
-                    if(s.status === 'BLOCKED') badges += `<span class="badge badge-blocked">BLOCKED</span>`;
-                    if(s.due) badges += `<span class="badge badge-date">📅 ${new Date(s.due).toLocaleDateString(undefined, {month:'numeric', day:'numeric'})}</span>`;
-                    if(s.pomo) badges += `<span class="badge">🍅 ${s.pomo}</span>`;
-                    
-                    let gitLink = '';
-                    if(s.gitRef && s.gitRef.startsWith('http')) {
-                        gitLink = `<a href="${s.gitRef}" target="_blank" onclick="event.stopPropagation()" title="Open Git"><svg class="git-icon-svg" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg></a>`;
-                    }
-
-                    tasksHtml += `
-                        <li class="task-item ${s.status === 'DONE' ? 'status-done' : s.status === 'IN_PROGRESS' ? 'status-in-progress' : s.status === 'BLOCKED' ? 'status-blocked' : ''}" onclick="openTaskModal('${key}', '${task.replace(/'/g,"\\'")}')">
-                            <div style="flex:1">
-                                <div class="task-row-top">
-                                    <div class="task-title">
-                                        <span style="${s.status==='DONE'?'text-decoration:line-through; color:var(--text-muted)':''}">${task}</span>
-                                        ${s.status==='DONE'?'<span>✅</span>':''}
-                                        ${gitLink}
-                                    </div>
-                                    <div class="mini-actions">
-                                        <button class="mini-btn" onclick="renameTask(${eIdx}, ${tIdx}, '${task.replace(/'/g,"\\'")}', event)">✎</button>
-                                        <button class="mini-btn del" onclick="deleteTaskItem(${eIdx}, ${tIdx}, event)">🗑</button>
-                                    </div>
-                                </div>
-                                <div class="task-badges">${badges}</div>
-                            </div>
-                        </li>
-                    `;
                 });
+            }
+        });
+    };
 
-                card.innerHTML = `
-                    <div class="epic-header">
-                        <span>${epic.title}</span>
-                        <div class="mini-actions">
-                            <button class="mini-btn" onclick="editEpic(${eIdx})">✎</button>
-                            <button class="mini-btn del" onclick="deleteEpic(${eIdx})">🗑</button>
-                        </div>
-                    </div>
-                    <ul class="task-list">${tasksHtml}</ul>
-                    <button class="btn-add-task" onclick="addTask(${eIdx})">+ Add Task</button>
-                `;
-                container.appendChild(card);
+    // Mobile Navigation Toggle
+    const mobileToggle = document.getElementById('mobile-nav-toggle');
+    const sidebar = document.getElementById('sidebar');
+    
+    mobileToggle.onclick = function() {
+        sidebar.classList.toggle('open');
+        this.innerHTML = sidebar.classList.contains('open') ? '✕' : '☰';
+    };
+
+    // Smooth scroll and auto-close sidebar on mobile
+    document.querySelectorAll('#sidebar a').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            document.querySelector(targetId).scrollIntoView({
+                behavior: 'smooth'
             });
-        }
-
-        // --- MODALS & LOGIC ---
-        function customPrompt(title, val='') {
-            return new Promise(resolve => {
-                document.getElementById('p-title').innerText = title;
-                const inp = document.getElementById('p-input'); inp.value = val;
-                document.getElementById('prompt-modal').style.display = 'flex'; inp.focus();
-                const clean = () => { document.getElementById('prompt-modal').style.display='none'; document.getElementById('p-confirm').onclick = null; };
-                document.getElementById('p-confirm').onclick = () => { clean(); resolve(inp.value); };
-                inp.onkeydown = (e) => { if(e.key==='Enter') document.getElementById('p-confirm').click(); };
-            });
-        }
-        function customConfirm(title, msg) {
-            return new Promise(resolve => {
-                document.getElementById('c-title').innerText = title; document.getElementById('c-msg').innerText = msg;
-                document.getElementById('confirm-modal').style.display='flex';
-                const clean = () => { document.getElementById('confirm-modal').style.display='none'; document.getElementById('c-confirm').onclick=null; };
-                document.getElementById('c-confirm').onclick = () => { clean(); resolve(true); };
-            });
-        }
-        function closeModal(id) { document.getElementById(id).style.display='none'; }
-        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
-
-        // --- EDIT ---
-        async function addPhase() { const t = await customPrompt("Phase Title"); if(t) { activeProject.plan.push({id:'p'+Date.now(), title:t, epics:[]}); save(); renderSidebar(); showToast("Phase Added", "success"); }}
-        async function editPhase(i, e) { e.stopPropagation(); const t = await customPrompt("Edit Phase", activeProject.plan[i].title); if(t) { activeProject.plan[i].title=t; save(); renderSidebar(); renderContent(); showToast("Updated", "success"); }}
-        async function deletePhase(i, e) { e.stopPropagation(); if(await customConfirm("Delete Phase?", "Permanent?")) { activeProject.plan.splice(i,1); save(); renderSidebar(); renderContent(); showToast("Deleted", "success"); }}
-        
-        async function addEpic() { const t = await customPrompt("Epic Title"); if(t) { activeProject.plan[currentPhaseIdx].epics.push({title:t, tasks:[]}); save(); renderContent(); showToast("Added", "success"); }}
-        async function editEpic(i) { const t = await customPrompt("Edit Epic", activeProject.plan[currentPhaseIdx].epics[i].title); if(t) { activeProject.plan[currentPhaseIdx].epics[i].title=t; save(); renderContent(); showToast("Updated", "success"); }}
-        async function deleteEpic(i) { if(await customConfirm("Delete Epic?", "Permanent?")) { activeProject.plan[currentPhaseIdx].epics.splice(i,1); save(); renderContent(); showToast("Deleted", "success"); }}
-
-        async function addTask(eI) { const t = await customPrompt("New Task"); if(t) { activeProject.plan[currentPhaseIdx].epics[eI].tasks.push(t); save(); renderContent(); renderSidebar(); showToast("Added", "success"); }}
-        async function renameTask(eI, tI, old, e) { e.stopPropagation(); const t = await customPrompt("Rename Task", old); if(t) { activeProject.plan[currentPhaseIdx].epics[eI].tasks[tI] = t; save(); renderContent(); showToast("Updated", "success"); }}
-        async function deleteTaskItem(eI, tI, e) { e.stopPropagation(); if(await customConfirm("Delete Task?", "Permanent?")) { activeProject.plan[currentPhaseIdx].epics[eI].tasks.splice(tI,1); save(); renderContent(); renderSidebar(); showToast("Deleted", "success"); }}
-
-        // --- TASK DETAIL ---
-        function openTaskModal(key, title) {
-            editingKey = key;
-            if(!activeProject.progress[key]) activeProject.progress[key] = { status:'TODO', logs:{}, dod:{} };
-            const s = activeProject.progress[key];
             
-            document.getElementById('m-task-title').value = title;
-            document.getElementById('m-status').value = s.status;
-            document.getElementById('m-git').value = s.gitRef || '';
-            document.getElementById('m-start').value = s.start || '';
-            document.getElementById('m-due').value = s.due || '';
-            document.getElementById('m-blocker').value = s.blocker || '';
-            
-            document.getElementById('log-prob').value = s.logs.prob || '';
-            document.getElementById('log-sol').value = s.logs.sol || '';
-            
-            document.getElementById('dod-code').checked = s.dod.code || false;
-            document.getElementById('dod-test').checked = s.dod.test || false;
-            document.getElementById('dod-clean').checked = s.dod.clean || false;
-            
-            document.getElementById('m-pomo-val').innerText = s.pomo || 0;
-            
-            toggleBlocker();
-            document.getElementById('task-modal').style.display = 'flex';
-        }
+            if (window.innerWidth <= 1024) {
+                sidebar.classList.remove('open');
+                mobileToggle.innerHTML = '☰';
+            }
 
-        function toggleBlocker() { document.getElementById('m-blocker-wrap').className = document.getElementById('m-status').value === 'BLOCKED' ? '' : 'hidden'; }
-        function saveTaskChanges() {
-            const s = activeProject.progress[editingKey];
-            s.status = document.getElementById('m-status').value;
-            s.gitRef = document.getElementById('m-git').value;
-            s.start = document.getElementById('m-start').value;
-            s.due = document.getElementById('m-due').value;
-            s.blocker = document.getElementById('m-blocker').value;
-            s.logs = { prob: document.getElementById('log-prob').value, sol: document.getElementById('log-sol').value };
-            s.dod = { code: document.getElementById('dod-code').checked, test: document.getElementById('dod-test').checked, clean: document.getElementById('dod-clean').checked };
-            s.pomo = parseInt(document.getElementById('m-pomo-val').innerText);
-            
-            const newTitle = document.getElementById('m-task-title').value;
-            // Note: To update title in plan array requires parsing key or storing indices. 
-            // Simplified: Just saving state for now. To rename title properly use the list edit button.
-            
-            if(s.status === 'DONE' && (!s.dod.code || !s.dod.test)) { showToast("Code/Tests required", "error"); s.status = "IN_PROGRESS"; }
-            
-            save(); renderContent(); renderSidebar(); closeModal('task-modal'); showToast("Saved", "success");
-        }
+            document.querySelectorAll('#sidebar a').forEach(a => a.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
 
-        function promptSecurityCheck(type) {
-            pendingAction = type;
-            document.getElementById('sec-title').innerText = type==='DELETE'?"Delete Project":"Reset";
-            document.getElementById('sec-name').innerText = activeProject.name;
-            document.getElementById('sec-input').value = '';
-            document.getElementById('security-modal').style.display='flex';
-        }
-        document.getElementById('sec-confirm').onclick = () => {
-            if(document.getElementById('sec-input').value === activeProject.name) {
-                if(pendingAction==='DELETE') { library.projects = library.projects.filter(p=>p.id!==activeProject.id); save(); closeProject(); }
-                else { activeProject.progress={}; save(); renderContent(); renderSidebar(); }
-                closeModal('security-modal');
-            } else showToast("Name mismatch", "error");
-        };
-
-        function exportCurrentProject() { download(JSON.stringify(activeProject), 'project.json'); showToast("Exported", "success"); }
-        function importCurrentProject(input) {
-            const f = input.files[0]; if(!f) return;
-            const r = new FileReader();
-            r.onload = (e) => {
-                try {
-                    const d = JSON.parse(e.target.result);
-                    if(d.plan && confirm("Overwrite?")) { activeProject.plan = d.plan; activeProject.progress = d.progress||{}; save(); renderSidebar(); renderContent(); showToast("Updated", "success"); }
-                } catch(e) { showToast("Error", "error"); }
-                input.value='';
-            };
-            r.readAsText(f);
-        }
-
-        function adjPomo(n) { const el = document.getElementById('m-pomo-val'); let v = parseInt(el.innerText) + n; if(v < 0) v = 0; el.innerText = v; }
-        
-        let timerInterval, timeLeft = 25 * 60, isRunning = false;
-        function toggleTimer() {
-            const btn = document.getElementById('timer-btn');
-            if (isRunning) { clearInterval(timerInterval); isRunning = false; btn.innerText = "Start"; }
-            else { isRunning = true; btn.innerText = "Pause"; timerInterval = setInterval(() => { if (timeLeft > 0) { timeLeft--; document.getElementById('timer-display').innerText = `${Math.floor(timeLeft/60).toString().padStart(2,'0')}:${(timeLeft%60).toString().padStart(2,'0')}`; document.title = `(${Math.floor(timeLeft/60)}:${(timeLeft%60).toString().padStart(2,'0')})`; } else { clearInterval(timerInterval); isRunning = false; showToast("Done!", "success"); timeLeft = 25*60; btn.innerText = "Start"; adjPomo(1); } }, 1000); }
-        }
-        function resetTimer() { clearInterval(timerInterval); isRunning = false; timeLeft = 25 * 60; document.getElementById('timer-display').innerText = "25:00"; document.getElementById('timer-btn').innerText = "Start"; }
-
-        init();
-    </script>
 </body>
 </html>
