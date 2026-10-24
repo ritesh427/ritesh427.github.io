@@ -537,7 +537,7 @@ body.has-dock main { padding-bottom: 110px; }
 @media (max-width: 1280px) { .row-hero { grid-template-columns: repeat(3, minmax(0, 1fr)); } .upnext { grid-column: 1 / -1; } }
 @media (max-width: 1000px) {
   .grid-2 { grid-template-columns: minmax(0, 1fr); }
-  .sidebar { position: fixed; left: 0; top: 0; margin-left: 0 !important; transform: translateX(-102%); width: min(300px, 86vw); box-shadow: var(--shadow-lg); background: var(--surface-solid); }
+  .sidebar { z-index: 75; position: fixed; left: 0; top: 0; margin-left: 0 !important; transform: translateX(-102%); width: min(300px, 86vw); box-shadow: var(--shadow-lg); background: var(--surface-solid); }
   body.side-open .sidebar { transform: none; }
   .only-mobile { display: inline-grid; } .only-desktop { display: none !important; }
 }
