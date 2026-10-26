@@ -1,28 +1,42 @@
 {
   "name": "DevPath · Developer Learning & Assessment Dashboard",
   "short_name": "DevPath",
-  "description": "Master Java, Spring Boot, Microservices, Kafka, LLD, and HLD with adaptive exams, spaced repetition, streak tracking, and 1v1 multiplayer duels.",
+  "id": "./",
   "start_url": "./index.html",
+  "scope": "./",
+  "description": "Master Java, Spring Boot, Microservices, Kafka, LLD, and HLD with adaptive exams, spaced repetition, streak tracking, and 1v1 multiplayer duels.",
   "display": "standalone",
   "background_color": "#0b0d17",
   "theme_color": "#0b0d17",
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "assets/icon.svg",
-      "sizes": "192x192 512x512",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' rx='42' fill='%236366f1'/%3E%3Cpath d='M108 30 48 108h42l-6 54 60-78h-42z' fill='white'/%3E%3C/svg%3E",
+      "src": "assets/icon-192.png",
       "sizes": "192x192",
-      "type": "image/svg+xml",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%236366f1'/%3E%3Cpath d='M288 80 128 288h112l-16 144 160-208h-112z' fill='white'/%3E%3C/svg%3E",
+      "src": "assets/icon-512.png",
       "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any"
     }

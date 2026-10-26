@@ -862,6 +862,17 @@ const A = {
       icon: v === 'nailed' ? '💪' : v === 'okay' ? '🙂' : '😕',
       ms: 2600
     });
+  },
+  'pwa-install': () => {
+    if (typeof PWA !== 'undefined') {
+      if (PWA.isIOS()) {
+        PWA.openIOSGuideModal();
+      } else if (PWA.deferredPrompt) {
+        PWA.deferredPrompt.prompt();
+      } else {
+        PWA.showInstallNotification(false);
+      }
+    }
   }
 };
 

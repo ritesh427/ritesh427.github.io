@@ -168,6 +168,7 @@ Views.sidebar = () => {
       }).join('')}
     </nav>
     <div class="side-foot">
+      <button class="btn primary sm" data-action="pwa-install" id="sideInstallBtn" style="grid-column: 1 / -1; width: 100%; justify-content: center; margin-bottom: 4px;">${icon('download', 14)} Install App</button>
       <button class="btn ghost sm" data-action="help">${icon('keyboard', 15)} Shortcuts</button>
       <button class="btn ghost sm" data-action="settings">${icon('sliders', 15)} Settings</button>
     </div>`;
