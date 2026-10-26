@@ -1,0 +1,287 @@
+'use strict';
+/* =========================================================
+   DevPath Curriculum & Topic Registry (206 Topics)
+   ========================================================= */
+
+const catDefaults = {
+  "Microservices": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBzcmOSqWnNT4PLzgwNuAU8ATZcoQ70XhIPig1WezHv2WQ", git: "https://gitlab.com/shrayansh8/springboot-microservices" },
+  "Event Driven Architecture": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBMj092rB7WTpdf1fEHRa_nAVD4F1ye0GGueBTN_BR-0ew", git: "https://gitlab.com/shrayansh8/springboot-microservices/-/tree/main/EventDrivenArchitecture?ref_type=heads" },
+  "JUnit5 & Mockito": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBwQub2G2MKTLK_leeD4UNgAXaPDKcGqVysMLBAGOStstI", git: "https://gitlab.com/shrayansh8/junit5andmockito/-/tree/main/Junit5Lectures/src/test/java/concepts?ref_type=heads" },
+  "Spring Boot": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBLC22wbjyIQ4xWDY7RMOpBAe8EcXucHdqFl0RC_YCqYRI", git: "https://gitlab.com/shrayansh8/springboot-microservices" },
+  "LLD": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBwQub2G2MKTLK_leeD4UNgAXaPDKcGqVysMLBAGOStstI", git: "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding" },
+  "HLD": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBzcmOSqWnNT4PLzgwNuAU8ATZcoQ70XhIPig1WezHv2WQ", git: "" },
+  "Java": { note: "https://1drv.ms/o/c/6b364628c29feb52/IgBJQS9wVkkaRI78ISwP-lLlAfGEeBDYaF6j_APJuTQmUmQ", git: "" },
+  "Cloud & AI": { note: "", git: "" }
+};
+
+const rawLinks = [
+  // Microservices (23 topics)
+  ["ms1", "1. RestTemplate", "Microservices", "https://drive.google.com/file/d/1tFNmDMauszX3K8wcAxBaVAX3FidyEfei/view?usp=drive_link"],
+  ["ms2", "2. RestClient", "Microservices", "https://drive.google.com/file/d/1a2Yx3g99nXUw1UlvreHcBJj04ktMBhcD/view?usp=drive_link"],
+  ["ms3", "3. FeignClient", "Microservices", "https://drive.google.com/file/d/1xev4wWJ1dceBUi7l77z2KgTx_YZDbfg1/view?usp=drive_link"],
+  ["ms4", "4. ServiceDiscovery", "Microservices", "https://drive.google.com/file/d/11DAZgXFoArZ17xVLhkIxTYQtUYAJNnr-/view?usp=drive_link"],
+  ["ms5", "5. Client Side Load Balancer", "Microservices", "https://drive.google.com/file/d/1uERH11qv6xWBvwHc0BoOJlnn89IzWt95/view?usp=drive_link"],
+  ["ms6", "6. Rate Limiter", "Microservices", "https://drive.google.com/file/d/1EwfhhSiBNJw87tqvoaseW5ZKUKB-YJDx/view?usp=drive_link"],
+  ["ms7", "7. Bulkhead", "Microservices", "https://drive.google.com/file/d/1CSXu3bNRsvwhsvIr2EdTkbyP7fUHQMt7/view?usp=drive_link"],
+  ["ms8", "8. Retry", "Microservices", "https://drive.google.com/file/d/1F4e2EwjCfi11-q7RdujOqiPgt7oCbO7B/view?usp=drive_link"],
+  ["ms9", "9. Circuit Breaker", "Microservices", "https://drive.google.com/file/d/1ApUVMYBXzsEiW_tCL_ZpfX0IGKZQ2IZe/view?usp=drive_link"],
+  ["ms10", "10. Api Gateway Part1", "Microservices", "https://drive.google.com/file/d/1CbIz2ZgwcinR0y69Q7O-MRSgWgu-b-Ze/view?usp=drive_link"],
+  ["ms11", "11. Api Gateway Part2", "Microservices", "https://drive.google.com/file/d/14bbYUgLn3q5CXVKL90pMYb9TbAuu0GKd/view?usp=drive_link"],
+  ["ms12", "12. Centralized Configuration", "Microservices", "https://drive.google.com/file/d/1jyj0NGktH3DEA6dQr2ziAVQk0PwaS3S9/view?usp=drive_link"],
+  ["ms13", "13. Refresh Scope", "Microservices", "https://drive.google.com/file/d/1Yb-qJjcNWHNtIZ7QaZxgKdHNoty9i-1F/view?usp=drive_link"],
+  ["ms14", "14. Cloud Bus", "Microservices", "https://drive.google.com/file/d/1Byww5BZPKMRqwHLgMJnx7_CczEHNDcFi/view?usp=drive_link"],
+  ["ms15", "15. Distributed Tracing", "Microservices", "https://drive.google.com/file/d/10ngkU6IzaZ_htyX3g1oSZ2e9FnwRrRJQ/view?usp=drive_link"],
+  ["ms16", "16. Distributed Logging Part1", "Microservices", "https://drive.google.com/file/d/1A9UfCSivJt8MS6opPfxZc3CvkxodXajk/view?usp=drive_link"],
+  ["ms17", "17. Distributed Logging Part2", "Microservices", "https://drive.google.com/file/d/1Np9DxNIssaTBarQuyPjz87e5T9-8sVwQ/view?usp=drive_link"],
+  ["ms18", "18. Distributed Logging Part3", "Microservices", "https://drive.google.com/file/d/1KOl9X0M1RfhUEUW5gwOB2M93dH0yH89P/view?usp=drive_link"],
+  ["ms19", "19. Distributed Logging Part4", "Microservices", "https://drive.google.com/file/d/1NbsMDboh1pVvYffURP4zy2dO3HoFaE9U/view?usp=drive_link"],
+  ["ms20", "20. Distributed Scheduler Part1", "Microservices", "https://drive.google.com/file/d/1Uc1VRhyPYeqLSAzuSFIdWBVsLwwtLIwp/view?usp=drive_link"],
+  ["ms21", "21. Distributed Scheduler Part2", "Microservices", "https://drive.google.com/file/d/1skz-q6DSH7_UCpaJ5gcuJR7aznGNOOkJ/view?usp=drive_link"],
+  ["ms22", "22. Distributed Scheduler Part3", "Microservices", "https://drive.google.com/file/d/1-Js_ki_mWgCWyJWzmBP3dVMWy0XU-EcF/view?usp=drive_link"],
+  ["ms23", "23. Distributed Scheduler Part4", "Microservices", "https://drive.google.com/file/d/1-Js_ki_mWgCWyJWzmBP3dVMWy0XU-EcF/view?usp=drive_link"],
+
+  // Event Driven Architecture (9 topics)
+  ["eda1", "1. What is EDA", "Event Driven Architecture", "https://drive.google.com/file/d/1Q3L1RCfAeXOqp59Th_M5H1HCqqWJovdU/view?usp=drive_link"],
+  ["eda2", "2-6. Kafka Architecture", "Event Driven Architecture", "https://drive.google.com/file/d/15bfuqS48Xg2a6E3nj5GL2iFZMWRub0JS/view?usp=drive_link"],
+  ["eda7", "7. Cluster Setup", "Event Driven Architecture", "https://drive.google.com/file/d/1BRZCm3cH1xexHWIZYSiHc75RGwrIaHfL/view?usp=drive_link"],
+  ["eda8", "8-9. Producer Internals", "Event Driven Architecture", "https://drive.google.com/file/d/1H7nwMGXFFcvdVOpJ1GJCPSBou9KNODqh/view?usp=drive_link"],
+  ["eda10", "10. Producer Idempotency", "Event Driven Architecture", "https://drive.google.com/file/d/1WYJxIBJlM_e7Xu6rqcn8p7ixKNJk2PjC/view?usp=drive_link"],
+  ["eda11", "11. Consumer Setup (Part-1)", "Event Driven Architecture", "https://drive.google.com/file/d/1YzUepxvY2NiR7oR8H38iHTE1XpUtJ34x/view?usp=drive_link"],
+  ["eda12", "12. Consumer Setup (Part-2)", "Event Driven Architecture", "https://drive.google.com/file/d/1S8Yx3WDjm3uQ1_s0hWfUPyZl7xBAE65T/view?usp=drive_link"],
+  ["eda15", "15. Producer Transaction", "Event Driven Architecture", "https://drive.google.com/file/d/1JuYwCd4RKndL8MyTPgpkKZm1HpoCUz4k/view?usp=drive_link"],
+  ["eda16", "16. Consumer Transaction", "Event Driven Architecture", "https://drive.google.com/file/d/1QsZ4zi9ZxdpcdlZdDjTolGGSa7ynxwqX/view?usp=drive_link"],
+
+  // JUnit5 & Mockito (17 topics)
+  ["ju1", "1. Unit Test Introduction", "JUnit5 & Mockito", "https://drive.google.com/file/d/10lTNGehyQgCYqYnnmyVNfBbtXHwtSFdn/view?usp=sharing"],
+  ["ju2", "2. Architecture", "JUnit5 & Mockito", "https://drive.google.com/file/d/1kkRHpzmraD1iWItaw7sgbydd_5VPsQBJ/view?usp=drive_link"],
+  ["ju3", "3. Lifecycle, Parallel Execution", "JUnit5 & Mockito", "https://drive.google.com/file/d/1XT_j4OricSbhn3nXvrFMGeHcy7bo-SmQ/view?usp=drive_link"],
+  ["ju4", "4. Assertions", "JUnit5 & Mockito", "https://drive.google.com/file/d/1TXqNgJog6f4rSCu9ouXA_eN8dx3_n5Gq/view?usp=drive_link"],
+  ["ju5", "5. Extensions", "JUnit5 & Mockito", "https://drive.google.com/file/d/1UyOlUshyZUfIZzGaGVCQ7WhJQHTkG4Zz/view?usp=drive_link"],
+  ["ju6", "6. Repeated Tests", "JUnit5 & Mockito", "https://drive.google.com/file/d/1FVujWepZGk5WrddsUbkOfa54z3dAJbAs/view?usp=drive_link"],
+  ["ju7", "7-8. Parametrized Test", "JUnit5 & Mockito", "https://drive.google.com/file/d/1QDxSwXpfJSwQ9B7j3VLrjV0-gR17pFBz/view?usp=drive_link"],
+  ["ju9", "9. Assumptions", "JUnit5 & Mockito", "https://drive.google.com/file/d/1ck01D8nSeDWNUj32a3Lj4hDZtSmVSl24/view?usp=drive_link"],
+  ["ju10", "10. Tagging and Filtering", "JUnit5 & Mockito", "https://drive.google.com/file/d/15I8fPVOCIrsxRZW2QwZpqXC_snLBQEk8/view?usp=drive_link"],
+  ["ju11", "11. Test Suite", "JUnit5 & Mockito", "https://drive.google.com/file/d/1_CZy-k_XumwkKr9EFBfcFaikAsp6vxew/view?usp=drive_link"],
+  ["ju12", "12. Dynamic Tests (@TestFactory)", "JUnit5 & Mockito", "https://drive.google.com/file/d/1SyAeshZXWFajeHMhCpaCLkQBe5ZXEMbD/view?usp=drive_link"],
+  ["ju13", "13. Mockito Introduction", "JUnit5 & Mockito", "https://drive.google.com/file/d/1yIIL0yQtgjMqASO60gTf5WmMikVhoRyO/view?usp=drive_link"],
+  ["ju14", "14. Mockito Architecture", "JUnit5 & Mockito", "https://drive.google.com/file/d/1VDBBdNLASIU3t7eOBUKlFQVw1u7X5K7g/view?usp=drive_link"],
+  ["ju15", "15. @InjectMocks", "JUnit5 & Mockito", "https://drive.google.com/file/d/1pMtHVtTptpe6I4_1u837QIjqkRzytOov/view?usp=drive_link"],
+  ["ju16", "16. @Mock in Constructor", "JUnit5 & Mockito", "https://drive.google.com/file/d/13fWzPthTNPzXLfMgMBqr-Jux_EkNxu42/view?usp=drive_link"],
+  ["ju17", "17. Stubbing", "JUnit5 & Mockito", "https://drive.google.com/file/d/1T3kLQQCpHPu7YidNb8h38JaVW3UZ7ht7/view?usp=drive_link"],
+  ["ju18", "18. Verifying", "JUnit5 & Mockito", "https://drive.google.com/file/d/1cblfLMGfUCM5_7p4qYxZ1uAeiVWZ615O/view?usp=drive_link"],
+
+  // Low Level Design (42 topics)
+  ["lld1", "1. SOLID Principles", "LLD", "https://drive.google.com/drive/folders/14Bigi6TB53HHjFJX8h5SjwZky4hJOO-W?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/video1solid"],
+  ["lld2", "2. Strategy pattern", "LLD", "https://drive.google.com/file/d/1smTeCvuc9aQwZS7gd-vxPs75wezuYAFp/view?usp=drive_link"],
+  ["lld3", "3. Observer pattern", "LLD", "https://drive.google.com/file/d/1l3T-TsuhWyQx8us5lxeh-bt4KR_8tr9w/view?usp=drive_link"],
+  ["lld4", "4. Decorator Pattern", "LLD", "https://drive.google.com/file/d/19W73JBOtOtOzIHmKBA-4ACqCXwv60pB0/view?usp=drive_link"],
+  ["lld5", "5. Factory and Abstract Factory", "LLD", "https://drive.google.com/file/d/1iyouXyHYdbhTyptjN17oqFW8RmGKTQ87/view?usp=drive_link"],
+  ["lld6", "6. Parking Lot", "LLD", "https://drive.google.com/file/d/1aE9QhlRZgtUDI-p_2NiPdVWaq3eP-Mn7/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/parking_lot"],
+  ["lld7", "7. Tic Tac Toe game", "LLD", "https://drive.google.com/file/d/1JgTipI2hutFrd3YxDpE8L2KukIr0VC7H/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/tictactoe"],
+  ["lld8", "8. Elevator System", "LLD", "https://drive.google.com/file/d/1MGudMSiJj2JMC75qq3o34gW2Kz-UAYPl/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/elevator"],
+  ["lld9", "9. Car Rental System", "LLD", "https://drive.google.com/file/d/1QR51mRs_1cM7Cq5aDlPLKAvrjHMtLiU0/view?usp=drive_link"],
+  ["lld10", "10. Chain of Responsibility", "LLD", "https://drive.google.com/file/d/1niWAA5Vy3gC8i6xU96igcYVR_ygZmboT/view?usp=drive_link"],
+  ["lld11", "11. Snake and Ladder game", "LLD", "https://drive.google.com/file/d/1cGyGGWOrp_b4Jm2xHFlI_FitPivDHgiN/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/snakeNladder"],
+  ["lld12", "12. Hashmap Internal Implementation", "LLD", "", "", "https://gitlab.com/shrayansh8/interviewcodingpractise/-/blob/main/src/main/java/com/conceptandcoding/LowLevelDesign/DesignDataStructures/MyHashMap.java"],
+  ["lld13", "13. Proxy Design Pattern", "LLD", "https://drive.google.com/file/d/1S0fRkyGAmhGupC02Xqi6YEfMmeaBxi_K/view?usp=drive_link"],
+  ["lld14", "14. BookMyShow", "LLD", "https://drive.google.com/file/d/1XbWo8m1hOOdKGww0UO1x3zIskdQjqf2i/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/book_my_show"],
+  ["lld15", "15. Null Object Pattern", "LLD", "https://drive.google.com/file/d/1LUQFI4vDRn6mAsgmDMVCO4lmOXX50dDc/view?usp=drive_link"],
+  ["lld16", "16. Vending Machine", "LLD", "https://drive.google.com/file/d/1FDEdh2xhvlZpftC_392pml9h2lcl_q3A/view?usp=drive_link"],
+  ["lld17", "17. LLD of ATM", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/atm"],
+  ["lld18", "18. Chess Mock Interview", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/chess"],
+  ["lld19", "19. File System (Composite)", "LLD", "https://drive.google.com/file/d/1FIBgNSJY-YkZYJO7WIKsY_io6tVIBkCa/view?usp=drive_link"],
+  ["lld20", "20. Adapter Pattern", "LLD", "https://drive.google.com/file/d/1BKx6HITzyw-c1RjX4372aH_L4b1-5S1w/view?usp=drive_link"],
+  ["lld21", "21. LLD of Splitwise", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/splitwise"],
+  ["lld23", "23. Builder Design Pattern", "LLD", "https://drive.google.com/file/d/1V5qnfvYpNiEzb3bu9221HMD8QDaTkVC9/view?usp=drive_link"],
+  ["lld24", "24. LLD of Cricbuzz", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/cricbuzz"],
+  ["lld25", "25. Facade design pattern", "LLD", "https://drive.google.com/file/d/1YpWHwZmOFIlFd-ftign3jtZWhOWEjwy0/view?usp=drive_link"],
+  ["lld26", "26. Bridge design pattern", "LLD", "https://drive.google.com/file/d/1byU7bYbjdkhIFU2je3Ck8IqjrFZvrRkr/view?usp=drive_link"],
+  ["lld27", "27. All Creational Patterns", "LLD", "https://drive.google.com/drive/folders/19th5gDxaDXI15eXolORUhWh_Uoclm8LP?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/creationalpatterns"],
+  ["lld28", "28. Singleton", "LLD", "https://drive.google.com/file/d/1P_ptiVovd0ERLtMqVbgJVd9r5mYme-k_/view?usp=drive_link"],
+  ["lld29", "29. Inventory Management System", "LLD", "", "", "https://gitlab.com/shrayansh8/interviewcodingpractise/-/tree/main/src/main/java/com/conceptandcoding/LowLevelDesign/DesignOrderManagementSystem"],
+  ["lld30", "30. Word Processor (Flyweight)", "LLD", "https://drive.google.com/file/d/1oCmas08vpcpiEMqYkIYEvjkNWIQ9lDGm/view?usp=drive_link"],
+  ["lld31", "31. Undo/Redo (Command)", "LLD", "https://drive.google.com/file/d/183IjgJ6pQDHswDQiwWMazetTpdK6SWaV/view?usp=drive_link"],
+  ["lld32", "32. All Structural Patterns", "LLD", "https://drive.google.com/drive/folders/13hg1N0piFmP4uBEH3jd9fvjIoA4SK4Dt?usp=drive_link", "https://notebook.zohopublic.in/public/notes/74tdo33c5b7060d544b1c986e519dd3ba4d1b", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/structuralpatterns"],
+  ["lld33", "33. Iterator Pattern", "LLD", "https://drive.google.com/file/d/1-AR6mJkZydatqHIxA58EreRzDt33_MqQ/view?usp=drive_link"],
+  ["lld34", "34. Mediator Pattern", "LLD", "https://drive.google.com/file/d/1SVx1ZYrJ_nqdHQ6Uq390wSt1TMX5vPOU/view?usp=drive_link"],
+  ["lld35", "35. Apply Coupon App", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/couponappln"],
+  ["lld36", "36. Visitor Pattern", "LLD", "https://drive.google.com/file/d/1vX_USKxmI-wqOwsV3tMD4OGj6a-usJdn/view?usp=drive_link"],
+  ["lld37", "37. MVC Pattern", "LLD", "https://drive.google.com/file/d/1oKEaL_-2SnfeRIJUDzX7WNEOtqqcMTJ0/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/additionalpatterns/mvc"],
+  ["lld38", "38. Memento Pattern", "LLD", "https://drive.google.com/file/d/1hc0cbjPKURcsvlMMkfMsq4yFXisS9Z2b/view?usp=drive_link"],
+  ["lld39", "39. Template Method Pattern", "LLD", "https://drive.google.com/file/d/15qaWbbBxXeZD3uC_7jfVHwPZxxiAm-jV/view?usp=drive_link"],
+  ["lld41", "41. Interpreter Pattern", "LLD", "https://drive.google.com/file/d/1jnzOCqy1ICoPkI0d-N9HolZacVtlbeJD/view?usp=drive_link"],
+  ["lld42", "42. Payment Gateway", "LLD", "", "https://notebook.zohopublic.in/public/notes/bietv6993f5a023ec4e9f89436149ac3ed2f7", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/paymentgateway"],
+  ["lld43", "43. Object Pool Pattern", "LLD", "https://drive.google.com/file/d/1NymzCEjJq7c_w1XQrjpt77xk-M1KrvWo/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/creationalpatterns/objectpool"],
+  ["lld44", "44. Meeting Scheduler", "LLD", "", "", "https://gitlab.com/shrayansh8/lld-lowleveldesign/-/tree/main/src/main/java/com/conceptcoding/interviewquestions/meetingscheduler"],
+
+  // Spring Boot (44 topics)
+  ["sb1", "1. Intro (Handwritten)", "Spring Boot", "https://drive.google.com/file/d/1a2_BIwB2k7TZLiLrVuzUbQngqnNzSFUd/view?usp=drive_link"],
+  ["sb1_2", "1. Intro (Original)", "Spring Boot", "https://drive.google.com/file/d/1J-RxhAg6gQXthbfcB2HOYIwOIt3qcji2/view?usp=drive_link"],
+  ["sb2", "2. Setup & Architecture", "Spring Boot", "https://drive.google.com/file/d/1R4N4COx9zqW733io4mL5NSZtlQGOvLJo/view?usp=drive_link"],
+  ["sb3", "3. Maven Lifecycle", "Spring Boot", "https://drive.google.com/file/d/11bGdZiUqQy54wB8p8RjMZDzV_7VwzFn9/view?usp=drive_link"],
+  ["sb4", "4. Annotations (HW)", "Spring Boot", "https://drive.google.com/file/d/1xWhI8B3t9vX1ya5nPelg4jnIXd8VeosO/view?usp=drive_link"],
+  ["sb4_2", "4. Annotations (Orig)", "Spring Boot", "https://drive.google.com/file/d/1YrkztBBsuf7vq--0npU_KG931RlCEjLx/view?usp=drive_link"],
+  ["sb5", "5. Bean Lifecycle (HW)", "Spring Boot", "https://drive.google.com/file/d/1Gf55XqAlBIrpHsm-rbbSDdQJobkipUEX/view?usp=drive_link"],
+  ["sb5_2", "5. Bean Lifecycle (Orig)", "Spring Boot", "https://drive.google.com/file/d/1wsbMfoGdqbyNT725zZqhxLT5PSQJBcPc/view?usp=drive_link"],
+  ["sb6", "6. Dependency Injection (HW)", "Spring Boot", "https://drive.google.com/file/d/1e-kG19FdiHG4t2r2eBwWq6Rp0_vEbYwF/view?usp=drive_link"],
+  ["sb6_2", "6. Dependency Injection (Orig)", "Spring Boot", "https://drive.google.com/file/d/1X04R94t_JHLABFC58MKL7rgh5XuFSSrK/view?usp=drive_link"],
+  ["sb7", "7. Bean Scope", "Spring Boot", "https://drive.google.com/file/d/1NdatPKCp-_oj2SWu-wjlEqsuH6FN4OjB/view?usp=drive_link"],
+  ["sb8", "8. Dynamic Init Beans", "Spring Boot", "https://drive.google.com/file/d/1I0mxDg8TNkfYasiCcDqSY8pev5gXKliN/view?usp=drive_link"],
+  ["sb9", "9. ConditionalOnProperty", "Spring Boot", "https://drive.google.com/file/d/1WCnayljjpiTAxy_nB9y3qHt5lEFIM3wr/view?usp=drive_link"],
+  ["sb10", "10. Profile", "Spring Boot", "https://drive.google.com/file/d/1Y1FF8szVjoqEW8-GhpBThvxuYhhf4aLk/view?usp=drive_link"],
+  ["sb11", "11. AOP", "Spring Boot", "https://drive.google.com/file/d/1z7Owlrq2kB9m19DXHu563yBe1_XjN2CB/view?usp=drive_link"],
+  ["sb12", "12. Transactional (Part1)", "Spring Boot", "https://drive.google.com/file/d/194qNz7zM-QKN07mGjePwPNBiezXipQKx/view?usp=drive_link"],
+  ["sb13", "13. Transactional (Part2)", "Spring Boot", "https://drive.google.com/file/d/1cpN5lZTg9fV_k006IHRi0WoHUG48yzOR/view?usp=drive_link"],
+  ["sb14", "14. Transactional (Part3)", "Spring Boot", "https://drive.google.com/file/d/1Ui4YIUhaFRuHyq600JfqDD1R5O4ZnjTq/view?usp=drive_link"],
+  ["sb15", "15. Async Annotation (P1)", "Spring Boot", "https://drive.google.com/file/d/1gw3frdhMRJY47k9kji7sMellmtu4hfSQ/view?usp=drive_link"],
+  ["sb16", "16. Async Annotation (P2)", "Spring Boot", "https://drive.google.com/file/d/1fRT6PzpZcW2m2ZxvkLB-dAIGAh7QFIFX/view?usp=drive_link"],
+  ["sb17", "17. Custom Interceptors", "Spring Boot", "https://drive.google.com/file/d/1vrrz89rlN3Zdkndwi2WyWQ2rwkax0yFi/view?usp=drive_link"],
+  ["sb18", "18. Filters vs Interceptors", "Spring Boot", "https://drive.google.com/file/d/1mFhfPQ5NH7kl4hghdw02B-cGe4Eyzosa/view?usp=drive_link"],
+  ["sb19", "19. HATEOS", "Spring Boot", "https://drive.google.com/file/d/1Q2hAaaO3n-xKk6zR2VMf_ob_VGwHB24V/view?usp=drive_link"],
+  ["sb20", "20. Response Entity & Codes", "Spring Boot", "https://drive.google.com/file/d/14R3BOVfHs2rP9wyPKVAk9WcEaksVZnI5/view?usp=drive_link"],
+  ["sb21", "21. Exception Handling (HW)", "Spring Boot", "https://drive.google.com/file/d/1JgtoXbqSdqMYvNbAh-ygaMs0h6m5TRPl/view?usp=drive_link"],
+  ["sb21_2", "21. Exception Handling (Orig)", "Spring Boot", "https://drive.google.com/file/d/1TczdAMC2Lcj8ZP6ecS9ruLneEAuIzf-v/view?usp=drive_link"],
+  ["sb22", "22. JPA (Part1)", "Spring Boot", "https://drive.google.com/file/d/19wKUSN1C1pLDMxDLPiP7NR3NQMmylmFP/view?usp=drive_link"],
+  ["sb23", "23. JPA Setup and Arch", "Spring Boot", "https://drive.google.com/file/d/1BlVZJak3YDyYQ63pvhaF5C4LqRoZDCQM/view?usp=drive_link"],
+  ["sb24", "24. JPA L1 Caching", "Spring Boot", "https://drive.google.com/file/d/1u-sdAh3GYkuLtwIzcNAVFfudqxUhZrTB/view?usp=drive_link"],
+  ["sb25", "25. JPA L2 Caching", "Spring Boot", "https://drive.google.com/file/d/1rAoppmeNzzrrBnrvgq2mjlgke_gjCXQk/view?usp=drive_link"],
+  ["sb26", "26. JPA DTO to Table", "Spring Boot", "https://drive.google.com/file/d/1JHs1Q3oLwfcVogOFiAbWdJzQauGCcCpY/view?usp=drive_link"],
+  ["sb27", "27. JPA One to One", "Spring Boot", "https://drive.google.com/file/d/1Vss45B7tJUKZCOGjirGR_gld56QYO6eL/view?usp=drive_link"],
+  ["sb28", "28. JPA One to Many", "Spring Boot", "https://drive.google.com/file/d/1CkoG2O9NsYu33qYaspn5k4bFlP2rt8LM/view?usp=drive_link"],
+  ["sb29", "29. JPA Derived and JPQL", "Spring Boot", "https://drive.google.com/file/d/1_WfPVCjo2xmaw0ZKhdzEKMfWM9eKdQ30/view?usp=drive_link"],
+  ["sb30", "30. JPA Native & Criteria", "Spring Boot", "https://drive.google.com/file/d/1mijhERCBLoUFFHfz_ZS1-o2t1EU7qCIo/view?usp=drive_link"],
+  ["sb32", "32. Attacks", "Spring Boot", "https://drive.google.com/file/d/1JINOQHR7j2B-R_9IaduT6wDn1MLpKfTX/view?usp=drive_link"],
+  ["sb33", "33. Sec P1 Setup", "Spring Boot", "https://drive.google.com/file/d/1mBC4cBF9CIoEhBEPJMQuNkymocGcvyJ6/view?usp=drive_link"],
+  ["sb34", "34. Sec P2 Multiple User", "Spring Boot", "https://drive.google.com/file/d/1HKMoc-gPt8Sv05ePDcJmRg_XXA2_h1Ua/view?usp=drive_link"],
+  ["sb36", "36. Sec P4 Basic Auth", "Spring Boot", "https://drive.google.com/file/d/17oyaGwIItZpsRyQsDjXwHr1WUuFcVUAe/view?usp=drive_link"],
+  ["sb37", "37. Sec P5-6 JWT", "Spring Boot", "https://drive.google.com/file/d/1Rbi5j7aA0JEt_ctzQLwQCUXFxQ0Y04vZ/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/interviewcodingpractise/-/tree/main/src/main/java/com/conceptandcoding/learningspringboot/JWT"],
+  ["sb39", "39. Sec P7-8 OAuth", "Spring Boot", "https://drive.google.com/file/d/1KyVQvaGbSFeMAl9cVgY27Zwgy68UevSn/view?usp=drive_link", "", "https://gitlab.com/shrayansh8/interviewcodingpractise/-/tree/main/src/main/java/com/conceptandcoding/learningspringboot/OAuth"],
+  ["sb41", "41. Sec P9 Method Security", "Spring Boot", "https://drive.google.com/file/d/1ip1EDOlGBGJWtD1wGHro1P7OLbnhXIPR/view?usp=drive_link"],
+  ["sb42", "42. Actuator", "Spring Boot", "https://drive.google.com/file/d/1cwQnr2E24hQlt9x-3yo5QiNb9wmk3Ldy/view?usp=drive_link"],
+  ["sb43", "43. ConfigurationProperties", "Spring Boot", "https://drive.google.com/file/d/1b1u8atXsHyP_cNWyPFV7BP5G8ApI3VPs/view?usp=drive_link"],
+
+  // Java (40 topics)
+  ["ja1", "1. OOPs Concept", "Java", "https://drive.google.com/file/d/1eg_I2kdII2_KPtzGifky-YEvFcgaCX4H/view?usp=drive_link"],
+  ["ja2", "2. How Java program works", "Java", "https://drive.google.com/file/d/1orNECv5ucicgyhcC58tsQ10lTqj0Xc0K/view?usp=drive_link"],
+  ["ja4", "4. Primitive data types", "Java", "https://drive.google.com/file/d/1vWVJ9nAIbih0vier0XD-jFaUCujWuYnU/view?usp=drive_link"],
+  ["ja6", "6. Reference and Non Primitive", "Java", "https://drive.google.com/file/d/1y23GVqAKPxQ72ZAP1_uOsJW2XfnBDhX5/view?usp=drive_link"],
+  ["ja7", "7. Methods", "Java", "https://drive.google.com/file/d/1KEMCFaA5phnL1qneiWPPsSeDGoRqFyWK/view?usp=drive_link"],
+  ["ja9", "9. Memory Management and GC", "Java", "https://drive.google.com/file/d/1VLbaVl69r9FlKw2q_nI4qS6mlGx1t9Js/view?usp=drive_link"],
+  ["ja10", "10. Classes & Generics", "Java", "https://drive.google.com/file/d/1eE5Pculcp0qem6tMPHDz9h-jhMclzGIt/view?usp=drive_link"],
+  ["ja12", "12. Enum, POJO, Singleton", "Java", "https://drive.google.com/file/d/1MplD0GcXSgk1qCGQ7NFx4tWh8LDP_HtK/view?usp=drive_link"],
+  ["ja14", "14. Interfaces", "Java", "https://drive.google.com/file/d/17tRa9KAj2RrAUbhAT_N8fBOT5BzU_PKb/view?usp=drive_link"],
+  ["ja16", "16. Functional Interface & Lambda", "Java", "https://drive.google.com/file/d/10-_r4_MUxosOGzjhw7Snv4NrGhOpoy5s/view?usp=drive_link"],
+  ["ja17", "17. Java Reflection", "Java", "https://drive.google.com/file/d/1cxxPVU7NrOr_TChkIXE1C7khli31UlIf/view?usp=drive_link"],
+  ["ja18", "18. Annotations", "Java", "https://drive.google.com/file/d/1zlZFUnNwuksAUJKwRXiIHkx2_8YrDWgb/view?usp=drive_link"],
+  ["ja19", "19. Exception Handling", "Java", "https://drive.google.com/file/d/1-J8ppiadzHsgBEJuFOCEVFsOFA5GbeGL/view?usp=drive_link"],
+  ["ja20", "20. Operators", "Java", "https://drive.google.com/file/d/1lAMOdu4_4R4uiwE_h0dTaxMmrHwvLfhl/view?usp=drive_link"],
+  ["ja21", "21. Control Flow Statements", "Java", "https://drive.google.com/file/d/1C8YexhwkW_Z11g4mqbqhNoQROFvK3pqm/view?usp=drive_link"],
+  ["ja22", "22-24. Collections (Part-1 to 3)", "Java", "https://drive.google.com/file/d/1gMXDCjmbNrPC_igkTFBoOSfZzUOvCuXy/view?usp=drive_link"],
+  ["ja25", "25-27. Collections (Part-4 to 6)", "Java", "https://drive.google.com/file/d/1gzU1W6i_KW8RLy4vVCFqQX5Wac_3tx3j/view?usp=drive_link"],
+  ["ja28", "28. Collections Streams", "Java", "https://drive.google.com/file/d/1A2BAJ2o8sMQlizTOgIBe-kLRmgNPI614/view?usp=drive_link"],
+  ["ja29", "29. Multithreading (Part-1) Process vs Threads", "Java", "https://drive.google.com/file/d/15GLro4BgRTIFFyMAarBuqO5K_R9C1_ie/view?usp=drive_link"],
+  ["ja30", "30. Multithreading (Part-2) Thread Creation", "Java", "https://drive.google.com/file/d/1IA_6vfEvBopFBEH5ubOMPEC1I632KaMM/view?usp=drive_link"],
+  ["ja31", "31. Multithreading (Part-3) Thread Joining", "Java", "", "https://notebook.zohopublic.in/public/notes/74tdob1b1f9bf584f44228974656f4d93519d"],
+  ["ja32", "32. Multithreading (Part-4) Locks", "Java", "https://drive.google.com/file/d/1LOjJ_lMzOhF2ebY6aiXf2i5voqSM_0sv/view?usp=drive_link"],
+  ["ja33", "33. Multithreading (Part-5) Lock Free", "Java", "https://drive.google.com/file/d/1Zx662N0AwNu2gha5QDn8Ga4D_sxPjxn0/view?usp=drive_link"],
+  ["ja34", "34. Multithreading (Part-6) ThreadPools", "Java", "https://drive.google.com/file/d/1KYoFTnEGJl2dmkIYNdYd4YHoHolWEK-d/view?usp=drive_link"],
+  ["ja35", "35. Multithreading (Part-7) CompletableFuture", "Java", "https://drive.google.com/file/d/16AgWyZ0WwisQUHw4eGwOsOQDOgbO2DO5/view?usp=drive_link"],
+  ["ja36", "36. Multithreading (Part-8) Fork-Join Pool", "Java", "https://drive.google.com/file/d/1KKf8vPtl6sOi085sRr-QpQd-WGNnE4VI/view"],
+  ["ja37", "37. Multithreading (Part-9) Scheduled ThreadPool", "Java", "https://drive.google.com/file/d/1vZZU-zUBxp603rRsZOmxottQYsA-W443/view?usp=drive_link"],
+  ["ja38", "38. Virtual thread vs Normal Thread", "Java", "https://drive.google.com/file/d/1hw87Y-up_1wvZL4lRLgv4T2b3k5K8zhZ/view?usp=drive_link"],
+  ["ja39", "39. Project Lombok", "Java", "https://drive.google.com/file/d/1griShscTmjIpPz1gO1fO-MmvnPPWXtCI/view?usp=drive_link"],
+  ["ja40", "40. Sequenced Collection (Java 21)", "Java", "https://drive.google.com/file/d/1SpDB_VClW_XGCIDH_BfZmKwYkXUDL7yI/view?usp=drive_link"],
+  ["ja41", "41. Sealed Classes and Interfaces (Java 17)", "Java", "https://drive.google.com/file/d/1Vay3BP3eOD--1uECyvE3OGKEAdEvAFQF/view?usp=drive_link"],
+  ["ja42", "42. Switch Expression (Java 14)", "Java", "https://drive.google.com/file/d/17jEt2f60PahuVWqU-kipke-itwJCrcA0/view?usp=drive_link"],
+  ["ja43", "43. Pattern Matching InstanceOf (Java 16)", "Java", "", "https://1drv.ms/o/c/6b364628c29feb52/IgBJQS9wVkkaRI78ISwP-lLlAfGEeBDYaF6j_APJuTQmUmQ"],
+  ["ja44", "44. Pattern Matching Switch (Java 21)", "Java", "", "https://1drv.ms/o/c/6b364628c29feb52/IgBJQS9wVkkaRI78ISwP-lLlAfGEeBDYaF6j_APJuTQmUmQ"],
+  ["ja45", "45. Record Class (Java 16)", "Java", "", "https://1drv.ms/o/c/6b364628c29feb52/IgBJQS9wVkkaRI78ISwP-lLlAfGEeBDYaF6j_APJuTQmUmQ"],
+  ["ja46", "46. Text Blocks (Java 15)", "Java", "https://drive.google.com/file/d/1DkRnpbBtgQQiFCuhWtjteWFWcEBGYS-9/view?usp=drive_link"],
+  ["ja47", "47. Optionals (Java 8-11)", "Java", "https://drive.google.com/file/d/14g1osv4HfhVIZ2rSlHeOW6F3tVkjqGZq/view?usp=drive_link"],
+  ["ja48", "48. Traditional File Handling", "Java", "https://drive.google.com/file/d/1wJ38eciZvOcftxCabNVBA-DefsaZbd8h/view?usp=drive_link"],
+  ["ja49", "49. NIO (Part1)", "Java", "https://drive.google.com/file/d/1kmCPgztBpKGmA1aw0VZXlg7T3_M_GBk7/view?usp=drive_link"],
+  ["ja50", "50-51. NIO (Part2-3)", "Java", "https://drive.google.com/file/d/14Yf5NS5tR7dkBGwPOc3rPAAzURWV4i7k/view?usp=drive_link"],
+
+  // High Level Design (28 topics)
+  ["hld1", "1. Network protocols", "HLD", "https://drive.google.com/file/d/1iegvlzgcLJtcGvbjJbPqF4hZaB5u_nrh/view?usp=drive_link"],
+  ["hld2", "2. CAP Theorem", "HLD", "https://drive.google.com/file/d/1rEs7p_Hrgdu57xakTyxgO1k3Zyp3zu-C/view?usp=drive_link"],
+  ["hld3", "3. Microservices Pattern", "HLD", "https://drive.google.com/file/d/1d8R5wkQo9gnCcB_e2DFKCn-TgxWoJMsd/view?usp=drive_link"],
+  ["hld5", "5. Scale from 0 to Million", "HLD", "https://drive.google.com/file/d/16FIwh_zZ2nowjFh_vzeUq7nAwoaQct6f/view?usp=drive_link"],
+  ["hld6", "6. Consistent Hashing", "HLD", "https://drive.google.com/file/d/1dMSY_fHaKwADw_zeQJfoWQUiHwgwDL6H/view?usp=drive_link"],
+  ["hld7", "7. URL Shortening", "HLD", "https://drive.google.com/file/d/1iegvlzgcLJtcGvbjJbPqF4hZaB5u_nrh/view?usp=drive_link"],
+  ["hld8", "8. Back of the envelope", "HLD", "https://drive.google.com/file/d/1AH37a-iSXNquC01PUIi14yDO8jscnaA6/view?usp=drive_link"],
+  ["hld10", "10. SQL vs NOSQL", "HLD", "https://drive.google.com/file/d/1CuxKzs00W6meH_6PdF2la8xBkXnyvhcO/view?usp=drive_link"],
+  ["hld12", "12. Rate Limiter", "HLD", "https://drive.google.com/file/d/1EwfhhSiBNJw87tqvoaseW5ZKUKB-YJDx/view?usp=drive_link"],
+  ["hld14", "14. Idempotent POST API", "HLD", "https://drive.google.com/file/d/1pzl_Pr0iUD3jyRUtS58Sq9DyCsrr2dmE/view?usp=drive_link"],
+  ["hld15", "15. High Availability System", "HLD", "https://drive.google.com/file/d/1k7OUopYnC2fpEHDLw-zbFDdyNvoba4mo/view?usp=drive_link"],
+  ["hld16", "16. Distributed Messaging Queue", "HLD", "https://drive.google.com/file/d/1kfnXbRlobCeK-U9kT56nyXI-4VY9EBAo/view?usp=drive_link"],
+  ["hld17", "17. Proxy vs Reverse Proxy", "HLD", "https://drive.google.com/file/d/18wyJRj2g11NE1Ll1c6GJSiqnhwSao01U/view?usp=drive_link"],
+  ["hld18", "18. Load Balancer", "HLD", "https://drive.google.com/file/d/1dAg77qQ1t9mlHXc1VvO-dZXvaGWnvmaZ/view?usp=drive_link"],
+  ["hld19", "19. Distributed Cache", "HLD", "https://drive.google.com/file/d/1C7f5kvsWQ45ECA3sR0jgpym1cy96CgR0/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/u3i1s6d12db6764b94cff9ad7f4ddef5b5348"],
+  ["hld20", "20. Distributed Transactions", "HLD", "https://drive.google.com/file/d/1kPHF4MMoqc2xFXNXaXHfqqrEDdeU0kLO/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/u3i1sc0949c83b482441887cc4eba8031560e"],
+  ["hld21", "21. Database Indexing", "HLD", "", "https://notebook.zohopublic.in/public/notes/74tdo7871dd86eb99414bb94d8737a8b73b84"],
+  ["hld22", "22. Concurrency Control", "HLD", "", "https://notebook.zohopublic.in/public/notes/u3i1s8441ef17edee467bb020cc6974b3d7f9"],
+  ["hld23", "23. Two Phase Locking (2PL)", "HLD", "", "https://notebook.zohopublic.in/public/notes/74tdoc7e4be4e091e4005916a9721b69ee7b3"],
+  ["hld24", "24. OAuth 2.0", "HLD", "https://drive.google.com/file/d/1DTuw_AyH2ByBV8tldT4kha87MXLplXdi/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/bietv949cfd82a5804e0ea1d18400d3ff6fa3"],
+  ["hld25", "25. Symmetric & Asymmetric Encryption", "HLD", "https://drive.google.com/file/d/13oOxr-aZu0K3u7FqBS1ONOCNENjoWERm/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/bietvf603d76e50a04c989bb3522c763be0ee"],
+  ["hld26", "26. JWT Explained", "HLD", "https://drive.google.com/file/d/1jURIUs6grcQBkXl_mnx3nvZDlpHAqof8/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/bietvcd2cffdd8c7d449c839c007fecf8d562"],
+  ["hld27", "27. Thundering Herd", "HLD", "https://drive.google.com/file/d/1s_rhkuSserKURoOTwolrnMGifGHd9oKI/view?usp=drive_link"],
+  ["hld28", "28. API Gateway", "HLD", "https://drive.google.com/file/d/1eQxotRxC4q1c12uXn7IY4oLcuZgt-iBx/view?usp=drive_link", "https://notebook.zohopublic.in/public/notes/9wn9of886c95da92e4778b0d3bc23cb0b8106"],
+  ["hld29", "29. Service Mesh", "HLD", "", "https://notebook.zohopublic.in/public/notes/9wn9od9ab6075a35b4258aadedbf53aca805e"],
+  ["hld30", "30. DNS", "HLD", "", "https://notebook.zohopublic.in/public/notes/9wn9oa7b313dd344b426288e0efca9f0eeaa6"],
+  ["hld32", "32. Common Attacks", "HLD", "https://drive.google.com/file/d/1JINOQHR7j2B-R_9IaduT6wDn1MLpKfTX/view?usp=drive_link"],
+  ["hld33", "33. Dual Write Problem", "HLD", "https://drive.google.com/file/d/14wwKmtzMEgvctlQhiSrLU0gw9fhmMAGn/view?usp=drive_link", "https://1drv.ms/o/c/6b364628c29feb52/EpHzxZpvUj9ChPoZKABB6hYB3ThLz9J66-3csHIWs_G_ZA"],
+
+  // Cloud & Git & AI (3 topics)
+  ["git1", "Git Mastery", "Git", "", "https://1drv.ms/o/c/6b364628c29feb52/IgAWrCnRaWVtQb6EbImjKGFgASYq1bJoMk6FeFSK1wHghrE"],
+  ["aws1", "AWS Mastery", "AWS", "", "https://1drv.ms/o/c/6b364628c29feb52/IgCVN6T3mbBTQpEUAmQcYyMyAeBs_agRfbtryD62GQ8aU44"],
+  ["ai1", "Spring AI Integration", "Spring AI", "", "https://1drv.ms/o/c/6b364628c29feb52/EqpkRzx2MaFKrsXvLK9sIswBV5x6gO5e01ccFr1IAwJtEw", "https://gitlab.com/shrayansh8/spring-ai/-/tree/main/src/main/java/com/conceptandcoding"]
+];
+
+const ROADMAP_ORDER = ['Java', 'Spring Boot', 'JUnit5 & Mockito', 'Microservices', 'Event Driven Architecture', 'LLD', 'HLD', 'Git', 'AWS', 'Spring AI'];
+
+const CATEGORY_META = {
+  'Java': { icon: '☕', color: '#ef4444', blurb: 'Language fundamentals, JVM internals, concurrency, collections, modern Java 8-21' },
+  'Spring Boot': { icon: '🍃', color: '#22c55e', blurb: 'DI, AOP, Bean lifecycle, JPA, security, filter chains, actuator' },
+  'JUnit5 & Mockito': { icon: '🧪', color: '#14b8a6', blurb: 'Test lifecycle, parametrized tests, dynamic testing, extensions, mockito stubbing/verifying' },
+  'Microservices': { icon: '🧩', color: '#6366f1', blurb: 'Resilience patterns, gateways, service discovery, centralized config, tracing, schedulers' },
+  'Event Driven Architecture': { icon: '⚡', color: '#ec4899', blurb: 'Kafka cluster architecture, producer internals, consumer groups, idempotency, transactions' },
+  'LLD': { icon: '🏗️', color: '#a855f7', blurb: 'SOLID principles, Gang of Four design patterns, realistic machine coding problems' },
+  'HLD': { icon: '🌐', color: '#3b82f6', blurb: 'Distributed systems, consistency models, caching, load balancing, high availability' },
+  'Git': { icon: '🌿', color: '#f97316', blurb: 'Version control mastery, branching strategies, internal object graph' },
+  'AWS': { icon: '☁️', color: '#eab308', blurb: 'Cloud fundamentals, IAM, S3, EC2, Lambda, DynamoDB, architecture' },
+  'Spring AI': { icon: '🤖', color: '#06b6d4', blurb: 'LLM integrations, prompt engineering, embeddings, vector stores, RAG in Spring' }
+};
+
+const catMeta = c => CATEGORY_META[c] || { icon: '📚', color: '#94a3b8', blurb: '' };
+
+const CONF_LABELS = ['', 'Not Started', 'Basic', 'Comfortable', 'Interview Ready', 'Expert'];
+const CONF_EMOJI = ['', '🌱', '📘', '🙂', '💼', '🏆'];
+const SRS_DAYS = { 1: 1, 2: 3, 3: 7, 4: 14, 5: 30 };
+const DAY_MS = 864e5;
+
+const NUM_RE = /^(\d+(?:\s*[-–]\s*\d+)?)\.\s+(.*)$/;
+const TOPICS = rawLinks.map((row, idx) => {
+  const defs = catDefaults[row[2]] || {};
+  const m = NUM_RE.exec(row[1]);
+  return {
+    id: row[0],
+    order: idx,
+    title: row[1],
+    num: m ? m[1].replace(/\s+/g, '') : '',
+    name: m ? m[2] : row[1],
+    category: row[2],
+    pdfLink: row[3] || '',
+    oneNoteLink: row[4] || defs.note || '',
+    gitLink: row[5] || defs.git || '',
+    difficulty: row[2] === 'HLD' || row[2] === 'LLD' ? 'Advanced' : 'Intermediate',
+    duration: '2h'
+  };
+});
+
+const CATEGORIES = (() => {
+  const seen = new Set(TOPICS.map(t => t.category));
+  const out = ROADMAP_ORDER.filter(c => seen.has(c));
+  seen.forEach(c => { if (!out.includes(c)) out.push(c); });
+  return out;
+})();
