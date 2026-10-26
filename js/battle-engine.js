@@ -69,14 +69,31 @@ const Battle = {
     return roomId;
   },
 
+  parseCode(raw) {
+    if (!raw) return '';
+    let str = String(raw).trim();
+    const urlMatch = /[?&]room=([a-zA-Z0-9_-]+)/.exec(str);
+    if (urlMatch && urlMatch[1]) str = urlMatch[1];
+    str = str.replace(/^https?:\/\/[^\/]+/i, '').replace(/^[#/]+/, '');
+    if (!str.toLowerCase().startsWith('devpath-') && /^[a-zA-Z0-9]{4,12}$/.test(str)) {
+      str = 'devpath-' + str;
+    }
+    return str.toLowerCase();
+  },
+
+  shortCode() {
+    return (this.room || '').replace(/^devpath-/, '').toUpperCase();
+  },
+
   joinRoom(roomId) {
+    const cleanId = this.parseCode(roomId);
     this.init();
     this.isHost = false;
     this.isBot = false;
-    this.room = roomId;
+    this.room = cleanId;
     this.s.phase = 'lobby';
     this.s.local.ready = false;
-    this.setupPeer(null, roomId);
+    this.setupPeer(null, cleanId);
   },
 
   startVsBot(topicId = 'ja1') {
@@ -93,16 +110,30 @@ const Battle = {
 
   setupPeer(customId, connectToId = null) {
     if (typeof Peer === 'undefined') {
-      console.warn('PeerJS library not detected. Running in peer simulation mode.');
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('PeerJS library not detected. Running in peer simulation mode.');
+      }
       return;
     }
 
     try {
-      if (this.peer) this.peer.destroy();
+      if (this.conn) {
+        try { this.conn.close(); } catch(e) {}
+        this.conn = null;
+      }
+      if (this.peer) {
+        try { this.peer.destroy(); } catch(e) {}
+        this.peer = null;
+      }
+
       this.peer = customId ? new Peer(customId) : new Peer();
 
       this.peer.on('open', id => {
-        if (!this.isHost) this.room = id;
+        if (this.isHost) {
+          this.room = id;
+        } else if (connectToId) {
+          this.room = connectToId;
+        }
         if (connectToId) {
           const c = this.peer.connect(connectToId, { reliable: true });
           this.setupConn(c);
@@ -115,11 +146,12 @@ const Battle = {
       });
 
       this.peer.on('error', err => {
-        console.error('PeerJS error:', err);
-        toast('Connection negotiation error: ' + err.type, { title: 'P2P Network Warning', icon: '⚠️', kind: 'bad' });
+        if (typeof console !== 'undefined' && console.error) console.error('PeerJS error:', err);
+        const msg = err.type === 'peer-unavailable' ? 'Room not found. Check the code and try again.' : ('P2P Network Warning: ' + err.type);
+        toast(msg, { title: '1v1 Arena Network', icon: '⚠️', kind: 'bad' });
       });
     } catch (e) {
-      console.error('WebRTC initialization failed:', e);
+      if (typeof console !== 'undefined' && console.error) console.error('WebRTC initialization failed:', e);
     }
   },
 
@@ -442,6 +474,10 @@ const Battle = {
     if (this.conn) {
       try { this.conn.close(); } catch(e){}
       this.conn = null;
+    }
+    if (this.peer) {
+      try { this.peer.destroy(); } catch(e){}
+      this.peer = null;
     }
     this.s.phase = 'idle';
   }

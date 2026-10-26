@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: calc(14px + env(safe-area-inset-top)) clamp(14px, 4vw, 24px) 24px;
+  padding: calc(14px + env(safe-area-inset-top)) clamp(14px, 4vw, 24px) calc(28px + env(safe-area-inset-bottom));
 }
 
 /* ----- Lobby & Room Setup ----- */
@@ -308,6 +308,96 @@
   letter-spacing: 0.08em;
 }
 
+/* ----- Room Code & Sync Elements ----- */
+.room-sync-panel {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.room-code-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rc-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.rc-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rc-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #fbbf24;
+  background: var(--surface-solid);
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1.5px dashed rgba(251, 191, 36, 0.45);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.join-box {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.join-box > span {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.join-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.join-row input,
+#joinModalCodeInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 16px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.room-connected-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: var(--success);
+}
+
 @media (max-width: 640px) {
   .lobby-players {
     grid-template-columns: 1fr;
@@ -316,10 +406,70 @@
   .versus-badge {
     margin: 4px 0;
   }
+  .battle-hud {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .hud-player {
+    gap: 6px;
+    min-width: 0;
+  }
+  .hud-info {
+    min-width: 0;
+  }
+  .hud-info b {
+    font-size: 0.82rem;
+    max-width: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .player-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
+    flex: none;
+  }
+  .hud-score {
+    font-size: 1.1rem;
+  }
+  .battle-timer {
+    min-width: 44px;
+    padding: 4px 6px;
+    font-size: 1rem;
+  }
   .hud-prog-bar {
-    width: 65px;
+    width: 48px;
+    height: 4px;
   }
   .duel-stats-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .rc-display {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rc-display button {
+    width: 100%;
+    justify-content: center;
+  }
+  .join-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .join-row button {
+    width: 100%;
+    justify-content: center;
+  }
+  .invite-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .invite-box button {
+    width: 100%;
+    justify-content: center;
   }
 }

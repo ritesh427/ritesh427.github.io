@@ -10,6 +10,7 @@ function btlLobby(s) {
   const m = catMeta(t.category);
   const inviteUrl = window.location.origin + window.location.pathname + '#/battle?room=' + (Battle.room || '');
   const topicOptions = store.topics.filter(tp => QB.has(tp.id)).map(tp => `<option value="${tp.id}"${tp.id === s.topicId ? ' selected' : ''}>${catMeta(tp.category).icon} ${esc(tp.name)}</option>`).join('');
+  const code = Battle.shortCode();
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
     <div class="qz-top">
@@ -42,13 +43,35 @@ function btlLobby(s) {
         </div>
       </div>
 
-      ${Battle.isHost && !Battle.isBot ? `<div class="field">
-        <span>Invite Challenger via Direct Link</span>
-        <div class="invite-box">
-          <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
-          <button class="btn sm primary" data-action="battle-copy">${icon('download', 14)} Copy Link</button>
+      ${Battle.isHost && !Battle.isBot ? `<div class="room-sync-panel">
+        <div class="room-code-badge">
+          <span class="rc-label">ROOM SYNC CODE</span>
+          <div class="rc-display">
+            <span class="rc-code">${esc(code)}</span>
+            <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
+            <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+          </div>
         </div>
-        <small class="muted">Send this link to a friend. No server required: connects peer-to-peer via WebRTC.</small>
+        <div class="invite-box" style="margin-top:6px;">
+          <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
+        </div>
+        <small class="muted">Your friend can enter the 6-character code above or open the direct link on any phone or desktop.</small>
+
+        <div class="join-box" style="margin-top:10px;">
+          <span>Joining a friend's room instead?</span>
+          <div class="join-row">
+            <input type="text" id="lobbyJoinCodeInput" placeholder="Enter friend's code (e.g. 9X7K2B) or link" autocomplete="off" spellcheck="false">
+            <button class="btn" data-action="battle-join-from-lobby">Join Room</button>
+          </div>
+        </div>
+      </div>` : ''}
+
+      ${!Battle.isHost && !Battle.isBot ? `<div class="room-connected-banner">
+        <div>
+          <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;display:block;">CONNECTED TO ROOM</span>
+          <b style="font-size:1.15rem;letter-spacing:0.08em;">${esc(code)}</b>
+        </div>
+        <button class="btn sm ghost" data-action="battle-switch-room">Leave / Switch Room</button>
       </div>` : ''}
 
       ${Battle.isHost ? `<div class="set-grid">
@@ -186,29 +209,31 @@ function btlPodium(s) {
       <div class="section-head" style="margin-top:20px;text-align:left;">
         <h3>Question Breakdown</h3>
       </div>
-      <table class="duel-breakdown-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Question</th>
-            <th>Your Outcome</th>
-            <th>Opponent</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${s.qs.map((q, idx) => {
-            const locAns = s.local.answers[idx];
-            const locOk = locAns && locAns.isCorrect;
-            const remOk = s.remote.answers[idx];
-            return `<tr>
-              <td><b>${idx + 1}</b></td>
-              <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
-              <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
-              <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;">
+        <table class="duel-breakdown-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Your Outcome</th>
+              <th>Opponent</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${s.qs.map((q, idx) => {
+              const locAns = s.local.answers[idx];
+              const locOk = locAns && locAns.isCorrect;
+              const remOk = s.remote.answers[idx];
+              return `<tr>
+                <td><b>${idx + 1}</b></td>
+                <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
+                <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
+                <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>`;
 }
@@ -246,12 +271,67 @@ Battle.onTimer = () => {
   }
 };
 
+function openJoinBattleModal() {
+  if (typeof openModal !== 'function') return;
+  openModal(`
+    <button class="icon-btn modal-close" data-action="close-modal" aria-label="Close">${icon('x', 20)}</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <div class="lobby-ico" style="width:44px;height:44px;font-size:1.3rem;">⚔️</div>
+      <div>
+        <h2 style="margin:0;">Join 1v1 Battle Arena</h2>
+        <p class="muted small" style="margin:0;">Enter room code or paste challenger's invite link</p>
+      </div>
+    </div>
+    <div class="field" style="margin:16px 0;">
+      <span>Room Sync Code or Invite Link</span>
+      <input type="text" id="joinModalCodeInput" placeholder="e.g. 9X7K2B or paste link" autocomplete="off" spellcheck="false" autofocus>
+      <small class="muted">Enter the 6-character room code shared by the host to connect.</small>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-action="close-modal">Cancel</button>
+      <button class="btn primary" data-action="battle-join-submit">${icon('swords', 15)} Connect to Arena</button>
+    </div>
+  `, 'sm');
+}
+
 /* ----- Action Handlers for Battle ----- */
 const BattleActions = {
   'battle-open': (t, n) => {
     closePanel();
     const topicId = (n && n.dataset && n.dataset.id) || 'ja1';
     Battle.createRoom(topicId);
+    renderBattle();
+  },
+  'battle-join-modal': () => {
+    closePanel();
+    openJoinBattleModal();
+  },
+  'battle-join-submit': () => {
+    const input = document.getElementById('joinModalCodeInput');
+    const raw = input ? input.value : '';
+    const clean = Battle.parseCode(raw);
+    if (!clean) {
+      return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
+    }
+    closeModal();
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    Battle.joinRoom(clean);
+    renderBattle();
+  },
+  'battle-join-from-lobby': () => {
+    const input = document.getElementById('lobbyJoinCodeInput');
+    const raw = input ? input.value : '';
+    const clean = Battle.parseCode(raw);
+    if (!clean) {
+      return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
+    }
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    Battle.joinRoom(clean);
+    renderBattle();
+  },
+  'battle-switch-room': () => {
+    Battle.exit();
+    Battle.createRoom('ja1');
     renderBattle();
   },
   'battle-bot': (t, n) => {
@@ -277,6 +357,13 @@ const BattleActions = {
     Battle.submitAnswer(+n.dataset.val);
     renderBattle();
   },
+  'battle-copy-code': () => {
+    const code = Battle.shortCode();
+    if (code) {
+      navigator.clipboard?.writeText(code);
+      toast(`Room Code ${code} copied to clipboard!`, { title: 'Room Code Copied 📋', icon: '📋' });
+    }
+  },
   'battle-copy': () => {
     const input = document.getElementById('inviteLinkInput');
     if (input) {
@@ -297,6 +384,18 @@ const BattleActions = {
     renderBattle();
   }
 };
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (e.target && e.target.id === 'lobbyJoinCodeInput') {
+      e.preventDefault();
+      BattleActions['battle-join-from-lobby']();
+    } else if (e.target && e.target.id === 'joinModalCodeInput') {
+      e.preventDefault();
+      BattleActions['battle-join-submit']();
+    }
+  }
+});
 
 document.addEventListener('change', e => {
   if (e.target.dataset.change === 'battle-topic') {

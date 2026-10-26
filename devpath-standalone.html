@@ -776,7 +776,7 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   display: flex;
   flex-direction: column;
   gap: 16px;
-  padding: calc(14px + env(safe-area-inset-top)) clamp(14px, 4vw, 24px) 24px;
+  padding: calc(14px + env(safe-area-inset-top)) clamp(14px, 4vw, 24px) calc(28px + env(safe-area-inset-bottom));
 }
 
 /* ----- Lobby & Room Setup ----- */
@@ -1074,6 +1074,96 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   letter-spacing: 0.08em;
 }
 
+/* ----- Room Code & Sync Elements ----- */
+.room-sync-panel {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+
+.room-code-badge {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rc-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.rc-display {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.rc-code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  color: #fbbf24;
+  background: var(--surface-solid);
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1.5px dashed rgba(251, 191, 36, 0.45);
+  text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.join-box {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+.join-box > span {
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.join-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.join-row input,
+#joinModalCodeInput {
+  flex: 1;
+  min-width: 0;
+  background: var(--surface-solid);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 10px;
+  font-size: 16px !important;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.room-connected-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(52, 211, 153, 0.1);
+  border: 1px solid rgba(52, 211, 153, 0.3);
+  color: var(--success);
+}
+
 @media (max-width: 640px) {
   .lobby-players {
     grid-template-columns: 1fr;
@@ -1082,11 +1172,71 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   .versus-badge {
     margin: 4px 0;
   }
+  .battle-hud {
+    padding: 8px 10px;
+    gap: 6px;
+  }
+  .hud-player {
+    gap: 6px;
+    min-width: 0;
+  }
+  .hud-info {
+    min-width: 0;
+  }
+  .hud-info b {
+    font-size: 0.82rem;
+    max-width: 64px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .player-avatar {
+    width: 36px;
+    height: 36px;
+    font-size: 1.15rem;
+    flex: none;
+  }
+  .hud-score {
+    font-size: 1.1rem;
+  }
+  .battle-timer {
+    min-width: 44px;
+    padding: 4px 6px;
+    font-size: 1rem;
+  }
   .hud-prog-bar {
-    width: 65px;
+    width: 48px;
+    height: 4px;
   }
   .duel-stats-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .rc-display {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .rc-display button {
+    width: 100%;
+    justify-content: center;
+  }
+  .join-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .join-row button {
+    width: 100%;
+    justify-content: center;
+  }
+  .invite-box {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .invite-box button {
+    width: 100%;
+    justify-content: center;
   }
 }
 
@@ -5408,7 +5558,10 @@ Views.tests = () => {
     </p>
     <div class="row-actions" style="margin-top:14px;">
       <button class="btn primary" data-action="battle-open">
-        ${icon('swords', 15)} Invite via Link (P2P)
+        ${icon('swords', 15)} Create Match (P2P)
+      </button>
+      <button class="btn" data-action="battle-join-modal">
+        ${icon('link', 15)} Enter Room Code
       </button>
       <button class="btn" data-action="battle-bot">
         🤖 Duel vs DevBot (AI)
@@ -5421,7 +5574,7 @@ Views.tests = () => {
     eyebrow: 'Assessment Command Hub',
     title: 'Knowledge Tests &amp; Exams',
     sub: `${g.passedTopicsCount} of ${topicsWithBank} testable topics completed with 80%+ score. ${g.totalAttempts} total attempts recorded.`,
-    actions: `<button class="btn primary" data-action="battle-open">${icon('swords', 15)} 1v1 Battle Duel</button><button class="btn" data-action="daily-challenge">${icon('target', 15)} Daily Challenge</button>`
+    actions: `<button class="btn primary" data-action="battle-open">${icon('swords', 15)} 1v1 Battle</button><button class="btn" data-action="battle-join-modal">${icon('link', 15)} Join Code</button><button class="btn" data-action="daily-challenge">${icon('target', 15)} Daily Challenge</button>`
   })}
 
   <section class="grid-2">
@@ -5917,14 +6070,31 @@ const Battle = {
     return roomId;
   },
 
+  parseCode(raw) {
+    if (!raw) return '';
+    let str = String(raw).trim();
+    const urlMatch = /[?&]room=([a-zA-Z0-9_-]+)/.exec(str);
+    if (urlMatch && urlMatch[1]) str = urlMatch[1];
+    str = str.replace(/^https?:\/\/[^\/]+/i, '').replace(/^[#/]+/, '');
+    if (!str.toLowerCase().startsWith('devpath-') && /^[a-zA-Z0-9]{4,12}$/.test(str)) {
+      str = 'devpath-' + str;
+    }
+    return str.toLowerCase();
+  },
+
+  shortCode() {
+    return (this.room || '').replace(/^devpath-/, '').toUpperCase();
+  },
+
   joinRoom(roomId) {
+    const cleanId = this.parseCode(roomId);
     this.init();
     this.isHost = false;
     this.isBot = false;
-    this.room = roomId;
+    this.room = cleanId;
     this.s.phase = 'lobby';
     this.s.local.ready = false;
-    this.setupPeer(null, roomId);
+    this.setupPeer(null, cleanId);
   },
 
   startVsBot(topicId = 'ja1') {
@@ -5941,16 +6111,30 @@ const Battle = {
 
   setupPeer(customId, connectToId = null) {
     if (typeof Peer === 'undefined') {
-      console.warn('PeerJS library not detected. Running in peer simulation mode.');
+      if (typeof console !== 'undefined' && console.warn) {
+        console.warn('PeerJS library not detected. Running in peer simulation mode.');
+      }
       return;
     }
 
     try {
-      if (this.peer) this.peer.destroy();
+      if (this.conn) {
+        try { this.conn.close(); } catch(e) {}
+        this.conn = null;
+      }
+      if (this.peer) {
+        try { this.peer.destroy(); } catch(e) {}
+        this.peer = null;
+      }
+
       this.peer = customId ? new Peer(customId) : new Peer();
 
       this.peer.on('open', id => {
-        if (!this.isHost) this.room = id;
+        if (this.isHost) {
+          this.room = id;
+        } else if (connectToId) {
+          this.room = connectToId;
+        }
         if (connectToId) {
           const c = this.peer.connect(connectToId, { reliable: true });
           this.setupConn(c);
@@ -5963,11 +6147,12 @@ const Battle = {
       });
 
       this.peer.on('error', err => {
-        console.error('PeerJS error:', err);
-        toast('Connection negotiation error: ' + err.type, { title: 'P2P Network Warning', icon: '⚠️', kind: 'bad' });
+        if (typeof console !== 'undefined' && console.error) console.error('PeerJS error:', err);
+        const msg = err.type === 'peer-unavailable' ? 'Room not found. Check the code and try again.' : ('P2P Network Warning: ' + err.type);
+        toast(msg, { title: '1v1 Arena Network', icon: '⚠️', kind: 'bad' });
       });
     } catch (e) {
-      console.error('WebRTC initialization failed:', e);
+      if (typeof console !== 'undefined' && console.error) console.error('WebRTC initialization failed:', e);
     }
   },
 
@@ -6291,6 +6476,10 @@ const Battle = {
       try { this.conn.close(); } catch(e){}
       this.conn = null;
     }
+    if (this.peer) {
+      try { this.peer.destroy(); } catch(e){}
+      this.peer = null;
+    }
     this.s.phase = 'idle';
   }
 };
@@ -6310,6 +6499,7 @@ function btlLobby(s) {
   const m = catMeta(t.category);
   const inviteUrl = window.location.origin + window.location.pathname + '#/battle?room=' + (Battle.room || '');
   const topicOptions = store.topics.filter(tp => QB.has(tp.id)).map(tp => `<option value="${tp.id}"${tp.id === s.topicId ? ' selected' : ''}>${catMeta(tp.category).icon} ${esc(tp.name)}</option>`).join('');
+  const code = Battle.shortCode();
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
     <div class="qz-top">
@@ -6342,13 +6532,35 @@ function btlLobby(s) {
         </div>
       </div>
 
-      ${Battle.isHost && !Battle.isBot ? `<div class="field">
-        <span>Invite Challenger via Direct Link</span>
-        <div class="invite-box">
-          <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
-          <button class="btn sm primary" data-action="battle-copy">${icon('download', 14)} Copy Link</button>
+      ${Battle.isHost && !Battle.isBot ? `<div class="room-sync-panel">
+        <div class="room-code-badge">
+          <span class="rc-label">ROOM SYNC CODE</span>
+          <div class="rc-display">
+            <span class="rc-code">${esc(code)}</span>
+            <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
+            <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+          </div>
         </div>
-        <small class="muted">Send this link to a friend. No server required: connects peer-to-peer via WebRTC.</small>
+        <div class="invite-box" style="margin-top:6px;">
+          <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
+        </div>
+        <small class="muted">Your friend can enter the 6-character code above or open the direct link on any phone or desktop.</small>
+
+        <div class="join-box" style="margin-top:10px;">
+          <span>Joining a friend's room instead?</span>
+          <div class="join-row">
+            <input type="text" id="lobbyJoinCodeInput" placeholder="Enter friend's code (e.g. 9X7K2B) or link" autocomplete="off" spellcheck="false">
+            <button class="btn" data-action="battle-join-from-lobby">Join Room</button>
+          </div>
+        </div>
+      </div>` : ''}
+
+      ${!Battle.isHost && !Battle.isBot ? `<div class="room-connected-banner">
+        <div>
+          <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;display:block;">CONNECTED TO ROOM</span>
+          <b style="font-size:1.15rem;letter-spacing:0.08em;">${esc(code)}</b>
+        </div>
+        <button class="btn sm ghost" data-action="battle-switch-room">Leave / Switch Room</button>
       </div>` : ''}
 
       ${Battle.isHost ? `<div class="set-grid">
@@ -6486,29 +6698,31 @@ function btlPodium(s) {
       <div class="section-head" style="margin-top:20px;text-align:left;">
         <h3>Question Breakdown</h3>
       </div>
-      <table class="duel-breakdown-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Question</th>
-            <th>Your Outcome</th>
-            <th>Opponent</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${s.qs.map((q, idx) => {
-            const locAns = s.local.answers[idx];
-            const locOk = locAns && locAns.isCorrect;
-            const remOk = s.remote.answers[idx];
-            return `<tr>
-              <td><b>${idx + 1}</b></td>
-              <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
-              <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
-              <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
-            </tr>`;
-          }).join('')}
-        </tbody>
-      </table>
+      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;">
+        <table class="duel-breakdown-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Question</th>
+              <th>Your Outcome</th>
+              <th>Opponent</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${s.qs.map((q, idx) => {
+              const locAns = s.local.answers[idx];
+              const locOk = locAns && locAns.isCorrect;
+              const remOk = s.remote.answers[idx];
+              return `<tr>
+                <td><b>${idx + 1}</b></td>
+                <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
+                <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
+                <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
+              </tr>`;
+            }).join('')}
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>`;
 }
@@ -6546,12 +6760,67 @@ Battle.onTimer = () => {
   }
 };
 
+function openJoinBattleModal() {
+  if (typeof openModal !== 'function') return;
+  openModal(`
+    <button class="icon-btn modal-close" data-action="close-modal" aria-label="Close">${icon('x', 20)}</button>
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+      <div class="lobby-ico" style="width:44px;height:44px;font-size:1.3rem;">⚔️</div>
+      <div>
+        <h2 style="margin:0;">Join 1v1 Battle Arena</h2>
+        <p class="muted small" style="margin:0;">Enter room code or paste challenger's invite link</p>
+      </div>
+    </div>
+    <div class="field" style="margin:16px 0;">
+      <span>Room Sync Code or Invite Link</span>
+      <input type="text" id="joinModalCodeInput" placeholder="e.g. 9X7K2B or paste link" autocomplete="off" spellcheck="false" autofocus>
+      <small class="muted">Enter the 6-character room code shared by the host to connect.</small>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" data-action="close-modal">Cancel</button>
+      <button class="btn primary" data-action="battle-join-submit">${icon('swords', 15)} Connect to Arena</button>
+    </div>
+  `, 'sm');
+}
+
 /* ----- Action Handlers for Battle ----- */
 const BattleActions = {
   'battle-open': (t, n) => {
     closePanel();
     const topicId = (n && n.dataset && n.dataset.id) || 'ja1';
     Battle.createRoom(topicId);
+    renderBattle();
+  },
+  'battle-join-modal': () => {
+    closePanel();
+    openJoinBattleModal();
+  },
+  'battle-join-submit': () => {
+    const input = document.getElementById('joinModalCodeInput');
+    const raw = input ? input.value : '';
+    const clean = Battle.parseCode(raw);
+    if (!clean) {
+      return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
+    }
+    closeModal();
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    Battle.joinRoom(clean);
+    renderBattle();
+  },
+  'battle-join-from-lobby': () => {
+    const input = document.getElementById('lobbyJoinCodeInput');
+    const raw = input ? input.value : '';
+    const clean = Battle.parseCode(raw);
+    if (!clean) {
+      return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
+    }
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    Battle.joinRoom(clean);
+    renderBattle();
+  },
+  'battle-switch-room': () => {
+    Battle.exit();
+    Battle.createRoom('ja1');
     renderBattle();
   },
   'battle-bot': (t, n) => {
@@ -6577,6 +6846,13 @@ const BattleActions = {
     Battle.submitAnswer(+n.dataset.val);
     renderBattle();
   },
+  'battle-copy-code': () => {
+    const code = Battle.shortCode();
+    if (code) {
+      navigator.clipboard?.writeText(code);
+      toast(`Room Code ${code} copied to clipboard!`, { title: 'Room Code Copied 📋', icon: '📋' });
+    }
+  },
   'battle-copy': () => {
     const input = document.getElementById('inviteLinkInput');
     if (input) {
@@ -6597,6 +6873,18 @@ const BattleActions = {
     renderBattle();
   }
 };
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    if (e.target && e.target.id === 'lobbyJoinCodeInput') {
+      e.preventDefault();
+      BattleActions['battle-join-from-lobby']();
+    } else if (e.target && e.target.id === 'joinModalCodeInput') {
+      e.preventDefault();
+      BattleActions['battle-join-submit']();
+    }
+  }
+});
 
 document.addEventListener('change', e => {
   if (e.target.dataset.change === 'battle-topic') {

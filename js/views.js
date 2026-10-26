@@ -911,7 +911,10 @@ Views.tests = () => {
     </p>
     <div class="row-actions" style="margin-top:14px;">
       <button class="btn primary" data-action="battle-open">
-        ${icon('swords', 15)} Invite via Link (P2P)
+        ${icon('swords', 15)} Create Match (P2P)
+      </button>
+      <button class="btn" data-action="battle-join-modal">
+        ${icon('link', 15)} Enter Room Code
       </button>
       <button class="btn" data-action="battle-bot">
         🤖 Duel vs DevBot (AI)
@@ -924,7 +927,7 @@ Views.tests = () => {
     eyebrow: 'Assessment Command Hub',
     title: 'Knowledge Tests &amp; Exams',
     sub: `${g.passedTopicsCount} of ${topicsWithBank} testable topics completed with 80%+ score. ${g.totalAttempts} total attempts recorded.`,
-    actions: `<button class="btn primary" data-action="battle-open">${icon('swords', 15)} 1v1 Battle Duel</button><button class="btn" data-action="daily-challenge">${icon('target', 15)} Daily Challenge</button>`
+    actions: `<button class="btn primary" data-action="battle-open">${icon('swords', 15)} 1v1 Battle</button><button class="btn" data-action="battle-join-modal">${icon('link', 15)} Join Code</button><button class="btn" data-action="daily-challenge">${icon('target', 15)} Daily Challenge</button>`
   })}
 
   <section class="grid-2">
