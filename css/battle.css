@@ -1,5 +1,6 @@
 /* =========================================================
    DevPath 1v1 Peer-to-Peer Battle Arena Styles
+   Mobile-Optimized HUD, Live Opponent Waiting, & Synced Results
    ========================================================= */
 
 .battle-wrap {
@@ -40,6 +41,7 @@
   color: #fff;
   font-size: 1.6rem;
   box-shadow: 0 8px 24px -6px rgba(239, 68, 68, 0.6);
+  flex: none;
 }
 
 .lobby-players {
@@ -61,6 +63,13 @@
   gap: 8px;
 }
 
+.player-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
 .player-avatar {
   width: 60px;
   height: 60px;
@@ -69,8 +78,9 @@
   place-items: center;
   font-size: 1.8rem;
   background: var(--surface-solid);
-  border: 2px solid var(--primary);
+  border: 2.5px solid var(--primary);
   box-shadow: 0 4px 16px -4px var(--primary);
+  flex: none;
 }
 
 .player-avatar.opponent {
@@ -79,30 +89,38 @@
 }
 
 .player-name {
-  font-weight: 700;
+  font-weight: 750;
   font-size: 1.05rem;
+  color: var(--text);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .player-status {
-  font-size: 0.76rem;
-  font-weight: 650;
+  font-size: 0.74rem;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: 99px;
   background: var(--surface);
   color: var(--muted);
+  letter-spacing: 0.05em;
 }
 
 .player-status.ready {
   background: rgba(52, 211, 153, 0.16);
   color: var(--success);
+  border: 1px solid rgba(52, 211, 153, 0.4);
 }
 
 .versus-badge {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: #fbbf24;
-  text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  text-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+  white-space: nowrap;
 }
 
 .invite-box {
@@ -124,16 +142,16 @@
   font-size: 0.88rem;
 }
 
-/* ----- Live Battle Arena HUD ----- */
+/* ----- Live Battle Arena Split HUD ----- */
 .battle-hud {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
-  padding: 14px 18px;
+  padding: 12px 18px;
   border-radius: 18px;
   background: var(--surface-solid);
-  border: 1px solid var(--border-2);
+  border: 1.5px solid var(--border-2);
   box-shadow: var(--shadow);
 }
 
@@ -141,6 +159,7 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .hud-player.right {
@@ -148,16 +167,26 @@
   text-align: right;
 }
 
+.hud-info {
+  min-width: 0;
+}
+
 .hud-info b {
   display: block;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .hud-score {
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.35rem;
+  font-weight: 850;
   font-variant-numeric: tabular-nums;
   color: var(--primary-text);
+  line-height: 1.2;
 }
 
 .hud-player.right .hud-score {
@@ -189,13 +218,14 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  flex: none;
 }
 
 .battle-timer {
-  min-width: 58px;
+  min-width: 56px;
   text-align: center;
-  font: 800 1.25rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font: 850 1.25rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
   padding: 8px 12px;
   border-radius: 12px;
   background: var(--surface-2);
@@ -238,6 +268,46 @@
   to { transform: scale(1.1); opacity: 1; }
 }
 
+/* ----- Waiting Opponent Card ----- */
+.waiting-card {
+  text-align: center;
+  display: grid;
+  gap: 16px;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border-2);
+  box-shadow: var(--shadow-lg);
+}
+
+.waiting-ico {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  border: 2px solid var(--primary);
+  animation: pulseT 1.5s ease-in-out infinite;
+}
+
+.waiting-score-banner {
+  background: var(--surface-solid);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.opponent-live-box {
+  background: var(--surface-2);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
 /* ----- Victory Podium ----- */
 .podium-card {
   text-align: center;
@@ -247,6 +317,7 @@
   border-radius: 24px;
   background: linear-gradient(180deg, var(--surface-solid), var(--surface));
   border: 1.5px solid var(--border-2);
+  box-shadow: var(--shadow-lg);
 }
 
 .podium-crown {
@@ -262,8 +333,9 @@
 
 .podium-winner-name {
   font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem);
-  font-weight: 800;
+  font-weight: 850;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .duel-stats-grid {
@@ -274,38 +346,40 @@
 }
 
 .duel-stat-box {
-  padding: 16px;
+  padding: 18px;
   border-radius: 16px;
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   display: grid;
-  gap: 4px;
+  gap: 6px;
+  text-align: left;
 }
 
 .duel-stat-box.winner {
   border-color: #fbbf24;
   background: color-mix(in srgb, #fbbf24 10%, var(--surface-2));
+  box-shadow: 0 0 20px -4px rgba(251, 191, 36, 0.25);
 }
 
 .duel-breakdown-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-top: 10px;
+  font-size: 0.88rem;
 }
 
 .duel-breakdown-table th,
 .duel-breakdown-table td {
-  padding: 10px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
 }
 
 .duel-breakdown-table th {
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
+  background: var(--surface-solid);
 }
 
 /* ----- Room Code & Sync Elements ----- */
@@ -335,21 +409,28 @@
 .rc-display {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .rc-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 1.45rem;
+  font-size: 1.6rem;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: #fbbf24;
   background: var(--surface-solid);
-  padding: 6px 14px;
-  border-radius: 10px;
-  border: 1.5px dashed rgba(251, 191, 36, 0.45);
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: 1.5px dashed rgba(251, 191, 36, 0.5);
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.rc-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .join-box {
@@ -394,82 +475,147 @@
   padding: 12px 16px;
   border-radius: 14px;
   background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+  border: 1px solid rgba(52, 211, 153, 0.35);
   color: var(--success);
 }
 
+/* =========================================================
+   Mobile & Phone Responsive Polish (< 640px)
+   ========================================================= */
 @media (max-width: 640px) {
+  .battle-wrap {
+    padding: calc(10px + env(safe-area-inset-top)) 12px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .lobby-card {
+    padding: 16px 14px;
+    gap: 14px;
+  }
+
   .lobby-players {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
+    padding: 12px;
   }
+
+  .player-box {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--surface-solid);
+  }
+
+  .player-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .player-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+  }
+
   .versus-badge {
-    margin: 4px 0;
+    margin: 2px 0;
+    font-size: 1rem;
   }
+
   .battle-hud {
     padding: 8px 10px;
     gap: 6px;
+    border-radius: 14px;
   }
+
   .hud-player {
     gap: 6px;
     min-width: 0;
+    flex: 1;
   }
+
   .hud-info {
     min-width: 0;
+    flex: 1;
   }
+
   .hud-info b {
-    font-size: 0.82rem;
-    max-width: 64px;
+    font-size: 0.76rem;
+    max-width: 62px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .player-avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 1.15rem;
-    flex: none;
-  }
+
   .hud-score {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.1;
   }
+
   .battle-timer {
     min-width: 44px;
-    padding: 4px 6px;
-    font-size: 1rem;
+    padding: 5px 6px;
+    font-size: 1.05rem;
+    border-radius: 10px;
   }
+
   .hud-prog-bar {
-    width: 48px;
+    width: 100%;
+    max-width: 60px;
     height: 4px;
   }
-  .duel-stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (max-width: 480px) {
   .rc-display {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
-  .rc-display button {
+
+  .rc-code {
+    text-align: center;
+    font-size: 1.55rem;
+    letter-spacing: 0.16em;
+  }
+
+  .rc-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .rc-actions button {
     width: 100%;
     justify-content: center;
   }
+
   .join-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .join-row button {
     width: 100%;
     justify-content: center;
   }
-  .invite-box {
-    flex-direction: column;
-    align-items: stretch;
+
+  .duel-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
-  .invite-box button {
-    width: 100%;
-    justify-content: center;
+
+  .duel-stat-box {
+    padding: 14px;
+  }
+
+  .duel-stat-box b {
+    font-size: 1.6rem !important;
+  }
+
+  .duel-breakdown-table th,
+  .duel-breakdown-table td {
+    padding: 8px 6px;
+    font-size: 0.78rem;
   }
 }

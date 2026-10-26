@@ -844,6 +844,7 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
 /* --- css/battle.css --- */
 /* =========================================================
    DevPath 1v1 Peer-to-Peer Battle Arena Styles
+   Mobile-Optimized HUD, Live Opponent Waiting, & Synced Results
    ========================================================= */
 
 .battle-wrap {
@@ -884,6 +885,7 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   color: #fff;
   font-size: 1.6rem;
   box-shadow: 0 8px 24px -6px rgba(239, 68, 68, 0.6);
+  flex: none;
 }
 
 .lobby-players {
@@ -905,6 +907,13 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   gap: 8px;
 }
 
+.player-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
 .player-avatar {
   width: 60px;
   height: 60px;
@@ -913,8 +922,9 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   place-items: center;
   font-size: 1.8rem;
   background: var(--surface-solid);
-  border: 2px solid var(--primary);
+  border: 2.5px solid var(--primary);
   box-shadow: 0 4px 16px -4px var(--primary);
+  flex: none;
 }
 
 .player-avatar.opponent {
@@ -923,30 +933,38 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
 }
 
 .player-name {
-  font-weight: 700;
+  font-weight: 750;
   font-size: 1.05rem;
+  color: var(--text);
+  max-width: 140px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .player-status {
-  font-size: 0.76rem;
-  font-weight: 650;
+  font-size: 0.74rem;
+  font-weight: 700;
   padding: 3px 10px;
   border-radius: 99px;
   background: var(--surface);
   color: var(--muted);
+  letter-spacing: 0.05em;
 }
 
 .player-status.ready {
   background: rgba(52, 211, 153, 0.16);
   color: var(--success);
+  border: 1px solid rgba(52, 211, 153, 0.4);
 }
 
 .versus-badge {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 900;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   color: #fbbf24;
-  text-shadow: 0 0 12px rgba(251, 191, 36, 0.5);
+  text-shadow: 0 0 14px rgba(251, 191, 36, 0.5);
+  white-space: nowrap;
 }
 
 .invite-box {
@@ -968,16 +986,16 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   font-size: 0.88rem;
 }
 
-/* ----- Live Battle Arena HUD ----- */
+/* ----- Live Battle Arena Split HUD ----- */
 .battle-hud {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
-  padding: 14px 18px;
+  padding: 12px 18px;
   border-radius: 18px;
   background: var(--surface-solid);
-  border: 1px solid var(--border-2);
+  border: 1.5px solid var(--border-2);
   box-shadow: var(--shadow);
 }
 
@@ -985,6 +1003,7 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   display: flex;
   align-items: center;
   gap: 12px;
+  min-width: 0;
 }
 
 .hud-player.right {
@@ -992,16 +1011,26 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   text-align: right;
 }
 
+.hud-info {
+  min-width: 0;
+}
+
 .hud-info b {
   display: block;
-  font-size: 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
 }
 
 .hud-score {
-  font-size: 1.4rem;
-  font-weight: 800;
+  font-size: 1.35rem;
+  font-weight: 850;
   font-variant-numeric: tabular-nums;
   color: var(--primary-text);
+  line-height: 1.2;
 }
 
 .hud-player.right .hud-score {
@@ -1033,13 +1062,14 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
+  flex: none;
 }
 
 .battle-timer {
-  min-width: 58px;
+  min-width: 56px;
   text-align: center;
-  font: 800 1.25rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
+  font: 850 1.25rem/1 ui-monospace, SFMono-Regular, Menlo, monospace;
   padding: 8px 12px;
   border-radius: 12px;
   background: var(--surface-2);
@@ -1082,6 +1112,46 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   to { transform: scale(1.1); opacity: 1; }
 }
 
+/* ----- Waiting Opponent Card ----- */
+.waiting-card {
+  text-align: center;
+  display: grid;
+  gap: 16px;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background: var(--surface);
+  border: 1.5px solid var(--border-2);
+  box-shadow: var(--shadow-lg);
+}
+
+.waiting-ico {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  font-size: 2rem;
+  background: color-mix(in srgb, var(--primary) 18%, transparent);
+  border: 2px solid var(--primary);
+  animation: pulseT 1.5s ease-in-out infinite;
+}
+
+.waiting-score-banner {
+  background: var(--surface-solid);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+}
+
+.opponent-live-box {
+  background: var(--surface-2);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+}
+
 /* ----- Victory Podium ----- */
 .podium-card {
   text-align: center;
@@ -1091,6 +1161,7 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   border-radius: 24px;
   background: linear-gradient(180deg, var(--surface-solid), var(--surface));
   border: 1.5px solid var(--border-2);
+  box-shadow: var(--shadow-lg);
 }
 
 .podium-crown {
@@ -1106,8 +1177,9 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
 
 .podium-winner-name {
   font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.3rem);
-  font-weight: 800;
+  font-weight: 850;
   letter-spacing: -0.02em;
+  color: var(--text);
 }
 
 .duel-stats-grid {
@@ -1118,38 +1190,40 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
 }
 
 .duel-stat-box {
-  padding: 16px;
+  padding: 18px;
   border-radius: 16px;
   background: var(--surface-2);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   display: grid;
-  gap: 4px;
+  gap: 6px;
+  text-align: left;
 }
 
 .duel-stat-box.winner {
   border-color: #fbbf24;
   background: color-mix(in srgb, #fbbf24 10%, var(--surface-2));
+  box-shadow: 0 0 20px -4px rgba(251, 191, 36, 0.25);
 }
 
 .duel-breakdown-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
-  margin-top: 10px;
+  font-size: 0.88rem;
 }
 
 .duel-breakdown-table th,
 .duel-breakdown-table td {
-  padding: 10px;
+  padding: 12px 14px;
   border-bottom: 1px solid var(--border);
   text-align: left;
 }
 
 .duel-breakdown-table th {
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.09em;
+  background: var(--surface-solid);
 }
 
 /* ----- Room Code & Sync Elements ----- */
@@ -1179,21 +1253,28 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
 .rc-display {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: space-between;
+  gap: 12px;
   flex-wrap: wrap;
 }
 
 .rc-code {
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  font-size: 1.45rem;
+  font-size: 1.6rem;
   font-weight: 900;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.16em;
   color: #fbbf24;
   background: var(--surface-solid);
-  padding: 6px 14px;
-  border-radius: 10px;
-  border: 1.5px dashed rgba(251, 191, 36, 0.45);
+  padding: 6px 16px;
+  border-radius: 12px;
+  border: 1.5px dashed rgba(251, 191, 36, 0.5);
   text-shadow: 0 0 10px rgba(251, 191, 36, 0.3);
+}
+
+.rc-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 
 .join-box {
@@ -1238,83 +1319,148 @@ body.quiz-open .dock, body.quiz-open #tabbar { display: none; }
   padding: 12px 16px;
   border-radius: 14px;
   background: rgba(52, 211, 153, 0.1);
-  border: 1px solid rgba(52, 211, 153, 0.3);
+  border: 1px solid rgba(52, 211, 153, 0.35);
   color: var(--success);
 }
 
+/* =========================================================
+   Mobile & Phone Responsive Polish (< 640px)
+   ========================================================= */
 @media (max-width: 640px) {
+  .battle-wrap {
+    padding: calc(10px + env(safe-area-inset-top)) 12px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .lobby-card {
+    padding: 16px 14px;
+    gap: 14px;
+  }
+
   .lobby-players {
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 8px;
+    padding: 12px;
   }
+
+  .player-box {
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    padding: 8px 12px;
+    border-radius: 12px;
+    background: var(--surface-solid);
+  }
+
+  .player-meta {
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .player-avatar {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+  }
+
   .versus-badge {
-    margin: 4px 0;
+    margin: 2px 0;
+    font-size: 1rem;
   }
+
   .battle-hud {
     padding: 8px 10px;
     gap: 6px;
+    border-radius: 14px;
   }
+
   .hud-player {
     gap: 6px;
     min-width: 0;
+    flex: 1;
   }
+
   .hud-info {
     min-width: 0;
+    flex: 1;
   }
+
   .hud-info b {
-    font-size: 0.82rem;
-    max-width: 64px;
+    font-size: 0.76rem;
+    max-width: 62px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
-  .player-avatar {
-    width: 36px;
-    height: 36px;
-    font-size: 1.15rem;
-    flex: none;
-  }
+
   .hud-score {
-    font-size: 1.1rem;
+    font-size: 1.05rem;
+    line-height: 1.1;
   }
+
   .battle-timer {
     min-width: 44px;
-    padding: 4px 6px;
-    font-size: 1rem;
+    padding: 5px 6px;
+    font-size: 1.05rem;
+    border-radius: 10px;
   }
+
   .hud-prog-bar {
-    width: 48px;
+    width: 100%;
+    max-width: 60px;
     height: 4px;
   }
-  .duel-stats-grid {
-    grid-template-columns: 1fr;
-  }
-}
 
-@media (max-width: 480px) {
   .rc-display {
     flex-direction: column;
     align-items: stretch;
+    gap: 8px;
   }
-  .rc-display button {
+
+  .rc-code {
+    text-align: center;
+    font-size: 1.55rem;
+    letter-spacing: 0.16em;
+  }
+
+  .rc-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .rc-actions button {
     width: 100%;
     justify-content: center;
   }
+
   .join-row {
     flex-direction: column;
     align-items: stretch;
   }
+
   .join-row button {
     width: 100%;
     justify-content: center;
   }
-  .invite-box {
-    flex-direction: column;
-    align-items: stretch;
+
+  .duel-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
-  .invite-box button {
-    width: 100%;
-    justify-content: center;
+
+  .duel-stat-box {
+    padding: 14px;
+  }
+
+  .duel-stat-box b {
+    font-size: 1.6rem !important;
+  }
+
+  .duel-breakdown-table th,
+  .duel-breakdown-table td {
+    padding: 8px 6px;
+    font-size: 0.78rem;
   }
 }
 
@@ -6081,7 +6227,24 @@ window.addEventListener('blur', () => {
 'use strict';
 /* =========================================================
    DevPath 1v1 Peer-to-Peer Battle Engine (WebRTC DataChannel)
+   Enhanced with Multi-STUN, Auto-Retry, Heartbeat, and Synced Results
    ========================================================= */
+
+const PEER_CONFIG = {
+  debug: 0,
+  config: {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      { urls: 'stun:stun4.l.google.com:19302' },
+      { urls: 'stun:global.stun.twilio.com:3478' },
+      { urls: 'stun:stun.cloudflare.com:3478' }
+    ],
+    iceCandidatePoolSize: 10
+  }
+};
 
 const Battle = {
   peer: null,
@@ -6091,9 +6254,14 @@ const Battle = {
   room: null,
   tick: null,
   botTimer: null,
+  heartbeatTimer: null,
+  missedPings: 0,
+  outbox: [],
+  joinAttempts: 0,
+  joinMaxAttempts: 3,
 
   s: {
-    phase: 'idle', // 'idle' | 'lobby' | 'countdown' | 'battle' | 'result' | 'forfeited'
+    phase: 'idle', // 'idle' | 'lobby' | 'countdown' | 'battle' | 'waiting_opponent' | 'result' | 'forfeited'
     topicId: 'ja1',
     n: 10,
     secs: 20,
@@ -6110,6 +6278,7 @@ const Battle = {
       ready: false,
       score: 0,
       streak: 0,
+      maxStreak: 0,
       answers: [],
       done: false
     },
@@ -6119,19 +6288,34 @@ const Battle = {
       ready: false,
       score: 0,
       streak: 0,
+      maxStreak: 0,
       answers: [],
       done: false
     }
   },
 
   active() {
-    return this.s.phase === 'countdown' || this.s.phase === 'battle';
+    return this.s.phase === 'countdown' || this.s.phase === 'battle' || this.s.phase === 'waiting_opponent';
   },
 
   /* ----- Initialization & Networking ----- */
   init() {
-    this.s.local.name = store.settings.name || 'Engineer_' + Math.floor(100 + Math.random() * 900);
-    this.s.local.avatar = ['⚡', '🚀', '☕', '🍃', '🔥', '💎'][Math.floor(Math.random() * 6)];
+    this.s.local.name = (store && store.settings && store.settings.name ? store.settings.name : 'Engineer_' + Math.floor(100 + Math.random() * 900)).trim();
+    this.s.local.avatar = ['⚡', '🚀', '☕', '🍃', '🔥', '💎', '🎯', '🦁'][Math.floor(Math.random() * 8)];
+    this.s.local.score = 0;
+    this.s.local.streak = 0;
+    this.s.local.maxStreak = 0;
+    this.s.local.answers = [];
+    this.s.local.done = false;
+    this.s.remote.score = 0;
+    this.s.remote.streak = 0;
+    this.s.remote.maxStreak = 0;
+    this.s.remote.answers = [];
+    this.s.remote.done = false;
+    this.s.winner = null;
+    this.s.forfeitReason = '';
+    this.outbox = [];
+    this.missedPings = 0;
   },
 
   createRoom(topicId = 'ja1') {
@@ -6141,9 +6325,11 @@ const Battle = {
     this.s.topicId = topicId;
     this.s.phase = 'lobby';
     this.s.local.ready = false;
-    this.s.remote = { name: 'Awaiting Challenger...', avatar: '⏳', ready: false, score: 0, streak: 0, answers: [], done: false };
+    this.s.remote = { name: 'Awaiting Challenger...', avatar: '⏳', ready: false, score: 0, streak: 0, maxStreak: 0, answers: [], done: false };
     
-    const roomId = 'devpath-' + Math.random().toString(36).substring(2, 8);
+    // Generate clean 6-character room code with high entropy
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+    const roomId = 'devpath-' + code.toLowerCase();
     this.room = roomId;
     this.setupPeer(roomId);
     return roomId;
@@ -6173,6 +6359,8 @@ const Battle = {
     this.room = cleanId;
     this.s.phase = 'lobby';
     this.s.local.ready = false;
+    this.s.remote = { name: 'Connecting to Host...', avatar: '⏳', ready: false, score: 0, streak: 0, maxStreak: 0, answers: [], done: false };
+    this.joinAttempts = 1;
     this.setupPeer(null, cleanId);
   },
 
@@ -6184,39 +6372,30 @@ const Battle = {
     this.s.topicId = topicId;
     this.s.phase = 'lobby';
     this.s.local.ready = false;
-    this.s.remote = { name: 'DevBot (AI)', avatar: '🤖', ready: true, score: 0, streak: 0, answers: [], done: false };
+    this.s.remote = { name: 'DevBot (AI)', avatar: '🤖', ready: true, score: 0, streak: 0, maxStreak: 0, answers: [], done: false };
     this.onChange && this.onChange();
   },
 
   setupPeer(customId, connectToId = null) {
     if (typeof Peer === 'undefined') {
       if (typeof console !== 'undefined' && console.warn) {
-        console.warn('PeerJS library not detected. Running in peer simulation mode.');
+        console.warn('PeerJS library not detected.');
       }
       return;
     }
 
     try {
-      if (this.conn) {
-        try { this.conn.close(); } catch(e) {}
-        this.conn = null;
-      }
-      if (this.peer) {
-        try { this.peer.destroy(); } catch(e) {}
-        this.peer = null;
-      }
+      this.cleanup();
 
-      this.peer = customId ? new Peer(customId) : new Peer();
+      // Instantiate Peer with multi-STUN server configuration
+      this.peer = customId ? new Peer(customId, PEER_CONFIG) : new Peer(PEER_CONFIG);
 
       this.peer.on('open', id => {
         if (this.isHost) {
           this.room = id;
         } else if (connectToId) {
           this.room = connectToId;
-        }
-        if (connectToId) {
-          const c = this.peer.connect(connectToId, { reliable: true });
-          this.setupConn(c);
+          this.connectToPeer(connectToId);
         }
         this.onChange && this.onChange();
       });
@@ -6227,23 +6406,69 @@ const Battle = {
 
       this.peer.on('error', err => {
         if (typeof console !== 'undefined' && console.error) console.error('PeerJS error:', err);
-        const msg = err.type === 'peer-unavailable' ? 'Room not found. Check the code and try again.' : ('P2P Network Warning: ' + err.type);
-        toast(msg, { title: '1v1 Arena Network', icon: '⚠️', kind: 'bad' });
+        
+        // Handle peer-unavailable with retry for challenger
+        if (err.type === 'peer-unavailable' && !this.isHost && connectToId && this.joinAttempts < this.joinMaxAttempts) {
+          this.joinAttempts++;
+          toast(`Host room waking up, reconnecting (${this.joinAttempts}/${this.joinMaxAttempts})…`, { title: 'Connecting…', icon: '⏳', ms: 2000 });
+          setTimeout(() => {
+            if (this.peer && !this.peer.destroyed) {
+              this.connectToPeer(connectToId);
+            }
+          }, 1400);
+          return;
+        }
+
+        let msg = 'P2P network notice: ' + err.type;
+        if (err.type === 'peer-unavailable') {
+          msg = 'Room not found. Please double-check the code or verify host has the room open.';
+        } else if (err.type === 'unavailable-id') {
+          msg = 'Room code was recently used. Generating fresh code…';
+          if (this.isHost) setTimeout(() => this.createRoom(this.s.topicId), 400);
+          return;
+        }
+        toast(msg, { title: '1v1 Arena Network', icon: '⚠️', kind: 'bad', ms: 4000 });
+        this.onChange && this.onChange();
       });
     } catch (e) {
       if (typeof console !== 'undefined' && console.error) console.error('WebRTC initialization failed:', e);
     }
   },
 
+  connectToPeer(targetId) {
+    if (!this.peer || this.peer.destroyed) return;
+    try {
+      const c = this.peer.connect(targetId, {
+        reliable: true,
+        serialization: 'json'
+      });
+      this.setupConn(c);
+    } catch (e) {
+      console.warn('Peer connect attempt:', e);
+    }
+  },
+
   setupConn(c) {
+    if (!c) return;
     this.conn = c;
+
     this.conn.on('open', () => {
+      this.missedPings = 0;
+      this.startHeartbeat();
+
+      // Flush queued messages
+      while (this.outbox.length) {
+        const item = this.outbox.shift();
+        try { this.conn.send(item); } catch(e){}
+      }
+
+      // Initiate handshake
       this.send({
         type: 'HELLO',
         name: this.s.local.name,
         avatar: this.s.local.avatar
       });
-      toast('Challenger connected via WebRTC DataChannel!', { title: 'Peer Connected ⚡', icon: '🤝' });
+
       this.onChange && this.onChange();
     });
 
@@ -6252,6 +6477,7 @@ const Battle = {
     });
 
     this.conn.on('close', () => {
+      this.stopHeartbeat();
       if (this.active()) {
         this.forfeit('remote_disconnected');
       } else {
@@ -6261,11 +6487,42 @@ const Battle = {
         this.onChange && this.onChange();
       }
     });
+
+    this.conn.on('error', err => {
+      console.warn('DataChannel error:', err);
+    });
   },
 
   send(msg) {
     if (this.conn && this.conn.open) {
-      this.conn.send(msg);
+      try {
+        this.conn.send(msg);
+      } catch (e) {
+        this.outbox.push(msg);
+      }
+    } else {
+      this.outbox.push(msg);
+    }
+  },
+
+  /* ----- Heartbeat & Channel Keepalive ----- */
+  startHeartbeat() {
+    this.stopHeartbeat();
+    this.heartbeatTimer = setInterval(() => {
+      if (this.conn && this.conn.open) {
+        this.send({ type: 'PING' });
+        this.missedPings++;
+        if (this.missedPings > 5 && this.active()) {
+          this.forfeit('remote_disconnected');
+        }
+      }
+    }, 3500);
+  },
+
+  stopHeartbeat() {
+    if (this.heartbeatTimer) {
+      clearInterval(this.heartbeatTimer);
+      this.heartbeatTimer = null;
     }
   },
 
@@ -6274,9 +6531,18 @@ const Battle = {
     if (!msg || !msg.type) return;
 
     switch (msg.type) {
+      case 'PING':
+        this.send({ type: 'PONG' });
+        break;
+
+      case 'PONG':
+        this.missedPings = 0;
+        break;
+
       case 'HELLO':
         this.s.remote.name = msg.name || 'Opponent';
         this.s.remote.avatar = msg.avatar || '👤';
+        this.missedPings = 0;
         if (this.isHost) {
           this.send({
             type: 'HELLO_ACK',
@@ -6286,6 +6552,7 @@ const Battle = {
             n: this.s.n,
             secs: this.s.secs
           });
+          toast(`${this.s.remote.name} connected to your room!`, { title: 'Challenger Joined ⚡', icon: '🤝' });
         }
         break;
 
@@ -6295,6 +6562,19 @@ const Battle = {
         this.s.topicId = msg.topicId || this.s.topicId;
         this.s.n = msg.n || this.s.n;
         this.s.secs = msg.secs || this.s.secs;
+        this.missedPings = 0;
+        this.send({
+          type: 'HELLO_CONFIRM',
+          name: this.s.local.name,
+          avatar: this.s.local.avatar
+        });
+        toast(`Connected to Host: ${this.s.remote.name}!`, { title: 'Room Synced ⚡', icon: '🤝' });
+        break;
+
+      case 'HELLO_CONFIRM':
+        this.s.remote.name = msg.name || this.s.remote.name;
+        this.s.remote.avatar = msg.avatar || this.s.remote.avatar;
+        this.missedPings = 0;
         break;
 
       case 'CONFIG':
@@ -6319,8 +6599,20 @@ const Battle = {
 
       case 'PROGRESS':
         this.s.remote.score = msg.score;
-        this.s.remote.answers[msg.qIndex] = msg.correct;
+        this.s.remote.answers[msg.qIndex] = { isCorrect: !!msg.correct, pts: msg.pts || 0, timeUsed: msg.timeUsed || 0 };
         this.s.remote.done = !!msg.done;
+        if (this.s.remote.done) {
+          this.checkMatchCompletion();
+        }
+        break;
+
+      case 'FINISH':
+        this.s.remote.score = msg.score;
+        this.s.remote.done = true;
+        this.s.remote.maxStreak = msg.maxStreak || 0;
+        if (Array.isArray(msg.answers) && msg.answers.length) {
+          this.s.remote.answers = msg.answers;
+        }
         this.checkMatchCompletion();
         break;
 
@@ -6364,10 +6656,10 @@ const Battle = {
       return {
         idx,
         q: src.q,
-        k: src.k || '',
-        opts: order.map(j => src.o[j]),
+        k: src.k,
+        opts: order.map(o => src.opts[o]),
         a: order.indexOf(src.a),
-        e: src.e
+        exp: src.exp
       };
     });
 
@@ -6385,16 +6677,6 @@ const Battle = {
   beginCountdown() {
     this.s.phase = 'countdown';
     this.s.countdown = 3;
-    this.s.local.score = 0;
-    this.s.local.streak = 0;
-    this.s.local.answers = [];
-    this.s.local.done = false;
-    this.s.remote.score = 0;
-    this.s.remote.streak = 0;
-    this.s.remote.answers = [];
-    this.s.remote.done = false;
-    this.s.cur = 0;
-    this.s.winner = null;
 
     const iv = setInterval(() => {
       this.s.countdown--;
@@ -6410,6 +6692,16 @@ const Battle = {
   startBattle() {
     this.s.phase = 'battle';
     this.s.cur = 0;
+    this.s.local.score = 0;
+    this.s.local.streak = 0;
+    this.s.local.maxStreak = 0;
+    this.s.local.answers = [];
+    this.s.local.done = false;
+    this.s.remote.score = 0;
+    this.s.remote.streak = 0;
+    this.s.remote.maxStreak = 0;
+    this.s.remote.answers = [];
+    this.s.remote.done = false;
     this.beginQ();
     if (this.isBot) this.scheduleBotAnswers();
   },
@@ -6454,6 +6746,9 @@ const Battle = {
       // Points = 1000 Base + Speed Bonus up to 1000 * streak multiplier
       const speedBonus = Math.round(1000 * (timeRemaining / Math.max(1000, totalTime)));
       this.s.local.streak++;
+      if (this.s.local.streak > this.s.local.maxStreak) {
+        this.s.local.maxStreak = this.s.local.streak;
+      }
       const multiplier = Math.min(1.5, 1.0 + (this.s.local.streak - 1) * 0.1);
       pts = Math.round((1000 + speedBonus) * multiplier);
     } else {
@@ -6463,21 +6758,38 @@ const Battle = {
     this.s.local.score += pts;
     this.s.local.answers[this.s.cur] = { sel, isCorrect, pts, timeUsed };
 
-    // Broadcast live progress to opponent
+    const isLast = (this.s.cur + 1 >= this.s.qs.length);
+
+    // Broadcast live progress
     this.send({
       type: 'PROGRESS',
       qIndex: this.s.cur,
       score: this.s.local.score,
       correct: isCorrect,
-      done: this.s.cur + 1 >= this.s.qs.length
+      pts,
+      timeUsed,
+      done: isLast
     });
 
-    if (this.s.cur + 1 < this.s.qs.length) {
+    if (!isLast) {
       this.s.cur++;
       this.beginQ();
     } else {
       this.s.local.done = true;
-      this.checkMatchCompletion();
+      // Send final full answers payload
+      this.send({
+        type: 'FINISH',
+        score: this.s.local.score,
+        maxStreak: this.s.local.maxStreak,
+        answers: this.s.local.answers
+      });
+
+      if (this.s.remote.done) {
+        this.finishMatch();
+      } else {
+        // Player enters waiting room with live opponent tracker
+        this.s.phase = 'waiting_opponent';
+      }
     }
     this.onChange && this.onChange();
   },
@@ -6487,15 +6799,14 @@ const Battle = {
     clearTimeout(this.botTimer);
     let botQ = 0;
     const runNextBotAnswer = () => {
-      if (botQ >= this.s.qs.length || this.s.phase !== 'battle') return;
-      // Bot takes between 4 to 12 seconds to answer
-      const delay = 4000 + Math.random() * 8000;
+      if (botQ >= this.s.qs.length || !this.active()) return;
+      const delay = 3500 + Math.random() * 6000;
       this.botTimer = setTimeout(() => {
-        const isCorrect = Math.random() < 0.78; // 78% accuracy
-        const speedBonus = Math.round(1000 * Math.random());
+        const isCorrect = Math.random() < 0.80; // 80% accuracy
+        const speedBonus = Math.round(900 * Math.random());
         const pts = isCorrect ? (1000 + speedBonus) : 0;
         this.s.remote.score += pts;
-        this.s.remote.answers[botQ] = isCorrect;
+        this.s.remote.answers[botQ] = { isCorrect, pts, timeUsed: Math.round(delay) };
         botQ++;
         if (botQ >= this.s.qs.length) {
           this.s.remote.done = true;
@@ -6533,23 +6844,29 @@ const Battle = {
 
   checkMatchCompletion() {
     if (this.s.local.done && this.s.remote.done) {
-      this.s.phase = 'result';
-      this.stopTicker();
-      clearTimeout(this.botTimer);
-      if (this.s.local.score > this.s.remote.score) this.s.winner = 'local';
-      else if (this.s.local.score < this.s.remote.score) this.s.winner = 'remote';
-      else this.s.winner = 'tie';
-      
-      if (this.s.winner === 'local') {
-        confetti(innerWidth / 2, innerHeight / 3, 160);
-        beep();
-      }
-      this.onChange && this.onChange();
+      this.finishMatch();
     }
   },
 
-  exit() {
+  finishMatch() {
+    this.s.phase = 'result';
     this.stopTicker();
+    clearTimeout(this.botTimer);
+
+    if (this.s.local.score > this.s.remote.score) this.s.winner = 'local';
+    else if (this.s.local.score < this.s.remote.score) this.s.winner = 'remote';
+    else this.s.winner = 'tie';
+
+    if (this.s.winner === 'local') {
+      if (typeof confetti === 'function') confetti(innerWidth / 2, innerHeight / 3, 160);
+      if (typeof beep === 'function') beep();
+    }
+    this.onChange && this.onChange();
+  },
+
+  cleanup() {
+    this.stopTicker();
+    this.stopHeartbeat();
     clearTimeout(this.botTimer);
     if (this.conn) {
       try { this.conn.close(); } catch(e){}
@@ -6559,6 +6876,10 @@ const Battle = {
       try { this.peer.destroy(); } catch(e){}
       this.peer = null;
     }
+  },
+
+  exit() {
+    this.cleanup();
     this.s.phase = 'idle';
   }
 };
@@ -6569,6 +6890,7 @@ const Battle = {
 'use strict';
 /* =========================================================
    DevPath 1v1 Battle Arena UI Renderer & Action Wiring
+   Mobile-Optimized HUD, Live Opponent Waiting, & Synced Results
    ========================================================= */
 
 const btlEl = () => document.getElementById('quiz'); // reuses full-screen modal layer
@@ -6579,35 +6901,40 @@ function btlLobby(s) {
   const inviteUrl = window.location.origin + window.location.pathname + '#/battle?room=' + (Battle.room || '');
   const topicOptions = store.topics.filter(tp => QB.has(tp.id)).map(tp => `<option value="${tp.id}"${tp.id === s.topicId ? ' selected' : ''}>${catMeta(tp.category).icon} ${esc(tp.name)}</option>`).join('');
   const code = Battle.shortCode();
+  const isChallengerConnected = s.remote.name && !s.remote.name.includes('Awaiting') && !s.remote.name.includes('Connecting');
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
     <div class="qz-top">
       <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
-      <span class="eyebrow">1v1 Peer-to-Peer Duel Arena</span>
+      <span class="eyebrow">1v1 Technical Duel Arena</span>
     </div>
     
     <div class="lobby-card">
       <div class="lobby-head">
         <div class="lobby-ico">⚔️</div>
         <div>
-          <h2>Technical Interview 1v1 Duel</h2>
-          <p class="muted">Live head-to-head competition with synchronized timers and speed scoring. Leaving the tab forfeits the match.</p>
+          <h2>1v1 Competition Duel</h2>
+          <p class="muted">Live head-to-head match with synchronized timers and speed scoring. Leaving the tab forfeits the match.</p>
         </div>
       </div>
 
       <div class="lobby-players">
         <div class="player-box">
           <div class="player-avatar">${s.local.avatar}</div>
-          <span class="player-name">${esc(s.local.name)} (You)</span>
-          <span class="player-status ${s.local.ready ? 'ready' : ''}">${s.local.ready ? 'READY ✓' : 'NOT READY'}</span>
+          <div class="player-meta">
+            <span class="player-name">${esc(s.local.name)} (You)</span>
+            <span class="player-status ${s.local.ready ? 'ready' : ''}">${s.local.ready ? 'READY ✓' : 'NOT READY'}</span>
+          </div>
         </div>
 
-        <div class="versus-badge">VS</div>
+        <div class="versus-badge">⚔️ VS ⚔️</div>
 
         <div class="player-box">
           <div class="player-avatar opponent">${s.remote.avatar}</div>
-          <span class="player-name">${esc(s.remote.name)}</span>
-          <span class="player-status ${s.remote.ready ? 'ready' : ''}">${s.remote.ready ? 'READY ✓' : 'WAITING'}</span>
+          <div class="player-meta">
+            <span class="player-name">${esc(s.remote.name)}</span>
+            <span class="player-status ${s.remote.ready ? 'ready' : ''}">${s.remote.ready ? 'READY ✓' : 'WAITING'}</span>
+          </div>
         </div>
       </div>
 
@@ -6616,14 +6943,16 @@ function btlLobby(s) {
           <span class="rc-label">ROOM SYNC CODE</span>
           <div class="rc-display">
             <span class="rc-code">${esc(code)}</span>
-            <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
-            <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+            <div class="rc-actions">
+              <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
+              <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+            </div>
           </div>
         </div>
         <div class="invite-box" style="margin-top:6px;">
           <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
         </div>
-        <small class="muted">Your friend can enter the 6-character code above or open the direct link on any phone or desktop.</small>
+        <small class="muted">Your friend can enter the 6-character code above or open the direct link on phone or desktop.</small>
 
         <div class="join-box" style="margin-top:10px;">
           <span>Joining a friend's room instead?</span>
@@ -6639,7 +6968,7 @@ function btlLobby(s) {
           <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;display:block;">CONNECTED TO ROOM</span>
           <b style="font-size:1.15rem;letter-spacing:0.08em;">${esc(code)}</b>
         </div>
-        <button class="btn sm ghost" data-action="battle-switch-room">Leave / Switch Room</button>
+        <button class="btn sm ghost" data-action="battle-switch-room">Switch Room</button>
       </div>` : ''}
 
       ${Battle.isHost ? `<div class="set-grid">
@@ -6678,9 +7007,9 @@ function btlArena(s) {
   const t = store.byId.get(s.topicId) || { name: 'Technical Duel', category: 'General' };
   const m = catMeta(t.category);
   const rem = Math.max(0, Math.ceil((s.deadline - Date.now()) / 1000));
-  const localProg = Math.round(((s.cur) / s.qs.length) * 100);
+  const localProg = Math.round(((s.cur) / Math.max(1, s.qs.length)) * 100);
   const remoteAnswered = s.remote.answers.filter(x => x !== undefined).length;
-  const remoteProg = Math.round((remoteAnswered / s.qs.length) * 100);
+  const remoteProg = Math.round((remoteAnswered / Math.max(1, s.qs.length)) * 100);
 
   const opts = q.opts.map((o, i) => {
     let c = 'qz-opt';
@@ -6692,13 +7021,13 @@ function btlArena(s) {
   }).join('');
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
-    <!-- Live Arena HUD -->
+    <!-- Live Arena Split HUD (Mobile Optimized) -->
     <div class="battle-hud">
       <div class="hud-player">
-        <span class="player-avatar" style="width:42px;height:42px;font-size:1.3rem;">${s.local.avatar}</span>
+        <span class="player-avatar" style="width:40px;height:40px;font-size:1.25rem;">${s.local.avatar}</span>
         <div class="hud-info">
           <b>${esc(s.local.name)}</b>
-          <div class="hud-score">${s.local.score.toLocaleString()} <small style="font-size:0.75rem;color:var(--muted)">pts</small></div>
+          <div class="hud-score">${s.local.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small></div>
           <div class="hud-prog-bar"><i style="width:${localProg}%"></i></div>
         </div>
       </div>
@@ -6709,10 +7038,10 @@ function btlArena(s) {
       </div>
 
       <div class="hud-player right">
-        <span class="player-avatar opponent" style="width:42px;height:42px;font-size:1.3rem;">${s.remote.avatar}</span>
+        <span class="player-avatar opponent" style="width:40px;height:40px;font-size:1.25rem;">${s.remote.avatar}</span>
         <div class="hud-info">
           <b>${esc(s.remote.name)}</b>
-          <div class="hud-score">${s.remote.score.toLocaleString()} <small style="font-size:0.75rem;color:var(--muted)">pts</small></div>
+          <div class="hud-score">${s.remote.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small></div>
           <div class="hud-prog-bar"><i style="width:${remoteProg}%"></i></div>
         </div>
       </div>
@@ -6724,11 +7053,53 @@ function btlArena(s) {
       <h2 class="qz-text">${esc(q.q)}</h2>
       ${codeBlock(q.k)}
       <div class="qz-options">${opts}</div>
-      ${s.sel !== null ? `<div class="qz-fb ok"><small>Answer recorded! Waiting for clock or opponent…</small></div>` : ''}
+      ${s.sel !== null ? `<div class="qz-fb ok"><small>Answer recorded! Advancing round…</small></div>` : ''}
     </div>
 
-    <div class="qz-foot" style="min-height:48px;">
-      <span class="muted small">⚠️ Note: Switching or minimizing this tab immediately forfeits the match.</span>
+    <div class="qz-foot" style="min-height:44px;">
+      <span class="muted small">⚠️ Proctored Duel: Switching or minimizing tabs forfeits the match.</span>
+    </div>
+  </div>`;
+}
+
+function btlWaitingOpponent(s) {
+  const localCorrect = s.local.answers.filter(a => a && a.isCorrect).length;
+  const remoteDoneCount = s.remote.answers.filter(x => x !== undefined).length;
+  const remoteProg = Math.round((remoteDoneCount / Math.max(1, s.qs.length)) * 100);
+
+  return `<div class="battle-wrap">
+    <div class="qz-top">
+      <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
+      <span class="eyebrow">Match In Progress · Awaiting Opponent</span>
+    </div>
+
+    <div class="card waiting-card">
+      <div class="waiting-ico">⏱️</div>
+      <h2>You've Completed All Questions!</h2>
+      <p class="muted">Outstanding effort! Waiting for your opponent to complete their round…</p>
+
+      <div class="waiting-score-banner">
+        <span class="muted small">Your Final Score</span>
+        <b style="font-size:2.2rem;color:var(--primary-text);display:block;margin:4px 0;">${s.local.score.toLocaleString()} pts</b>
+        <span style="font-size:0.9rem;color:var(--success);font-weight:700;">${localCorrect}/${s.qs.length} Correct (${Math.round((localCorrect / Math.max(1, s.qs.length)) * 100)}%) · Max Streak: ${s.local.maxStreak || 0} 🔥</span>
+      </div>
+
+      <div class="opponent-live-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-weight:700;">${esc(s.remote.name)}'s Live Score:</span>
+          <span style="color:#f472b6;font-weight:800;font-size:1.15rem;">${s.remote.score.toLocaleString()} pts</span>
+        </div>
+        <div class="hud-prog-bar" style="width:100%;height:10px;">
+          <i style="width:${remoteProg}%;background:#ec4899;"></i>
+        </div>
+        <small class="muted" style="display:block;margin-top:6px;">
+          Question ${Math.min(s.qs.length, remoteDoneCount + 1)} of ${s.qs.length} (${remoteProg}%)
+        </small>
+      </div>
+
+      <p class="muted small" style="margin:6px 0 0;">
+        The winner podium and full question-by-question comparison table will appear the moment they answer their last question!
+      </p>
     </div>
   </div>`;
 }
@@ -6737,66 +7108,100 @@ function btlPodium(s) {
   const isWinner = s.winner === 'local';
   const isTie = s.winner === 'tie';
   const localCorrect = s.local.answers.filter(a => a && a.isCorrect).length;
-  const remoteCorrect = s.remote.answers.filter(Boolean).length;
+  const remoteCorrect = s.remote.answers.filter(a => a && (typeof a === 'object' ? a.isCorrect : !!a)).length;
+  const localPct = Math.round((localCorrect / Math.max(1, s.qs.length)) * 100);
+  const remotePct = Math.round((remoteCorrect / Math.max(1, s.qs.length)) * 100);
+  const pointDiff = Math.abs(s.local.score - s.remote.score);
+  const diffText = pointDiff > 0 ? ` by ${pointDiff.toLocaleString()} points` : '';
 
   return `<div class="battle-wrap">
     <div class="qz-top">
       <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
-      <span class="eyebrow">Match Conclusion</span>
+      <span class="eyebrow">Match Conclusion · Final Results</span>
     </div>
 
     <div class="podium-card">
       <div class="podium-crown">${isWinner ? '👑' : isTie ? '🤝' : '🥈'}</div>
       <h1 class="podium-winner-name">
-        ${isWinner ? `${esc(s.local.name)} Wins! 🏆` : isTie ? 'Honorary Tie!' : `${esc(s.remote.name)} Takes the Match!`}
+        ${isWinner ? `${esc(s.local.name)} Takes Victory${diffText}! 🏆` : isTie ? 'Honorary Draw! Both Played Hard! 🤝' : `${esc(s.remote.name)} Takes the Match${diffText}! 🥈`}
       </h1>
       <p class="muted">
-        ${s.forfeitReason ? esc(s.forfeitReason) : 'Both engineers fought hard across technical interview questions.'}
+        ${s.forfeitReason ? esc(s.forfeitReason) : 'Full side-by-side performance breakdown for both competitors.'}
       </p>
 
+      <!-- Side-by-Side Result Cards (Both Sides Visible) -->
       <div class="duel-stats-grid">
         <div class="duel-stat-box ${isWinner ? 'winner' : ''}">
-          <span class="muted small">${esc(s.local.name)} (You)</span>
-          <b style="font-size:1.8rem;color:var(--primary-text);">${s.local.score.toLocaleString()} pts</b>
-          <span>Accuracy: <b>${Math.round((localCorrect / Math.max(1, s.qs.length)) * 100)}%</b> (${localCorrect}/${s.qs.length})</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span class="muted small">${esc(s.local.name)} (You)</span>
+            ${isWinner ? '<span class="pill ok sm">WINNER 🏆</span>' : ''}
+          </div>
+          <b style="font-size:1.85rem;color:var(--primary-text);">${s.local.score.toLocaleString()} pts</b>
+          <div style="display:grid;gap:2px;font-size:0.86rem;">
+            <span>Accuracy: <b>${localPct}%</b> (${localCorrect}/${s.qs.length})</span>
+            <span>Max Streak: <b>🔥 ${s.local.maxStreak || localCorrect} in a row</b></span>
+          </div>
         </div>
 
         <div class="duel-stat-box ${!isWinner && !isTie ? 'winner' : ''}">
-          <span class="muted small">${esc(s.remote.name)}</span>
-          <b style="font-size:1.8rem;color:#f472b6;">${s.remote.score.toLocaleString()} pts</b>
-          <span>Accuracy: <b>${Math.round((remoteCorrect / Math.max(1, s.qs.length)) * 100)}%</b> (${remoteCorrect}/${s.qs.length})</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span class="muted small">${esc(s.remote.name)}</span>
+            ${!isWinner && !isTie ? '<span class="pill ok sm">WINNER 🏆</span>' : ''}
+          </div>
+          <b style="font-size:1.85rem;color:#f472b6;">${s.remote.score.toLocaleString()} pts</b>
+          <div style="display:grid;gap:2px;font-size:0.86rem;">
+            <span>Accuracy: <b>${remotePct}%</b> (${remoteCorrect}/${s.qs.length})</span>
+            <span>Max Streak: <b>🔥 ${s.remote.maxStreak || remoteCorrect} in a row</b></span>
+          </div>
         </div>
       </div>
 
-      <div class="modal-actions" style="justify-content:center;">
+      <div class="modal-actions" style="justify-content:center;margin:10px 0;">
         <button class="btn primary lg" data-action="battle-rematch">⚔️ Play Rematch</button>
         <button class="btn lg" data-action="battle-exit">Return to Dashboard</button>
       </div>
 
-      <!-- Question breakdown -->
-      <div class="section-head" style="margin-top:20px;text-align:left;">
-        <h3>Question Breakdown</h3>
+      <!-- Question-by-Question Breakdown for Both Players -->
+      <div class="section-head" style="margin-top:16px;text-align:left;">
+        <h3>Detailed Question-by-Question Comparison</h3>
       </div>
-      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;">
+      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--border);">
         <table class="duel-breakdown-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Question</th>
-              <th>Your Outcome</th>
-              <th>Opponent</th>
+              <th style="width:40px;">#</th>
+              <th>Question &amp; Key</th>
+              <th style="min-width:130px;">${esc(s.local.name)}</th>
+              <th style="min-width:130px;">${esc(s.remote.name)}</th>
             </tr>
           </thead>
           <tbody>
             ${s.qs.map((q, idx) => {
               const locAns = s.local.answers[idx];
               const locOk = locAns && locAns.isCorrect;
-              const remOk = s.remote.answers[idx];
+              const remAns = s.remote.answers[idx];
+              const remOk = remAns && (typeof remAns === 'object' ? remAns.isCorrect : !!remAns);
+              const locPts = locAns ? locAns.pts : 0;
+              const remPts = remAns && typeof remAns === 'object' ? remAns.pts : (remOk ? '✓' : 0);
+              const locTime = locAns && locAns.timeUsed ? (locAns.timeUsed / 1000).toFixed(1) + 's' : '';
+              const remTime = remAns && remAns.timeUsed ? (remAns.timeUsed / 1000).toFixed(1) + 's' : '';
+
               return `<tr>
                 <td><b>${idx + 1}</b></td>
-                <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
-                <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
-                <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
+                <td>
+                  <div style="font-weight:600;color:var(--text);line-height:1.35;margin-bottom:3px;">${esc(q.q)}</div>
+                  <small class="muted">Correct Answer: <b>${esc(q.opts[q.a])}</b></small>
+                </td>
+                <td>
+                  <span class="pill ${locOk ? 'ok' : 'warn'} sm">
+                    ${locOk ? `✓ +${locPts} (${locTime})` : '✗ Missed'}
+                  </span>
+                </td>
+                <td>
+                  <span class="pill ${remOk ? 'ok' : 'warn'} sm">
+                    ${remOk ? `✓ +${remPts} (${remTime})` : '✗ Missed'}
+                  </span>
+                </td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -6824,6 +7229,7 @@ function renderBattle() {
   if (s.phase === 'lobby') html = btlLobby(s);
   else if (s.phase === 'countdown') html = btlCountdown(s);
   else if (s.phase === 'battle') html = btlArena(s);
+  else if (s.phase === 'waiting_opponent') html = btlWaitingOpponent(s);
   else if (s.phase === 'result' || s.phase === 'forfeited') html = btlPodium(s);
 
   el.innerHTML = html;
@@ -6882,7 +7288,7 @@ const BattleActions = {
       return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
     }
     closeModal();
-    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}…`, { title: 'Syncing Room ⚡', icon: '⚡' });
     Battle.joinRoom(clean);
     renderBattle();
   },
@@ -6893,7 +7299,7 @@ const BattleActions = {
     if (!clean) {
       return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
     }
-    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}…`, { title: 'Syncing Room ⚡', icon: '⚡' });
     Battle.joinRoom(clean);
     renderBattle();
   },

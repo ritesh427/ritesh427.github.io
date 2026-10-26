@@ -1,6 +1,7 @@
 'use strict';
 /* =========================================================
    DevPath 1v1 Battle Arena UI Renderer & Action Wiring
+   Mobile-Optimized HUD, Live Opponent Waiting, & Synced Results
    ========================================================= */
 
 const btlEl = () => document.getElementById('quiz'); // reuses full-screen modal layer
@@ -11,35 +12,40 @@ function btlLobby(s) {
   const inviteUrl = window.location.origin + window.location.pathname + '#/battle?room=' + (Battle.room || '');
   const topicOptions = store.topics.filter(tp => QB.has(tp.id)).map(tp => `<option value="${tp.id}"${tp.id === s.topicId ? ' selected' : ''}>${catMeta(tp.category).icon} ${esc(tp.name)}</option>`).join('');
   const code = Battle.shortCode();
+  const isChallengerConnected = s.remote.name && !s.remote.name.includes('Awaiting') && !s.remote.name.includes('Connecting');
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
     <div class="qz-top">
       <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
-      <span class="eyebrow">1v1 Peer-to-Peer Duel Arena</span>
+      <span class="eyebrow">1v1 Technical Duel Arena</span>
     </div>
     
     <div class="lobby-card">
       <div class="lobby-head">
         <div class="lobby-ico">⚔️</div>
         <div>
-          <h2>Technical Interview 1v1 Duel</h2>
-          <p class="muted">Live head-to-head competition with synchronized timers and speed scoring. Leaving the tab forfeits the match.</p>
+          <h2>1v1 Competition Duel</h2>
+          <p class="muted">Live head-to-head match with synchronized timers and speed scoring. Leaving the tab forfeits the match.</p>
         </div>
       </div>
 
       <div class="lobby-players">
         <div class="player-box">
           <div class="player-avatar">${s.local.avatar}</div>
-          <span class="player-name">${esc(s.local.name)} (You)</span>
-          <span class="player-status ${s.local.ready ? 'ready' : ''}">${s.local.ready ? 'READY ✓' : 'NOT READY'}</span>
+          <div class="player-meta">
+            <span class="player-name">${esc(s.local.name)} (You)</span>
+            <span class="player-status ${s.local.ready ? 'ready' : ''}">${s.local.ready ? 'READY ✓' : 'NOT READY'}</span>
+          </div>
         </div>
 
-        <div class="versus-badge">VS</div>
+        <div class="versus-badge">⚔️ VS ⚔️</div>
 
         <div class="player-box">
           <div class="player-avatar opponent">${s.remote.avatar}</div>
-          <span class="player-name">${esc(s.remote.name)}</span>
-          <span class="player-status ${s.remote.ready ? 'ready' : ''}">${s.remote.ready ? 'READY ✓' : 'WAITING'}</span>
+          <div class="player-meta">
+            <span class="player-name">${esc(s.remote.name)}</span>
+            <span class="player-status ${s.remote.ready ? 'ready' : ''}">${s.remote.ready ? 'READY ✓' : 'WAITING'}</span>
+          </div>
         </div>
       </div>
 
@@ -48,14 +54,16 @@ function btlLobby(s) {
           <span class="rc-label">ROOM SYNC CODE</span>
           <div class="rc-display">
             <span class="rc-code">${esc(code)}</span>
-            <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
-            <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+            <div class="rc-actions">
+              <button class="btn sm" data-action="battle-copy-code">${icon('download', 14)} Copy Code</button>
+              <button class="btn sm primary" data-action="battle-copy">${icon('link', 14)} Copy Link</button>
+            </div>
           </div>
         </div>
         <div class="invite-box" style="margin-top:6px;">
           <input type="text" readonly value="${esc(inviteUrl)}" id="inviteLinkInput">
         </div>
-        <small class="muted">Your friend can enter the 6-character code above or open the direct link on any phone or desktop.</small>
+        <small class="muted">Your friend can enter the 6-character code above or open the direct link on phone or desktop.</small>
 
         <div class="join-box" style="margin-top:10px;">
           <span>Joining a friend's room instead?</span>
@@ -71,7 +79,7 @@ function btlLobby(s) {
           <span style="font-size:0.75rem;text-transform:uppercase;letter-spacing:0.08em;opacity:0.8;display:block;">CONNECTED TO ROOM</span>
           <b style="font-size:1.15rem;letter-spacing:0.08em;">${esc(code)}</b>
         </div>
-        <button class="btn sm ghost" data-action="battle-switch-room">Leave / Switch Room</button>
+        <button class="btn sm ghost" data-action="battle-switch-room">Switch Room</button>
       </div>` : ''}
 
       ${Battle.isHost ? `<div class="set-grid">
@@ -110,9 +118,9 @@ function btlArena(s) {
   const t = store.byId.get(s.topicId) || { name: 'Technical Duel', category: 'General' };
   const m = catMeta(t.category);
   const rem = Math.max(0, Math.ceil((s.deadline - Date.now()) / 1000));
-  const localProg = Math.round(((s.cur) / s.qs.length) * 100);
+  const localProg = Math.round(((s.cur) / Math.max(1, s.qs.length)) * 100);
   const remoteAnswered = s.remote.answers.filter(x => x !== undefined).length;
-  const remoteProg = Math.round((remoteAnswered / s.qs.length) * 100);
+  const remoteProg = Math.round((remoteAnswered / Math.max(1, s.qs.length)) * 100);
 
   const opts = q.opts.map((o, i) => {
     let c = 'qz-opt';
@@ -124,13 +132,13 @@ function btlArena(s) {
   }).join('');
 
   return `<div class="battle-wrap" style="--cat:${m.color}">
-    <!-- Live Arena HUD -->
+    <!-- Live Arena Split HUD (Mobile Optimized) -->
     <div class="battle-hud">
       <div class="hud-player">
-        <span class="player-avatar" style="width:42px;height:42px;font-size:1.3rem;">${s.local.avatar}</span>
+        <span class="player-avatar" style="width:40px;height:40px;font-size:1.25rem;">${s.local.avatar}</span>
         <div class="hud-info">
           <b>${esc(s.local.name)}</b>
-          <div class="hud-score">${s.local.score.toLocaleString()} <small style="font-size:0.75rem;color:var(--muted)">pts</small></div>
+          <div class="hud-score">${s.local.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small></div>
           <div class="hud-prog-bar"><i style="width:${localProg}%"></i></div>
         </div>
       </div>
@@ -141,10 +149,10 @@ function btlArena(s) {
       </div>
 
       <div class="hud-player right">
-        <span class="player-avatar opponent" style="width:42px;height:42px;font-size:1.3rem;">${s.remote.avatar}</span>
+        <span class="player-avatar opponent" style="width:40px;height:40px;font-size:1.25rem;">${s.remote.avatar}</span>
         <div class="hud-info">
           <b>${esc(s.remote.name)}</b>
-          <div class="hud-score">${s.remote.score.toLocaleString()} <small style="font-size:0.75rem;color:var(--muted)">pts</small></div>
+          <div class="hud-score">${s.remote.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small></div>
           <div class="hud-prog-bar"><i style="width:${remoteProg}%"></i></div>
         </div>
       </div>
@@ -156,11 +164,53 @@ function btlArena(s) {
       <h2 class="qz-text">${esc(q.q)}</h2>
       ${codeBlock(q.k)}
       <div class="qz-options">${opts}</div>
-      ${s.sel !== null ? `<div class="qz-fb ok"><small>Answer recorded! Waiting for clock or opponent…</small></div>` : ''}
+      ${s.sel !== null ? `<div class="qz-fb ok"><small>Answer recorded! Advancing round…</small></div>` : ''}
     </div>
 
-    <div class="qz-foot" style="min-height:48px;">
-      <span class="muted small">⚠️ Note: Switching or minimizing this tab immediately forfeits the match.</span>
+    <div class="qz-foot" style="min-height:44px;">
+      <span class="muted small">⚠️ Proctored Duel: Switching or minimizing tabs forfeits the match.</span>
+    </div>
+  </div>`;
+}
+
+function btlWaitingOpponent(s) {
+  const localCorrect = s.local.answers.filter(a => a && a.isCorrect).length;
+  const remoteDoneCount = s.remote.answers.filter(x => x !== undefined).length;
+  const remoteProg = Math.round((remoteDoneCount / Math.max(1, s.qs.length)) * 100);
+
+  return `<div class="battle-wrap">
+    <div class="qz-top">
+      <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
+      <span class="eyebrow">Match In Progress · Awaiting Opponent</span>
+    </div>
+
+    <div class="card waiting-card">
+      <div class="waiting-ico">⏱️</div>
+      <h2>You've Completed All Questions!</h2>
+      <p class="muted">Outstanding effort! Waiting for your opponent to complete their round…</p>
+
+      <div class="waiting-score-banner">
+        <span class="muted small">Your Final Score</span>
+        <b style="font-size:2.2rem;color:var(--primary-text);display:block;margin:4px 0;">${s.local.score.toLocaleString()} pts</b>
+        <span style="font-size:0.9rem;color:var(--success);font-weight:700;">${localCorrect}/${s.qs.length} Correct (${Math.round((localCorrect / Math.max(1, s.qs.length)) * 100)}%) · Max Streak: ${s.local.maxStreak || 0} 🔥</span>
+      </div>
+
+      <div class="opponent-live-box">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+          <span style="font-weight:700;">${esc(s.remote.name)}'s Live Score:</span>
+          <span style="color:#f472b6;font-weight:800;font-size:1.15rem;">${s.remote.score.toLocaleString()} pts</span>
+        </div>
+        <div class="hud-prog-bar" style="width:100%;height:10px;">
+          <i style="width:${remoteProg}%;background:#ec4899;"></i>
+        </div>
+        <small class="muted" style="display:block;margin-top:6px;">
+          Question ${Math.min(s.qs.length, remoteDoneCount + 1)} of ${s.qs.length} (${remoteProg}%)
+        </small>
+      </div>
+
+      <p class="muted small" style="margin:6px 0 0;">
+        The winner podium and full question-by-question comparison table will appear the moment they answer their last question!
+      </p>
     </div>
   </div>`;
 }
@@ -169,66 +219,100 @@ function btlPodium(s) {
   const isWinner = s.winner === 'local';
   const isTie = s.winner === 'tie';
   const localCorrect = s.local.answers.filter(a => a && a.isCorrect).length;
-  const remoteCorrect = s.remote.answers.filter(Boolean).length;
+  const remoteCorrect = s.remote.answers.filter(a => a && (typeof a === 'object' ? a.isCorrect : !!a)).length;
+  const localPct = Math.round((localCorrect / Math.max(1, s.qs.length)) * 100);
+  const remotePct = Math.round((remoteCorrect / Math.max(1, s.qs.length)) * 100);
+  const pointDiff = Math.abs(s.local.score - s.remote.score);
+  const diffText = pointDiff > 0 ? ` by ${pointDiff.toLocaleString()} points` : '';
 
   return `<div class="battle-wrap">
     <div class="qz-top">
       <button class="icon-btn" data-action="battle-exit" aria-label="Exit Arena">${icon('x', 20)}</button>
-      <span class="eyebrow">Match Conclusion</span>
+      <span class="eyebrow">Match Conclusion · Final Results</span>
     </div>
 
     <div class="podium-card">
       <div class="podium-crown">${isWinner ? '👑' : isTie ? '🤝' : '🥈'}</div>
       <h1 class="podium-winner-name">
-        ${isWinner ? `${esc(s.local.name)} Wins! 🏆` : isTie ? 'Honorary Tie!' : `${esc(s.remote.name)} Takes the Match!`}
+        ${isWinner ? `${esc(s.local.name)} Takes Victory${diffText}! 🏆` : isTie ? 'Honorary Draw! Both Played Hard! 🤝' : `${esc(s.remote.name)} Takes the Match${diffText}! 🥈`}
       </h1>
       <p class="muted">
-        ${s.forfeitReason ? esc(s.forfeitReason) : 'Both engineers fought hard across technical interview questions.'}
+        ${s.forfeitReason ? esc(s.forfeitReason) : 'Full side-by-side performance breakdown for both competitors.'}
       </p>
 
+      <!-- Side-by-Side Result Cards (Both Sides Visible) -->
       <div class="duel-stats-grid">
         <div class="duel-stat-box ${isWinner ? 'winner' : ''}">
-          <span class="muted small">${esc(s.local.name)} (You)</span>
-          <b style="font-size:1.8rem;color:var(--primary-text);">${s.local.score.toLocaleString()} pts</b>
-          <span>Accuracy: <b>${Math.round((localCorrect / Math.max(1, s.qs.length)) * 100)}%</b> (${localCorrect}/${s.qs.length})</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span class="muted small">${esc(s.local.name)} (You)</span>
+            ${isWinner ? '<span class="pill ok sm">WINNER 🏆</span>' : ''}
+          </div>
+          <b style="font-size:1.85rem;color:var(--primary-text);">${s.local.score.toLocaleString()} pts</b>
+          <div style="display:grid;gap:2px;font-size:0.86rem;">
+            <span>Accuracy: <b>${localPct}%</b> (${localCorrect}/${s.qs.length})</span>
+            <span>Max Streak: <b>🔥 ${s.local.maxStreak || localCorrect} in a row</b></span>
+          </div>
         </div>
 
         <div class="duel-stat-box ${!isWinner && !isTie ? 'winner' : ''}">
-          <span class="muted small">${esc(s.remote.name)}</span>
-          <b style="font-size:1.8rem;color:#f472b6;">${s.remote.score.toLocaleString()} pts</b>
-          <span>Accuracy: <b>${Math.round((remoteCorrect / Math.max(1, s.qs.length)) * 100)}%</b> (${remoteCorrect}/${s.qs.length})</span>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span class="muted small">${esc(s.remote.name)}</span>
+            ${!isWinner && !isTie ? '<span class="pill ok sm">WINNER 🏆</span>' : ''}
+          </div>
+          <b style="font-size:1.85rem;color:#f472b6;">${s.remote.score.toLocaleString()} pts</b>
+          <div style="display:grid;gap:2px;font-size:0.86rem;">
+            <span>Accuracy: <b>${remotePct}%</b> (${remoteCorrect}/${s.qs.length})</span>
+            <span>Max Streak: <b>🔥 ${s.remote.maxStreak || remoteCorrect} in a row</b></span>
+          </div>
         </div>
       </div>
 
-      <div class="modal-actions" style="justify-content:center;">
+      <div class="modal-actions" style="justify-content:center;margin:10px 0;">
         <button class="btn primary lg" data-action="battle-rematch">⚔️ Play Rematch</button>
         <button class="btn lg" data-action="battle-exit">Return to Dashboard</button>
       </div>
 
-      <!-- Question breakdown -->
-      <div class="section-head" style="margin-top:20px;text-align:left;">
-        <h3>Question Breakdown</h3>
+      <!-- Question-by-Question Breakdown for Both Players -->
+      <div class="section-head" style="margin-top:16px;text-align:left;">
+        <h3>Detailed Question-by-Question Comparison</h3>
       </div>
-      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;">
+      <div style="overflow-x:auto;width:100%;-webkit-overflow-scrolling:touch;border-radius:12px;border:1px solid var(--border);">
         <table class="duel-breakdown-table">
           <thead>
             <tr>
-              <th>#</th>
-              <th>Question</th>
-              <th>Your Outcome</th>
-              <th>Opponent</th>
+              <th style="width:40px;">#</th>
+              <th>Question &amp; Key</th>
+              <th style="min-width:130px;">${esc(s.local.name)}</th>
+              <th style="min-width:130px;">${esc(s.remote.name)}</th>
             </tr>
           </thead>
           <tbody>
             ${s.qs.map((q, idx) => {
               const locAns = s.local.answers[idx];
               const locOk = locAns && locAns.isCorrect;
-              const remOk = s.remote.answers[idx];
+              const remAns = s.remote.answers[idx];
+              const remOk = remAns && (typeof remAns === 'object' ? remAns.isCorrect : !!remAns);
+              const locPts = locAns ? locAns.pts : 0;
+              const remPts = remAns && typeof remAns === 'object' ? remAns.pts : (remOk ? '✓' : 0);
+              const locTime = locAns && locAns.timeUsed ? (locAns.timeUsed / 1000).toFixed(1) + 's' : '';
+              const remTime = remAns && remAns.timeUsed ? (remAns.timeUsed / 1000).toFixed(1) + 's' : '';
+
               return `<tr>
                 <td><b>${idx + 1}</b></td>
-                <td>${esc(q.q.length > 50 ? q.q.slice(0, 48) + '…' : q.q)}</td>
-                <td><span class="pill ${locOk ? 'ok' : 'warn'} sm">${locOk ? '✓ Correct (' + locAns.pts + ')' : '✗ Missed'}</span></td>
-                <td><span class="pill ${remOk ? 'ok' : 'warn'} sm">${remOk ? '✓ Correct' : '✗ Missed'}</span></td>
+                <td>
+                  <div style="font-weight:600;color:var(--text);line-height:1.35;margin-bottom:3px;">${esc(q.q)}</div>
+                  <small class="muted">Correct Answer: <b>${esc(q.opts[q.a])}</b></small>
+                </td>
+                <td>
+                  <span class="pill ${locOk ? 'ok' : 'warn'} sm">
+                    ${locOk ? `✓ +${locPts} (${locTime})` : '✗ Missed'}
+                  </span>
+                </td>
+                <td>
+                  <span class="pill ${remOk ? 'ok' : 'warn'} sm">
+                    ${remOk ? `✓ +${remPts} (${remTime})` : '✗ Missed'}
+                  </span>
+                </td>
               </tr>`;
             }).join('')}
           </tbody>
@@ -256,6 +340,7 @@ function renderBattle() {
   if (s.phase === 'lobby') html = btlLobby(s);
   else if (s.phase === 'countdown') html = btlCountdown(s);
   else if (s.phase === 'battle') html = btlArena(s);
+  else if (s.phase === 'waiting_opponent') html = btlWaitingOpponent(s);
   else if (s.phase === 'result' || s.phase === 'forfeited') html = btlPodium(s);
 
   el.innerHTML = html;
@@ -314,7 +399,7 @@ const BattleActions = {
       return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
     }
     closeModal();
-    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}…`, { title: 'Syncing Room ⚡', icon: '⚡' });
     Battle.joinRoom(clean);
     renderBattle();
   },
@@ -325,7 +410,7 @@ const BattleActions = {
     if (!clean) {
       return toast('Please enter a valid 6-character room code or invite link.', { title: 'Invalid Code', icon: '⚠️', kind: 'bad' });
     }
-    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}...`, { title: 'Syncing Room ⚡', icon: '⚡' });
+    toast(`Connecting to room ${clean.replace('devpath-', '').toUpperCase()}…`, { title: 'Syncing Room ⚡', icon: '⚡' });
     Battle.joinRoom(clean);
     renderBattle();
   },
