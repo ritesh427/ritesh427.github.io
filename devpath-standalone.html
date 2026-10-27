@@ -2579,9 +2579,9 @@ const Quiz = {
           i: src.idx !== undefined ? src.idx : idx,
           q: src.q,
           k: src.k || '',
-          opts: order.map(j => src.o[j]),
+          opts: order.map(j => (src.o || src.opts)[j]),
           a: order.indexOf(src.a),
-          e: src.e,
+          e: src.e || src.exp || '',
           secs: s.secs ? Math.round(s.secs * (src.k ? 1.5 : 1)) : 0
         };
       });
@@ -2594,9 +2594,9 @@ const Quiz = {
           i,
           q: src.q,
           k: src.k || '',
-          opts: order.map(j => src.o[j]),
+          opts: order.map(j => (src.o || src.opts)[j]),
           a: order.indexOf(src.a),
-          e: src.e,
+          e: src.e || src.exp || '',
           secs: s.secs ? Math.round(s.secs * (src.k ? 1.5 : 1)) : 0
         };
       });
@@ -8388,6 +8388,8 @@ Views.tests = () => {
   `;
 };
 
+Views.battle = () => Views.tests();
+
 </script>
   <script>
 /* --- js/quiz-ui.js --- */
@@ -9077,11 +9079,11 @@ const Battle = {
     switch (msg.type) {
       case 'PING':
         this.send({ type: 'PONG' });
-        break;
+        return;
 
       case 'PONG':
         this.missedPings = 0;
-        break;
+        return;
 
       case 'HELLO':
         this.s.remote.name = msg.name || 'Opponent';
@@ -9147,6 +9149,9 @@ const Battle = {
         this.s.remote.done = !!msg.done;
         if (this.s.remote.done) {
           this.checkMatchCompletion();
+        } else if (this.s.phase === 'battle') {
+          this.onRemoteProgress && this.onRemoteProgress();
+          return;
         }
         break;
 
@@ -9227,6 +9232,7 @@ const Battle = {
       if (this.s.countdown <= 0) {
         clearInterval(iv);
         this.startBattle();
+        return;
       }
       this.onChange && this.onChange();
     }, 1000);
@@ -9333,9 +9339,9 @@ const Battle = {
       } else {
         // Player enters waiting room with live opponent tracker
         this.s.phase = 'waiting_opponent';
+        this.onChange && this.onChange();
       }
     }
-    this.onChange && this.onChange();
   },
 
   /* ----- AI Bot Simulation ----- */
@@ -9356,9 +9362,13 @@ const Battle = {
           this.s.remote.done = true;
           this.checkMatchCompletion();
         } else {
+          if (this.s.phase === 'battle') {
+            this.onRemoteProgress && this.onRemoteProgress();
+          } else {
+            this.onChange && this.onChange();
+          }
           runNextBotAnswer();
         }
-        this.onChange && this.onChange();
       }, delay);
     };
     runNextBotAnswer();
@@ -9769,6 +9779,15 @@ function renderBattle() {
   document.body.classList.add('quiz-open');
   document.body.classList.add('no-scroll');
 
+  // Smooth in-place update for countdown to avoid flicker
+  if (s.phase === 'countdown') {
+    const numEl = el.querySelector('.countdown-number');
+    if (numEl) {
+      numEl.textContent = s.countdown || 3;
+      return;
+    }
+  }
+
   let html = '';
   if (s.phase === 'lobby') html = btlLobby(s);
   else if (s.phase === 'countdown') html = btlCountdown(s);
@@ -9786,6 +9805,21 @@ Battle.onTimer = () => {
     const rem = Math.max(0, Math.ceil((Battle.s.deadline - Date.now()) / 1000));
     t.textContent = rem + 's';
     t.classList.toggle('danger', rem <= 5);
+  }
+};
+
+Battle.onRemoteProgress = () => {
+  const s = Battle.s;
+  if (!s || s.phase !== 'battle') return;
+  const remoteScoreEl = document.querySelector('.hud-player.right .hud-score');
+  if (remoteScoreEl) {
+    remoteScoreEl.innerHTML = `${s.remote.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small>`;
+  }
+  const remoteProgEl = document.querySelector('.hud-player.right .hud-prog-bar i');
+  if (remoteProgEl) {
+    const remoteAnswered = s.remote.answers.filter(x => x !== undefined).length;
+    const remoteProg = Math.round((remoteAnswered / Math.max(1, s.qs.length)) * 100);
+    remoteProgEl.style.width = `${remoteProg}%`;
   }
 };
 
@@ -9873,7 +9907,6 @@ const BattleActions = {
   },
   'battle-pick': (t, n) => {
     Battle.submitAnswer(+n.dataset.val);
-    renderBattle();
   },
   'battle-copy-code': () => {
     const code = Battle.shortCode();

@@ -112,9 +112,9 @@ const Quiz = {
           i: src.idx !== undefined ? src.idx : idx,
           q: src.q,
           k: src.k || '',
-          opts: order.map(j => src.o[j]),
+          opts: order.map(j => (src.o || src.opts)[j]),
           a: order.indexOf(src.a),
-          e: src.e,
+          e: src.e || src.exp || '',
           secs: s.secs ? Math.round(s.secs * (src.k ? 1.5 : 1)) : 0
         };
       });
@@ -127,9 +127,9 @@ const Quiz = {
           i,
           q: src.q,
           k: src.k || '',
-          opts: order.map(j => src.o[j]),
+          opts: order.map(j => (src.o || src.opts)[j]),
           a: order.indexOf(src.a),
-          e: src.e,
+          e: src.e || src.exp || '',
           secs: s.secs ? Math.round(s.secs * (src.k ? 1.5 : 1)) : 0
         };
       });

@@ -307,11 +307,11 @@ const Battle = {
     switch (msg.type) {
       case 'PING':
         this.send({ type: 'PONG' });
-        break;
+        return;
 
       case 'PONG':
         this.missedPings = 0;
-        break;
+        return;
 
       case 'HELLO':
         this.s.remote.name = msg.name || 'Opponent';
@@ -377,6 +377,9 @@ const Battle = {
         this.s.remote.done = !!msg.done;
         if (this.s.remote.done) {
           this.checkMatchCompletion();
+        } else if (this.s.phase === 'battle') {
+          this.onRemoteProgress && this.onRemoteProgress();
+          return;
         }
         break;
 
@@ -457,6 +460,7 @@ const Battle = {
       if (this.s.countdown <= 0) {
         clearInterval(iv);
         this.startBattle();
+        return;
       }
       this.onChange && this.onChange();
     }, 1000);
@@ -563,9 +567,9 @@ const Battle = {
       } else {
         // Player enters waiting room with live opponent tracker
         this.s.phase = 'waiting_opponent';
+        this.onChange && this.onChange();
       }
     }
-    this.onChange && this.onChange();
   },
 
   /* ----- AI Bot Simulation ----- */
@@ -586,9 +590,13 @@ const Battle = {
           this.s.remote.done = true;
           this.checkMatchCompletion();
         } else {
+          if (this.s.phase === 'battle') {
+            this.onRemoteProgress && this.onRemoteProgress();
+          } else {
+            this.onChange && this.onChange();
+          }
           runNextBotAnswer();
         }
-        this.onChange && this.onChange();
       }, delay);
     };
     runNextBotAnswer();

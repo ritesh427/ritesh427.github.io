@@ -336,6 +336,15 @@ function renderBattle() {
   document.body.classList.add('quiz-open');
   document.body.classList.add('no-scroll');
 
+  // Smooth in-place update for countdown to avoid flicker
+  if (s.phase === 'countdown') {
+    const numEl = el.querySelector('.countdown-number');
+    if (numEl) {
+      numEl.textContent = s.countdown || 3;
+      return;
+    }
+  }
+
   let html = '';
   if (s.phase === 'lobby') html = btlLobby(s);
   else if (s.phase === 'countdown') html = btlCountdown(s);
@@ -353,6 +362,21 @@ Battle.onTimer = () => {
     const rem = Math.max(0, Math.ceil((Battle.s.deadline - Date.now()) / 1000));
     t.textContent = rem + 's';
     t.classList.toggle('danger', rem <= 5);
+  }
+};
+
+Battle.onRemoteProgress = () => {
+  const s = Battle.s;
+  if (!s || s.phase !== 'battle') return;
+  const remoteScoreEl = document.querySelector('.hud-player.right .hud-score');
+  if (remoteScoreEl) {
+    remoteScoreEl.innerHTML = `${s.remote.score.toLocaleString()} <small style="font-size:0.7rem;color:var(--muted)">pts</small>`;
+  }
+  const remoteProgEl = document.querySelector('.hud-player.right .hud-prog-bar i');
+  if (remoteProgEl) {
+    const remoteAnswered = s.remote.answers.filter(x => x !== undefined).length;
+    const remoteProg = Math.round((remoteAnswered / Math.max(1, s.qs.length)) * 100);
+    remoteProgEl.style.width = `${remoteProg}%`;
   }
 };
 
@@ -440,7 +464,6 @@ const BattleActions = {
   },
   'battle-pick': (t, n) => {
     Battle.submitAnswer(+n.dataset.val);
-    renderBattle();
   },
   'battle-copy-code': () => {
     const code = Battle.shortCode();

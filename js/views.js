@@ -972,3 +972,5 @@ Views.tests = () => {
   ${historyFeed}
   `;
 };
+
+Views.battle = () => Views.tests();
