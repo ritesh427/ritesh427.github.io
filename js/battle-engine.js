@@ -431,9 +431,9 @@ const Battle = {
         idx,
         q: src.q,
         k: src.k,
-        opts: order.map(o => src.opts[o]),
+        opts: order.map(o => (src.o || src.opts)[o]),
         a: order.indexOf(src.a),
-        exp: src.exp
+        exp: src.e || src.exp || ''
       };
     });
 

@@ -206,3 +206,44 @@ QB.add("eda15", [
     e: "The default is read_uncommitted. Setting isolation.level=read_committed instructs the consumer's fetcher to buffer transactional messages up to the Last Stable Offset (LSO) and discard aborted messages."
   }
 ]);
+
+// eda12: Kafka Consumer Advanced & Rebalance Listeners
+QB.add("eda12", [
+  {
+    q: "Why should you implement ConsumerRebalanceListener.onPartitionsRevoked() when manually managing Kafka consumer offsets?",
+    o: [
+      "To commit in-flight processed offsets to Kafka synchronously before partition ownership is transferred to another consumer during a rebalance",
+      "To delete all messages stored in the partitions",
+      "To trigger a JVM garbage collection",
+      "To restart the Kafka broker node"
+    ],
+    a: 0,
+    e: "When a rebalance occurs, your consumer loses ownership of its partitions. onPartitionsRevoked() is your last chance to flush state and commit offsets synchronously to prevent duplicate message processing by the new owner."
+  },
+  {
+    q: "How does manual asynchronous commit (commitAsync()) differ from synchronous commit (commitSync()) in KafkaConsumer?",
+    o: [
+      "commitAsync() is non-blocking and does not retry on failure (to prevent committing stale offsets out of order); commitSync() blocks the thread until broker ACK is received and retries retriable errors",
+      "commitSync() sends messages via UDP",
+      "commitAsync() only works when Kafka is running in ZooKeeper mode",
+      "commitSync() deletes the topic offsets permanently"
+    ],
+    a: 0,
+    e: "commitAsync() does not retry because if commit #1 fails and commit #2 succeeds, retrying commit #1 would overwrite the newer offset with an older one. Best practice: commitAsync() in poll loop, commitSync() in shutdown."
+  }
+]);
+
+// eda16: Kafka Consumer Transactions & Exactly Once
+QB.add("eda16", [
+  {
+    q: "How does Kafka's Transaction Coordinator prevent 'Zombie Instances' (split-brain producers) from corrupting partition logs?",
+    o: [
+      "Using an Epoch Number associated with the transactional.id; when a new producer initializes with the same ID, the coordinator bumps the epoch and rejects requests from older epochs with a ProducerFencedException",
+      "By rebooting the server operating system",
+      "By revoking SSL certificates",
+      "By deleting the producer's hard drive log"
+    ],
+    a: 0,
+    e: "Each transactional producer registers with a static transactional.id. The transaction coordinator issues an epoch. If an old producer experiences a network partition and wakes up, any write attempt is rejected with ProducerFencedException."
+  }
+]);

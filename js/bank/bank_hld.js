@@ -225,3 +225,299 @@ QB.add("hld33", [
     e: "The application writes to its local DB tables AND writes event payloads into an 'outbox' table inside ONE single ACID database transaction. Debezium reads the database write-ahead log (WAL) and reliably publishes events to Kafka."
   }
 ]);
+
+// hld3: Microservices Patterns
+QB.add("hld3", [
+  {
+    q: "How does the 'Transactional Outbox Pattern' ensure atomic database updates and event publishing without distributed 2PC transactions?",
+    o: [
+      "The business entity update and outgoing event message are saved inside the SAME local relational database transaction into an 'outbox' table; a separate CDC process (e.g. Debezium) asynchronously publishes outbox records to Kafka",
+      "The application calls Kafka first, and if Kafka succeeds, it commits the database",
+      "It uses Two-Phase Commit across Postgres and Kafka",
+      "Events are saved in browser local storage"
+    ],
+    a: 0,
+    e: "Dual writes to a database and a message broker always risk partial failure. The Outbox pattern relies on local ACID transactions to write business data and outbox events together, followed by reliable log tailing (CDC) to publish to Kafka."
+  },
+  {
+    q: "What is the primary trade-off between Orchestration-based Sagas and Choreography-based Sagas in distributed systems?",
+    o: [
+      "Orchestration centralizes workflow logic in a saga coordinator service (clearer state, easier testing, but central dependency); Choreography uses event-driven pub/sub between services (loose coupling, but complex debugging and cyclic dependency risks)",
+      "Orchestration uses UDP; Choreography uses TCP",
+      "Choreography requires a relational database; Orchestration does not",
+      "Orchestration is only supported in Java"
+    ],
+    a: 0,
+    e: "In Choreography, services react to each other's events. When flows grow to 8+ steps, tracking state becomes difficult. Orchestration provides a stateful coordinator (e.g. Temporal, Camunda, AWS Step Functions) that explicitly commands each step."
+  }
+]);
+
+// hld5: Scale from 0 to Million
+QB.add("hld5", [
+  {
+    q: "When scaling an application from 10,000 to 1,000,000 daily active users, what architectural transition is crucial for the web/application tier?",
+    o: [
+      "Making the web tier completely stateless so user sessions are stored in an external distributed cache (Redis) or JWTs, allowing horizontal autoscaling behind a load balancer",
+      "Upgrading the server to a 128-core mainframe with 2TB of RAM",
+      "Storing all user sessions on the web server's local file system",
+      "Disabling all database indexes"
+    ],
+    a: 0,
+    e: "Stateful servers require 'sticky sessions', preventing elastic horizontal scaling. Stateless servers treat instances as cattle: any node can service any request, enabling seamless auto-scaling up and down based on traffic."
+  }
+]);
+
+// hld8: Back of the envelope estimation
+QB.add("hld8", [
+  {
+    q: "If a system handles 100 Million daily active users, with each user generating 5 requests per day, what is the approximate average Queries Per Second (QPS)?",
+    o: [
+      "~5,800 QPS (100M * 5 = 500M requests / 86,400 seconds ~= 5,787 QPS; with peak factor of 2-3x = ~15,000 QPS)",
+      "~500,000 QPS",
+      "~50 QPS",
+      "~1,000,000 QPS"
+    ],
+    a: 0,
+    e: "A standard interview shortcut is rounding a day to ~86,400 -> 100,000 seconds. 500,000,000 / 86,400 ~= 5,800 average QPS. System capacity should typically be planned for 2x-3x peak traffic (~12,000 - 18,000 peak QPS)."
+  }
+]);
+
+// hld10: SQL vs NoSQL
+QB.add("hld10", [
+  {
+    q: "Under what workload characteristics is an Apache Cassandra (Wide-Column NoSQL) database superior to PostgreSQL?",
+    o: [
+      "Massive write-heavy append workloads (e.g. IoT telemetry, chat messages) distributed across multi-datacenter clusters requiring high availability with linear write scaling and no single point of failure",
+      "Complex multi-table financial transactions requiring ACID joins and foreign keys",
+      "Systems with small datasets under 10 Gigabytes",
+      "Applications requiring dynamic arbitrary SQL ad-hoc queries"
+    ],
+    a: 0,
+    e: "Cassandra's masterless LSM-tree architecture delivers blistering write throughput and zero-downtime multi-datacenter replication. However, it sacrifices ACID joins, foreign keys, and arbitrary ad-hoc filtering."
+  }
+]);
+
+// hld12: Rate Limiter
+QB.add("hld12", [
+  {
+    q: "Why is the Sliding Window Counter algorithm generally preferred over Fixed Window in production rate limiters?",
+    o: [
+      "Fixed Window allows double the allowed traffic burst at the boundary edge (e.g. 100 requests at 00:59 and 100 requests at 01:00); Sliding Window smooths traffic across overlapping window boundaries",
+      "Sliding Window uses 10x less memory than Fixed Window",
+      "Fixed Window requires atomic clocks",
+      "Sliding Window can only run in C++"
+    ],
+    a: 0,
+    e: "Fixed Window resets at minute marks, allowing a burst of 2x the limit across the boundary. Sliding Window Counter weights the previous window's requests with the current window's elapsed percentage, preventing boundary spikes."
+  }
+]);
+
+// hld15: High Availability System
+QB.add("hld15", [
+  {
+    q: "In high availability distributed clustering, what is 'Split-Brain' and how is it prevented?",
+    o: [
+      "When a network partition divides a cluster and both halves believe the other is dead, electing their own leaders; prevented by requiring a Strict Quorum (majority vote: N/2 + 1) for any leader election",
+      "When a CPU dual-core processor overheats",
+      "When an engineer deploys two different code versions simultaneously",
+      "When database tables have duplicated primary keys"
+    ],
+    a: 0,
+    e: "If two nodes both think they are leader, data diverges irreversibly. Quorum consensus ensures that only the network partition containing more than 50% of the nodes can elect a leader, rendering the minority partition read-only."
+  }
+]);
+
+// hld16: Distributed Messaging Queue
+QB.add("hld16", [
+  {
+    q: "What is the architectural difference in message consumption between RabbitMQ (AMQP) and Apache Kafka?",
+    o: [
+      "RabbitMQ uses a broker-centric 'smart broker / dumb consumer' push model where messages are deleted once acknowledged; Kafka uses a 'dumb broker / smart consumer' pull model where immutable logs persist on disk",
+      "RabbitMQ only runs on Windows; Kafka only runs on Linux",
+      "Kafka does not support consumer groups",
+      "RabbitMQ stores messages for 7 years by default"
+    ],
+    a: 0,
+    e: "RabbitMQ tracks per-message ACK states and deletes consumed messages. Kafka is an append-only commit log: consumers track their own offsets and pull messages at their own pace, enabling replayability and high throughput."
+  }
+]);
+
+// hld17: Proxy vs Reverse Proxy
+QB.add("hld17", [
+  {
+    q: "What is the difference between a Forward Proxy and a Reverse Proxy?",
+    o: [
+      "A Forward Proxy sits in front of clients and intercepts outbound requests to the internet (providing anonymity, filtering, caching); a Reverse Proxy sits in front of servers and intercepts inbound requests (providing load balancing, SSL termination, and caching)",
+      "Forward proxies only handle HTTP; Reverse proxies only handle FTP",
+      "Reverse proxies are hardware only",
+      "Forward proxies protect backend servers from DDoS attacks"
+    ],
+    a: 0,
+    e: "Forward proxies protect and represent clients (e.g. corporate internet egress proxy). Reverse proxies protect and represent servers (e.g. NGINX, Cloudflare, HAProxy)."
+  }
+]);
+
+// hld18: Load Balancers (L4 vs L7)
+QB.add("hld18", [
+  {
+    q: "How does a Layer 4 (Transport) Load Balancer differ from a Layer 7 (Application) Load Balancer?",
+    o: [
+      "Layer 4 routes packets based on IP and TCP/UDP ports without inspecting payload; Layer 7 terminates the HTTP connection and routes based on URL paths, HTTP headers, cookies, and body content",
+      "Layer 4 is slower than Layer 7",
+      "Layer 7 cannot terminate SSL certificates",
+      "Layer 4 only works with IPv6"
+    ],
+    a: 0,
+    e: "L4 load balancers (e.g. AWS NLB, IPVS) are ultra-fast packet forwarders with low CPU overhead. L7 load balancers (e.g. AWS ALB, NGINX, Envoy) can make intelligent routing decisions (e.g. /api/orders -> order service) by inspecting HTTP content."
+  }
+]);
+
+// hld20: Distributed Transactions (2PC vs Sagas)
+QB.add("hld20", [
+  {
+    q: "Why is Two-Phase Commit (2PC) considered an anti-pattern in modern cloud-native distributed microservices?",
+    o: [
+      "2PC is a blocking protocol: all participating nodes lock resources during the prepare phase; if the coordinator crashes, locks remain held indefinitely, destroying system availability and scalability",
+      "2PC does not support relational databases",
+      "2PC requires quantum computing hardware",
+      "2PC only works on a single computer"
+    ],
+    a: 0,
+    e: "2PC prioritizes strict consistency over availability. In distributed networks with latency and node crashes, 2PC causes cascading lock delays and timeouts. Modern architectures use Sagas with compensating transactions."
+  }
+]);
+
+// hld22: Concurrency Control
+QB.add("hld22", [
+  {
+    q: "When designing a ticket booking platform (e.g. BookMyShow, Ticketmaster), how does Optimistic Concurrency Control (OCC) prevent seat double-booking?",
+    o: [
+      "By maintaining a version/status column on the seat row; when booking, execute 'UPDATE seats SET status = 'BOOKED', version = version + 1 WHERE id = :id AND version = :readVersion'; if 0 rows update, reject as conflict",
+      "By acquiring a database-wide write lock on the entire tablespace",
+      "By disabling multithreading on the web server",
+      "By using random thread sleep delays"
+    ],
+    a: 0,
+    e: "OCC assumes conflicts are infrequent. By checking that the version hasn't changed since it was read, the atomic database UPDATE guarantees that only the first transaction commits, while concurrent attempts detect 0 rows updated and abort."
+  }
+]);
+
+// hld23: Two-Phase Locking (2PL)
+QB.add("hld23", [
+  {
+    q: "In database transaction theory, what is 'Strict Two-Phase Locking' (Strict 2PL)?",
+    o: [
+      "A protocol where all exclusive (write) locks acquired during transaction execution are held until the transaction commits or aborts, completely preventing cascading aborts",
+      "A protocol where transactions can only execute 2 SQL queries",
+      "A locking mechanism that uses two physical hard drives",
+      "A protocol that eliminates deadlocks completely"
+    ],
+    a: 0,
+    e: "Standard 2PL has a growing phase (acquiring locks) and shrinking phase (releasing locks). If a transaction releases a write lock before committing, other transactions can read uncommitted data, causing cascading rollbacks. Strict 2PL holds write locks until commit."
+  }
+]);
+
+// hld24: OAuth 2.0 Security
+QB.add("hld24", [
+  {
+    q: "Why is PKCE (Proof Key for Code Exchange) mandatory for public clients (Single-Page Apps, Mobile Apps) using OAuth 2.0 Authorization Code grant?",
+    o: [
+      "Public clients cannot safely store a client_secret; PKCE creates a dynamic one-time cryptographic code_verifier and code_challenge, preventing authorization code interception attacks",
+      "PKCE compresses the access token to 16 bytes",
+      "PKCE bypasses the need for HTTPS",
+      "PKCE replaces user passwords with biometric face scans"
+    ],
+    a: 0,
+    e: "Mobile apps and SPAs can be decompiled to extract hardcoded secrets. PKCE generates a random code_verifier, hashes it into code_challenge, and sends it to the auth server. Intercepted authorization codes cannot be redeemed without the original verifier."
+  }
+]);
+
+// hld25: Symmetric vs Asymmetric Encryption
+QB.add("hld25", [
+  {
+    q: "How does the TLS 1.3 handshake combine Asymmetric and Symmetric encryption to provide secure, high-performance HTTPS communications?",
+    o: [
+      "Asymmetric encryption (Elliptic Curve Diffie-Hellman) is used during the handshake to authenticate identity and negotiate a shared session key; fast Symmetric encryption (AES-GCM or ChaCha20) encrypts all subsequent data transfer",
+      "It uses only RSA 4096-bit encryption for every HTTP packet",
+      "It uses AES-128 for authentication and RSA for data transfer",
+      "It runs plaintext HTTP over UDP"
+    ],
+    a: 0,
+    e: "Asymmetric cryptography solves key distribution but is computationally expensive. Symmetric cryptography is blistering fast (hardware-accelerated AES-NI). Hybrid encryption gives you the best of both worlds."
+  }
+]);
+
+// hld27: Thundering Herd & Cache Stampede
+QB.add("hld27", [
+  {
+    q: "When a popular cached item (e.g. homepage breaking news) expires in Redis, thousands of concurrent requests can simultaneously miss cache and crash the database. What strategy prevents this Cache Stampede?",
+    o: [
+      "Mutex locking / Singleflight (only one thread acquires a distributed lock to query the DB and repopulate cache while others wait) or Probabilistic Early Expiration (XFetch)",
+      "Deleting the database indexes",
+      "Setting cache TTL to 0 seconds",
+      "Restarting the Redis cluster"
+    ],
+    a: 0,
+    e: "Mutex locking ensures only 1 worker hits the DB. Probabilistic Early Expiration (XFetch algorithm) proactively re-caches the item in the background based on a random probability before the TTL strictly expires."
+  }
+]);
+
+// hld28: API Gateway Architecture
+QB.add("hld28", [
+  {
+    q: "What is the 'Backend for Frontend' (BFF) architectural pattern when implemented with API Gateways?",
+    o: [
+      "Creating dedicated gateway instances tailored specifically to the needs of individual frontend client types (e.g. mobile app BFF, desktop web BFF, public 3rd-party API BFF)",
+      "Combining frontend HTML and backend SQL into a single file",
+      "Hosting the database on mobile devices",
+      "Eliminating all API gateways entirely"
+    ],
+    a: 0,
+    e: "Mobile apps need compact payloads and aggregated calls over cellular networks, while desktop web apps can handle richer data. BFF provides separate lightweight gateways tailored to each client's specific UI requirements."
+  }
+]);
+
+// hld29: Service Mesh
+QB.add("hld29", [
+  {
+    q: "In an enterprise Kubernetes cluster, what functionality does a Service Mesh (e.g. Istio with Envoy sidecars) provide that an API Gateway typically does not?",
+    o: [
+      "East-West (service-to-service) traffic management, automatic mutual TLS (mTLS) zero-trust encryption between pods, distributed traffic splitting (canary releases), and transparent observability without changing application code",
+      "Hosting the static frontend HTML files",
+      "Managing MySQL database migrations",
+      "Replacing Kubernetes DNS"
+    ],
+    a: 0,
+    e: "API Gateways handle North-South ingress traffic entering the cluster from the internet. Service Meshes handle East-West internal communication between microservices transparently via sidecar network proxies."
+  }
+]);
+
+// hld30: DNS Architecture
+QB.add("hld30", [
+  {
+    q: "What is the difference between an 'A' record and a 'CNAME' record in DNS?",
+    o: [
+      "An 'A' record maps a hostname directly to an IPv4 address; a 'CNAME' (Canonical Name) record aliases one domain name to another domain name",
+      "An 'A' record is for email; CNAME is for web",
+      "CNAME records resolve faster than A records",
+      "An 'A' record can only point to Amazon AWS IP addresses"
+    ],
+    a: 0,
+    e: "A records map host -> IP (e.g. api.example.com -> 192.0.2.1). CNAME maps alias -> target domain (e.g. www.example.com -> example.com). Note: DNS RFC prohibits CNAME records at the root/apex domain (@)."
+  }
+]);
+
+// hld32: Common Security Attacks
+QB.add("hld32", [
+  {
+    q: "How does the 'SameSite=Strict' or 'SameSite=Lax' cookie attribute defend web applications against Cross-Site Request Forgery (CSRF) attacks?",
+    o: [
+      "The browser refuses to send the cookie along with cross-site requests initiated by third-party malicious sites, preventing unauthorized actions on behalf of authenticated users",
+      "It encrypts the cookie with a 256-bit AES key",
+      "It prevents JavaScript from reading document.cookie (that is HttpOnly)",
+      "It forces cookies to expire after 5 seconds"
+    ],
+    a: 0,
+    e: "CSRF exploits the browser's behavior of automatically sending cookies to target domains. SameSite=Lax or Strict blocks cookies from cross-site POSTs, neutralizing CSRF for all modern browsers."
+  }
+]);

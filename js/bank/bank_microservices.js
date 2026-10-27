@@ -225,3 +225,230 @@ QB.add("ms20", [
     e: "ShedLock stores a lock record with expiration in an external database or Redis. Before invoking the @Scheduled method, an instance attempts to acquire the lock; if another node holds it, the run is skipped."
   }
 ]);
+
+// ms2: RestClient (Spring 6 / Boot 3)
+QB.add("ms2", [
+  {
+    q: "How do you configure custom error handling for 4xx and 5xx responses using Spring 6's fluent RestClient?",
+    o: [
+      "Using the .onStatus(predicate, errorHandler) fluent method on the response specification",
+      "By registering a legacy ResponseExtractor bean",
+      "By catching raw SocketException in a try-catch block",
+      "RestClient automatically ignores all HTTP errors by default"
+    ],
+    a: 0,
+    e: "RestClient provides .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> { throw new CustomNotFoundException(res.getStatusText()); }), providing a clean and declarative way to handle error codes."
+  },
+  {
+    q: "How does RestClient achieve connection pooling and request timeouts under the hood?",
+    o: [
+      "By configuring an underlying ClientHttpRequestFactory (such as Apache HttpComponents or Java 11 HttpClient) when building the RestClient",
+      "RestClient uses Java Reflection to bypass OS network sockets",
+      "Timeouts are managed by operating system cron jobs",
+      "Connection pooling is not supported in synchronous REST clients"
+    ],
+    a: 0,
+    e: "RestClient.builder().requestFactory(new JdkClientHttpRequestFactory(...)) or HttpComponentsClientHttpRequestFactory configures connection pooling, connect timeouts, and read timeouts."
+  }
+]);
+
+// ms3: OpenFeign Client Advanced
+QB.add("ms3", [
+  {
+    q: "How can you dynamically propagate an incoming JWT Bearer token across downstream microservice calls using OpenFeign?",
+    o: [
+      "By implementing a RequestInterceptor bean that retrieves the SecurityContextHolder token and adds the 'Authorization: Bearer <token>' header to RequestTemplate",
+      "By passing the JWT token as a query parameter on every method",
+      "By storing the JWT in an environment variable",
+      "Feign automatically forwards all HTTP headers without configuration"
+    ],
+    a: 0,
+    e: "RequestInterceptor is invoked before each Feign request is sent. It inspects the current HttpServletRequest or SecurityContextHolder and injects the Authorization header into template.header('Authorization', token)."
+  },
+  {
+    q: "What Feign Logger Level provides the complete HTTP request and response headers, body payloads, and metadata for debugging?",
+    o: [
+      "Logger.Level.FULL",
+      "Logger.Level.BASIC",
+      "Logger.Level.NONE",
+      "Logger.Level.HEADERS"
+    ],
+    a: 0,
+    e: "Feign Logger.Level supports: NONE (default), BASIC (request method, URL, response status, execution time), HEADERS (basic + request/response headers), and FULL (headers, body, and metadata for both request and response)."
+  }
+]);
+
+// ms5: Client Side Load Balancer
+QB.add("ms5", [
+  {
+    q: "What replaced Netflix Ribbon as the standard client-side load balancer in modern Spring Cloud?",
+    o: [
+      "Spring Cloud LoadBalancer (reactive and non-reactive client-side load balancing built by the Spring team)",
+      "NGINX Ingress Controller only",
+      "Zuul 1 Proxy",
+      "Hardware F5 Big-IP routers"
+    ],
+    a: 0,
+    e: "Netflix Ribbon was put into maintenance mode. Spring Cloud introduced Spring Cloud LoadBalancer as the modern, lightweight replacement supporting round-robin, random, and custom caching load balancer algorithms."
+  }
+]);
+
+// ms8: Resilience4j Retry
+QB.add("ms8", [
+  {
+    q: "Why is 'Exponential Backoff with Jitter' strongly recommended when configuring Resilience4j Retry for inter-service calls?",
+    o: [
+      "Jitter introduces randomized delays to prevent the 'Thundering Herd' problem where all retrying instances hammer the recovering service at identical intervals",
+      "It disables retries when the server load is high",
+      "It converts HTTP requests to UDP packets",
+      "It doubles the CPU clock rate during retries"
+    ],
+    a: 0,
+    e: "Exponential backoff increases wait times (e.g. 1s, 2s, 4s, 8s). Adding randomized jitter spreads out incoming retries, allowing an overloaded downstream service or database to recover smoothly."
+  }
+]);
+
+// ms11: API Gateway Part 2 (Rate Limiting & Security Filters)
+QB.add("ms11", [
+  {
+    q: "In Spring Cloud Gateway, how is distributed Token Bucket rate limiting implemented across multiple gateway instances?",
+    o: [
+      "Using RequestRateLimiterGatewayFilterFactory backed by RedisRateLimiter and Redis Lua scripts",
+      "By storing counter integers in JVM static fields",
+      "By writing IP address counters to local text files",
+      "Using local Guava RateLimiter on each node"
+    ],
+    a: 0,
+    e: "Spring Cloud Gateway integrates with Redis via Lua scripts implementing the Token Bucket algorithm. Because Redis is centralized and atomic, all gateway instances share the exact same rate limit quota per user/IP."
+  }
+]);
+
+// ms13: Refresh Scope
+QB.add("ms13", [
+  {
+    q: "What does the @RefreshScope annotation do in a Spring Boot application connected to Spring Cloud Config?",
+    o: [
+      "It puts a CGLIB proxy around the bean; when /actuator/refresh is called, the bean instance is destroyed and lazily recreated with fresh property values on its next access",
+      "It reboots the JVM automatically",
+      "It clears the PostgreSQL database tables",
+      "It recompiles the Java source files at runtime"
+    ],
+    a: 0,
+    e: "Beans in @RefreshScope act as lazy proxies. Calling POST /actuator/refresh re-reads configuration from the Config Server, evicts the existing bean instance from the scope cache, and re-initializes it with updated values."
+  }
+]);
+
+// ms14: Cloud Bus
+QB.add("ms14", [
+  {
+    q: "How does Spring Cloud Bus eliminate the need to invoke /actuator/refresh individually on hundreds of microservice instances?",
+    o: [
+      "It connects all microservice instances via a shared message broker (Kafka or RabbitMQ); sending POST /actuator/busrefresh to one node broadcasts a RefreshRemoteApplicationEvent to all instances",
+      "It connects via SSH to all server instances and runs a bash script",
+      "It opens socket connections on port 80 to every node sequentially",
+      "It uses DNS TXT records to notify servers"
+    ],
+    a: 0,
+    e: "Spring Cloud Bus links nodes with a lightweight message broker. When configurations change in Git, a single webhook call to the bus broadcasts the refresh event across the entire fleet."
+  }
+]);
+
+// ms16, ms17, ms18, ms19: Distributed Logging & Tracing
+QB.add("ms16", [
+  {
+    q: "How does Mapped Diagnostic Context (MDC) assist in distributed logging within a single microservice?",
+    o: [
+      "It stores key-value pairs (such as traceId and userId) in ThreadLocal memory so logging frameworks (Logback/Log4j2) automatically append them to every log line printed by that thread",
+      "It uploads log files directly to S3 every 10 seconds",
+      "It parses SQL statements before execution",
+      "It converts log text into encrypted binary files"
+    ],
+    a: 0,
+    e: "SLF4J MDC binds contextual metadata to the current thread. When your logging pattern includes [%X{traceId}], all log statements automatically print the traceId without manually passing it to every logger method."
+  }
+]);
+
+QB.add("ms17", [
+  {
+    q: "In distributed tracing (Micrometer Tracing / OpenTelemetry), what is the difference between a TraceId and a SpanId?",
+    o: [
+      "TraceId represents the entire end-to-end request journey across all microservices; SpanId represents a single unit of work (e.g. one HTTP request or DB query) within that journey",
+      "TraceId is local to one service; SpanId is global across all services",
+      "TraceId is only used for error logs; SpanId is used for info logs",
+      "There is no difference; they are aliases for the same value"
+    ],
+    a: 0,
+    e: "A Trace is a tree of Spans. The TraceId remains constant across the entire transaction lifecycle across dozens of microservices, while each individual network call, database query, or internal task gets a unique SpanId."
+  }
+]);
+
+QB.add("ms18", [
+  {
+    q: "What protocol has become the industry standard for exporting metrics, logs, and distributed traces to backends like Jaeger, Zipkin, and Prometheus?",
+    o: [
+      "OTLP (OpenTelemetry Protocol), operating over gRPC or HTTP using Protocol Buffers",
+      "SNMP (Simple Network Management Protocol)",
+      "FTP upload of CSV records",
+      "Raw Telnet connections"
+    ],
+    a: 0,
+    e: "OpenTelemetry Protocol (OTLP) standardizes telemetry data models and transmission mechanisms across observability vendors, eliminating proprietary agent vendor lock-in."
+  }
+]);
+
+QB.add("ms19", [
+  {
+    q: "In an ELK (Elasticsearch, Logstash, Kibana) stack, what is the best practice for formatting application logs in high-throughput microservices?",
+    o: [
+      "Log in structured JSON format (e.g. using logstash-logback-encoder) to eliminate expensive regex string parsing in Logstash/Elasticsearch ingestion pipelines",
+      "Log in unformatted raw multiline plain text",
+      "Log everything in XML format",
+      "Write logs directly to an Excel spreadsheet"
+    ],
+    a: 0,
+    e: "Emitting structured JSON directly from the application makes ingestion blistering fast: Elasticsearch and Logstash ingest JSON fields directly without CPU-intensive regular expression parsing of multiline stack traces."
+  }
+]);
+
+// ms21, ms22, ms23: Distributed Scheduler
+QB.add("ms21", [
+  {
+    q: "In ShedLock, why are both 'lockAtMostFor' and 'lockAtLeastFor' parameters essential on @SchedulerLock?",
+    o: [
+      "lockAtMostFor guarantees the lock is released if a node crashes; lockAtLeastFor prevents another node from executing the job if the first node finishes in milliseconds before clock drift passes",
+      "They define the minimum and maximum heap memory allocated to the job",
+      "They configure HTTP socket timeouts",
+      "They set the number of database retries"
+    ],
+    a: 0,
+    e: "lockAtMostFor prevents deadlocks if a node dies mid-job. lockAtLeastFor ensures the lock is held for at least a short duration (e.g. 5s) so slight clock discrepancies don't allow a second node to run the same minute's job."
+  }
+]);
+
+QB.add("ms22", [
+  {
+    q: "What is the primary vulnerability of using a single Redis instance with 'SET key value NX PX timeout' as a distributed lock in safety-critical systems?",
+    o: [
+      "If the lock holder experiences a long GC pause exceeding the lock timeout, the lock auto-releases and another node acquires it, causing two nodes to execute the critical section concurrently",
+      "Redis does not support key expiration",
+      "Redis is multi-threaded and causes race conditions",
+      "SET NX PX is not supported in Redis 7"
+    ],
+    a: 0,
+    e: "Martin Kleppmann highlighted that unexpected GC pauses or network delays can cause TTL to expire while the client still thinks it holds the lock. Robust systems use Fencing Tokens (monotonically increasing IDs verified by the storage layer)."
+  }
+]);
+
+QB.add("ms23", [
+  {
+    q: "When implementing a distributed task worker queue using PostgreSQL or MySQL, what SQL clause prevents lock contention and worker blocking?",
+    o: [
+      "SELECT * FROM tasks WHERE status = 'PENDING' ORDER BY id LIMIT 10 FOR UPDATE SKIP LOCKED",
+      "SELECT * FROM tasks WHERE status = 'PENDING' FOR READ ONLY",
+      "SELECT ALL FROM tasks UNLOCKED",
+      "LOCK TABLE tasks IN EXCLUSIVE MODE"
+    ],
+    a: 0,
+    e: "FOR UPDATE SKIP LOCKED locks selected rows while instructing other concurrent worker transactions to skip locked rows and immediately fetch the next unlocked batch, enabling highly scalable parallel task queues."
+  }
+]);

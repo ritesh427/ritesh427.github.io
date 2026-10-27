@@ -190,3 +190,138 @@ QB.add("ju18", [
     e: "When a method constructs an internal object and passes it to a collaborator, the test cannot inspect it directly. ArgumentCaptor captures the instance passed to the mock for detailed assertion."
   }
 ]);
+
+// ju5: JUnit 5 Extension Model
+QB.add("ju5", [
+  {
+    q: "How does JUnit 5's Extension model (@ExtendWith) improve upon JUnit 4's @Rule and @ClassRule?",
+    o: [
+      "It unifies all extension points (parameter resolution, lifecycle interception, exception handling, test execution condition) into a cohesive interface model that supports multiple extensions per test class",
+      "It requires all tests to be written in Groovy",
+      "It eliminates the need for test assertions",
+      "It compiles tests into native C++ binaries"
+    ],
+    a: 0,
+    e: "JUnit 4 rules suffered from limited composability and strict method signature constraints. JUnit 5 extensions implement specific callback interfaces (BeforeEachCallback, ParameterResolver, etc.) and compose seamlessly."
+  }
+]);
+
+// ju6: Repeated Tests
+QB.add("ju6", [
+  {
+    q: "In JUnit 5, what annotation and parameter resolver allows running a flaky or non-deterministic test multiple times while inspecting the current iteration?",
+    o: [
+      "@RepeatedTest(value = 5) and injecting RepetitionInfo into the test method",
+      "@Loop(count = 5)",
+      "@RetryableTest",
+      "@Test(repetition = 5)"
+    ],
+    a: 0,
+    e: "@RepeatedTest(10) repeats the test 10 times. You can declare RepetitionInfo in the method signature to inspect repetitionInfo.getCurrentRepetition() and repetitionInfo.getTotalRepetitions()."
+  }
+]);
+
+// ju9: Assumptions
+QB.add("ju9", [
+  {
+    q: "What happens when an assumption fails (e.g. Assumptions.assumeTrue(isLinux())) in a JUnit 5 test?",
+    o: [
+      "The test execution is aborted, and the test is marked as SKIPPED/IGNORED (not failed)",
+      "The test fails with an AssertionError and breaks the build",
+      "The entire test suite terminates immediately",
+      "The JVM throws an OutOfMemoryError"
+    ],
+    a: 0,
+    e: "Assumptions evaluate preconditions (like running on a specific OS, database availability, or CI environment). If an assumption fails, TestAbortedException is thrown, causing test runners to mark the test skipped, not failed."
+  }
+]);
+
+// ju10: Tagging and Filtering
+QB.add("ju10", [
+  {
+    q: "What is the purpose of @Tag in JUnit 5 when running automated builds in Maven or Gradle?",
+    o: [
+      "It allows categorizing tests (e.g. @Tag('fast'), @Tag('integration')) so build tools can selectively execute or exclude test groups in different CI/CD pipeline stages",
+      "It sets the color of the console output",
+      "It compresses the test classes into ZIP archives",
+      "It encrypts the test class names"
+    ],
+    a: 0,
+    e: "Using maven-surefire-plugin <groups>integration</groups> or <excludedGroups>slow</excludedGroups>, teams run fast unit tests on PR commit and execute slow integration tests on nightly builds."
+  }
+]);
+
+// ju11: Test Suites
+QB.add("ju11", [
+  {
+    q: "How do you create a structured test suite in JUnit 5 to discover and run specific packages or tag groups?",
+    o: [
+      "By annotating a class with @Suite and combining it with @SelectPackages or @SelectClasses and @IncludeTags",
+      "By creating a shell script named suite.sh",
+      "By listing class names in a text file in src/main/resources",
+      "By creating multiple main() methods in test classes"
+    ],
+    a: 0,
+    e: "JUnit Platform Suite engine provides @Suite, @SelectPackages('com.example.service'), @SelectClasses(...), and @IncludeTags('smoke') to package and execute test suites programmatically."
+  }
+]);
+
+// ju12: Dynamic Tests (@TestFactory)
+QB.add("ju12", [
+  {
+    q: "What is a Dynamic Test in JUnit 5 and what must a @TestFactory method return?",
+    o: [
+      "Tests generated at runtime based on external data or streams; the @TestFactory method must return a Stream, Collection, or Iterable of DynamicNode / DynamicTest",
+      "A test that rewrites its own bytecode while executing",
+      "A test that can only run inside a Docker container",
+      "A test that returns void"
+    ],
+    a: 0,
+    e: "Unlike standard @Test methods compiled statically, @TestFactory produces dynamic test cases at runtime. For example, reading 100 test cases from a JSON file and mapping each to dynamicTest(name, executable)."
+  }
+]);
+
+// ju13: Mockito Introduction
+QB.add("ju13", [
+  {
+    q: "What default return value does a Mockito mock provide for a method returning an int, boolean, or Object if no stubbing (when().thenReturn()) is defined?",
+    o: [
+      "int: 0, boolean: false, Object: null, Collections: empty collection",
+      "It throws a NullPointerException on every unstubbed invocation",
+      "It executes the real production method",
+      "It returns a random non-zero value"
+    ],
+    a: 0,
+    e: "Mockito adheres to 'nice mocks': unstubbed method invocations do not fail; they return standard defaults: 0 for numeric primitives, false for booleans, null for objects, and empty instances for Collections/Optionals."
+  }
+]);
+
+// ju14: Mockito Architecture & ByteBuddy
+QB.add("ju14", [
+  {
+    q: "How does Mockito's modern 'inline-mock-maker' mock final classes, final methods, and static methods without bytecode transformation at classload time?",
+    o: [
+      "Using ByteBuddy and Java Instrumentation API to modify existing class bytecode in memory (hot-swapping method bodies)",
+      "By generating dynamic subclasses using legacy CGLIB",
+      "By executing code in a simulated JavaScript runtime",
+      "By recompiling source files using javac"
+    ],
+    a: 0,
+    e: "Historically Mockito subclassed target classes, preventing mocking of final classes. The inline mock-maker uses Java Instrumentation and ByteBuddy to transform the bytecode of the class directly in memory."
+  }
+]);
+
+// ju16: Constructor Injection in Tests
+QB.add("ju16", [
+  {
+    q: "Why is Constructor Injection strongly preferred over @Autowired field injection when writing unit tests for Spring service components?",
+    o: [
+      "Classes with constructor injection can be instantiated in plain unit tests using 'new Service(mockA, mockB)' without needing reflection, Mockito annotations, or starting a Spring ApplicationContext",
+      "Constructor injection is faster because it bypasses the JVM classloader",
+      "Field injection causes memory leaks in all Spring versions",
+      "Constructor injection eliminates the need for unit tests entirely"
+    ],
+    a: 0,
+    e: "Constructor injection guarantees testability: your class declares its dependencies explicitly in its public contract. You can instantiate it in standard pure Java unit tests in milliseconds without Spring container overhead."
+  }
+]);

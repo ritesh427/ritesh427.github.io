@@ -3138,6 +3138,652 @@ QB.add("ja22", [
   }
 ]);
 
+// ja6: Reference and Non Primitive
+QB.add("ja6", [
+  {
+    q: "In Java, how are object references handled when passed as arguments to methods?",
+    o: [
+      "Java is strictly pass-by-value; the reference value (memory address pointer) is copied by value, allowing modifying object fields but not reassigning the caller reference",
+      "Java is pass-by-reference for non-primitives and pass-by-value for primitives",
+      "Java uses call-by-name semantics for objects",
+      "Objects are cloned automatically before being passed into methods"
+    ],
+    a: 0,
+    e: "Java is 100% pass-by-value. When an object is passed, the copy of the reference pointer is passed by value. Reassigning 'param = new Object()' inside the method has zero effect on the caller's variable."
+  },
+  {
+    q: "Where are local primitive variables and object instances stored in the JVM memory architecture?",
+    o: [
+      "Local primitive variables are stored on the Thread Stack frame; object instances (and their instance variables) are allocated on the Shared Heap",
+      "Both are stored exclusively on the Thread Stack",
+      "Both are stored in the JVM Metaspace",
+      "All Java variables are stored directly in CPU L1 cache"
+    ],
+    a: 0,
+    e: "Thread Stacks store local variables and execution frames for each thread. All objects (and their fields, including primitive fields) reside on the JVM Heap, managed by the Garbage Collector."
+  }
+]);
+
+// ja7: Methods
+QB.add("ja7", [
+  {
+    q: "How does Method Overloading differ fundamentally from Method Overriding in Java?",
+    o: [
+      "Overloading is resolved at compile-time (static polymorphism) based on method signature; Overriding is resolved at runtime (dynamic method dispatch) via the vtable based on the actual object type",
+      "Overloading requires inheritance; Overriding occurs within the same class",
+      "Overloading allows changing only the return type without changing parameter lists",
+      "Overriding methods cannot throw exceptions"
+    ],
+    a: 0,
+    e: "Method Overloading (same name, different parameter types/counts) is bound at compile time by javac. Overriding occurs when a subclass redefines an inherited non-static method, dispatched dynamically at runtime."
+  }
+]);
+
+// ja10: Classes & Generics
+QB.add("ja10", [
+  {
+    q: "What is Type Erasure in Java Generics, and what is its consequence at runtime?",
+    o: [
+      "The compiler checks type safety and removes generic type arguments (replacing them with Object or bounds), meaning List<String> and List<Integer> share the exact same raw class at runtime",
+      "Generic types are converted to C++ void pointers in the JVM",
+      "Type erasure converts all generic objects into byte arrays",
+      "Type erasure is a memory leak bug in older JVMs"
+    ],
+    a: 0,
+    e: "To preserve backwards compatibility with pre-Java 5 bytecode, javac erases generic types and inserts synthetic casts. At runtime, 'list instanceof List<String>' fails to compile because type arguments do not exist in bytecode."
+  },
+  {
+    q: "According to the PECS rule (Producer Extends, Consumer Super), which wildcard should be used when a method reads items out of a collection?",
+    o: [
+      "<? extends T> (Upper bounded wildcard for reading/producers)",
+      "<? super T> (Lower bounded wildcard for reading)",
+      "<?> (Unbounded wildcard only)",
+      "Generics cannot be read from in Java"
+    ],
+    a: 0,
+    e: "PECS stands for Producer Extends, Consumer Super. If your method reads items from a collection (it produces items for your method to use), declare it with Collection<? extends T>."
+  }
+]);
+
+// ja12: Enum, POJO, Singleton
+QB.add("ja12", [
+  {
+    q: "Why did Joshua Bloch famously recommend using an 'Enum' to implement the Singleton pattern in Java?",
+    o: [
+      "The JVM natively guarantees single-instance instantiation, thread safety, and immunity to reflection and serialization attacks",
+      "Enums execute faster than regular classes because they bypass the JVM",
+      "Enums do not consume heap memory",
+      "Enums can extend multiple classes simultaneously"
+    ],
+    a: 0,
+    e: "A single-element enum provides serializability for free without readResolve(), and the JVM explicitly prevents constructor instantiation via reflection (Constructor.newInstance throws IllegalArgumentException)."
+  }
+]);
+
+// ja14: Interfaces
+QB.add("ja14", [
+  {
+    q: "How does Java 8 resolve the 'Diamond Problem' when a class implements two interfaces that declare the same default method signature?",
+    o: [
+      "The compiler forces the implementing class to explicitly override the conflicting method and specify which interface to call (e.g. InterfaceA.super.method())",
+      "The JVM picks the interface loaded first alphabetically",
+      "The JVM crashes with an UnsatisfiedLinkError at startup",
+      "The compiler ignores both methods and leaves the implementation empty"
+    ],
+    a: 0,
+    e: "When two interfaces provide default methods with the exact same signature, the compiler issues an ambiguity error. The developer must override the method and explicitly call InterfaceA.super.method() or supply custom logic."
+  }
+]);
+
+// ja16: Functional Interface & Lambda
+QB.add("ja16", [
+  {
+    q: "Why must local variables referenced inside a Java lambda expression be 'final' or 'effectively final'?",
+    o: [
+      "Lambdas capture the value of the variable, not the stack variable itself; allowing mutation would cause concurrency race conditions and stack synchronization anomalies",
+      "Java bytecode does not support mutable variables",
+      "To allow the JIT compiler to inline the lambda into CPU registers",
+      "Variables in lambdas are automatically converted to static constants"
+    ],
+    a: 0,
+    e: "The lambda closure captures a copy of the primitive value or reference pointer. If the enclosing scope could mutate the variable after capture, the lambda's copy would become out of sync, leading to subtle race conditions."
+  },
+  {
+    q: "Which standard java.util.function interface takes an argument of type T and returns a boolean?",
+    o: [
+      "Predicate<T>",
+      "Function<T, R>",
+      "Consumer<T>",
+      "Supplier<T>"
+    ],
+    a: 0,
+    e: "Predicate<T> defines 'boolean test(T t)'. Consumer<T> accepts T and returns void. Supplier<T> takes no arguments and returns T. Function<T, R> transforms T into R."
+  }
+]);
+
+// ja17: Java Reflection
+QB.add("ja17", [
+  {
+    q: "What is the primary risk of using 'Field.setAccessible(true)' in production Java code?",
+    o: [
+      "It circumvents encapsulation by breaking private access boundaries and is restricted by Java Module System (JPMS) strong encapsulation starting in Java 9+",
+      "It permanently disables garbage collection for the host class",
+      "It forces the CPU to switch to single-core execution",
+      "It crashes the JVM with a StackOverflowError"
+    ],
+    a: 0,
+    e: "setAccessible(true) bypasses private modifier checks, creating security vulnerabilities and tight coupling to internal implementation details. Java 9+ JPMS throws InaccessibleObjectException across unexported module boundaries."
+  }
+]);
+
+// ja18: Annotations
+QB.add("ja18", [
+  {
+    q: "Which '@Retention' policy must be configured on a custom Java annotation for it to be inspected at runtime via Reflection?",
+    o: [
+      "RetentionPolicy.RUNTIME",
+      "RetentionPolicy.CLASS",
+      "RetentionPolicy.SOURCE",
+      "RetentionPolicy.SYSTEM"
+    ],
+    a: 0,
+    e: "RetentionPolicy.SOURCE annotations are discarded by javac (e.g. @Override). RetentionPolicy.CLASS annotations are recorded in .class bytecode but discarded by the JVM. RetentionPolicy.RUNTIME annotations are retained in the JVM."
+  }
+]);
+
+// ja19: Exception Handling
+QB.add("ja19", [
+  {
+    q: "What happens to secondary exceptions thrown by 'AutoCloseable.close()' during a try-with-resources statement if the main try block also threw an exception?",
+    o: [
+      "The secondary exception is added as a 'suppressed exception' to the primary exception (accessible via ex.getSuppressed())",
+      "The primary exception is discarded and lost",
+      "The JVM terminates immediately with an ExitCode -1",
+      "Suppressed exceptions are printed to System.err and ignored"
+    ],
+    a: 0,
+    e: "Try-with-resources preserves the original root exception thrown in the try block and attaches any exceptions thrown during resource closing as suppressed exceptions accessible via Throwable.getSuppressed()."
+  }
+]);
+
+// ja20: Operators
+QB.add("ja20", [
+  {
+    q: "What is the difference between the conditional logical operator '&&' and the bitwise logical operator '&' in boolean expressions?",
+    o: [
+      "'&&' short-circuits (skips evaluating the right operand if the left operand is false); '&' evaluates both operands unconditionally",
+      "'&' short-circuits while '&&' evaluates both",
+      "'&&' can only be used with numbers",
+      "There is no difference in boolean contexts"
+    ],
+    a: 0,
+    e: "Short-circuit evaluation: 'if (obj != null && obj.isValid())' safely skips the right operand if obj is null. Using '&' evaluates both operands, throwing a NullPointerException."
+  }
+]);
+
+// ja21: Control Flow Statements
+QB.add("ja21", [
+  {
+    q: "How does the 'continue' statement with a label behave inside nested loops in Java?",
+    o: [
+      "It skips the remainder of the current iteration and resumes execution at the next iteration of the labeled outer loop",
+      "It terminates the entire Java application immediately",
+      "It restarts the outer loop from index 0",
+      "Labeled continues are not supported in Java"
+    ],
+    a: 0,
+    e: "A labeled continue ('continue outerLoop;') jumps control directly to the condition or step statement of the designated labeled outer loop, skipping any remaining statements in both inner and outer loops for that iteration."
+  }
+]);
+
+// ja25: Collections (Part 4 to 6)
+QB.add("ja25", [
+  {
+    q: "How does ConcurrentHashMap achieve high concurrent throughput in Java 8+ without synchronizing the entire table?",
+    o: [
+      "It uses CAS (Compare-And-Swap) for empty bucket insertion and synchronizes only on the head node of a hash bucket (synchronized(node)), converting buckets to Red-Black trees when bin count >= 8",
+      "It uses a single global ReentrantLock on all reads and writes",
+      "It locks table segments using 16 separate segmented locks (legacy Java 7)",
+      "It relies on OS kernel file locks"
+    ],
+    a: 0,
+    e: "Java 8 ConcurrentHashMap abandoned Segment locking. It inserts empty bins lock-free via CAS (Unsafe/VarHandle) and locks only the individual head node of the bucket during collisions, treeifying bins with >= 8 nodes."
+  },
+  {
+    q: "Why is ArrayDeque preferred over LinkedList when implementing a Stack or Queue in Java?",
+    o: [
+      "ArrayDeque is backed by a contiguous circular array, offering cache locality and zero node-object allocation overhead compared to LinkedList's pointer nodes",
+      "LinkedList is synchronized while ArrayDeque is not",
+      "ArrayDeque allows null elements",
+      "ArrayDeque has O(N) access time while LinkedList is O(1)"
+    ],
+    a: 0,
+    e: "ArrayDeque has superior CPU cache locality and does not allocate a Node object for every single inserted element. LinkedList incurs heavy GC pressure and memory fragmentation from 24-byte Node allocations."
+  }
+]);
+
+// ja28: Collections Streams
+QB.add("ja28", [
+  {
+    q: "Why should developers exercise extreme caution when using 'parallelStream()' in a web application request thread?",
+    o: [
+      "By default, all parallel streams share the common ForkJoinPool.commonPool(); blocking tasks (I/O, database calls) can starve all application CPU-bound tasks",
+      "Parallel streams can only process numbers",
+      "Parallel streams disable JVM garbage collection",
+      "Parallel streams always produce random corrupt results"
+    ],
+    a: 0,
+    e: "ForkJoinPool.commonPool() is shared across the entire JVM. If web request threads run blocking network/DB queries inside parallelStream(), the common pool's worker threads become exhausted, locking up unrelated tasks."
+  },
+  {
+    q: "Which stream operation is an intermediate operation that will NOT execute until a terminal operation is invoked?",
+    o: [
+      "map() / filter()",
+      "collect()",
+      "count()",
+      "forEach()"
+    ],
+    a: 0,
+    e: "Streams are evaluated lazily. Intermediate operations (filter, map, flatMap, distinct) configure pipeline stages but perform no work until a terminal operation (collect, count, findFirst, forEach) triggers traversal."
+  }
+]);
+
+// ja29: Multithreading Process vs Threads
+QB.add("ja29", [
+  {
+    q: "What is the primary difference in memory sharing between operating system Processes and JVM Threads?",
+    o: [
+      "Processes have independent isolated address spaces; Threads of the same process share the heap and metaspace while maintaining their own private stack and program counter (PC)",
+      "Threads have isolated virtual memory; Processes share heap memory",
+      "Processes cannot communicate across a network",
+      "Threads consume 1GB of RAM each by default"
+    ],
+    a: 0,
+    e: "Processes run in isolated address spaces with OS protection boundaries. JVM threads share the common Heap and Metaspace, allowing fast inter-thread communication but requiring synchronization to prevent race conditions."
+  }
+]);
+
+// ja30: Thread Creation
+QB.add("ja30", [
+  {
+    q: "What is the key advantage of implementing 'Runnable' or 'Callable<T>' over extending the 'Thread' class directly?",
+    o: [
+      "Java does not support multiple class inheritance; implementing an interface leaves the class free to extend other classes and decouples the task from thread execution mechanics",
+      "Extending Thread is deprecated in Java 21",
+      "Runnable tasks run 5x faster than Thread subclasses",
+      "Thread subclasses cannot be synchronized"
+    ],
+    a: 0,
+    e: "Implementing Runnable or Callable adheres to Single Responsibility (decoupling task logic from thread execution) and avoids wasting the single inheritance slot in Java."
+  }
+]);
+
+// ja31: Thread Joining & Interruption
+QB.add("ja31", [
+  {
+    q: "What happens when a thread calls 'Thread.interrupt()' on another thread that is blocked in 'Thread.sleep()' or 'Object.wait()'?",
+    o: [
+      "The blocked thread awakens immediately, throws an InterruptedException, and its thread interruption status flag is cleared to false",
+      "The blocked thread is killed by the OS immediately",
+      "The thread continues sleeping until the timer expires",
+      "The JVM triggers a thread dump"
+    ],
+    a: 0,
+    e: "Blocking methods like sleep(), wait(), and join() detect interruption, clear the thread's interrupted flag, and throw InterruptedException, allowing the thread to catch the exception and perform clean teardown."
+  }
+]);
+
+// ja32: Locks (ReentrantLock & ReadWriteLock)
+QB.add("ja32", [
+  {
+    q: "What capability does 'ReentrantLock' provide that the intrinsic 'synchronized' keyword does NOT support?",
+    o: [
+      "Timed lock acquisition (tryLock(timeout)), interruptible locking (lockInterruptibly), and fair lock queuing policies",
+      "Locking across different physical servers",
+      "Automatic detection of deadlock cycles",
+      "Locking without consuming memory"
+    ],
+    a: 0,
+    e: "ReentrantLock provides tryLock() with timeouts, fair ordering policies, multiple Condition variables (for precise wait/notify signaling), and lockInterruptibly(), preventing threads from blocking indefinitely."
+  },
+  {
+    q: "When is a 'ReentrantReadWriteLock' most advantageous over a standard mutual exclusion lock?",
+    o: [
+      "In read-heavy scenarios with infrequent writes, allowing multiple concurrent reader threads to execute simultaneously while reserving exclusive access for writers",
+      "In write-heavy applications with 99% writes",
+      "When running on single-core microcontrollers",
+      "When locking database files on a network share"
+    ],
+    a: 0,
+    e: "ReentrantReadWriteLock allows any number of concurrent readers as long as no writer holds the writeLock. This dramatically increases throughput when reads vastly outnumber writes."
+  }
+]);
+
+// ja33: Lock Free & Atomic Operations
+QB.add("ja33", [
+  {
+    q: "How does 'LongAdder' outperform 'AtomicLong' in high-concurrency environments under extreme thread contention?",
+    o: [
+      "LongAdder maintains an internal array of cell counters that threads update independently via CAS, striping contention and summing cells only when sum() is called",
+      "LongAdder uses synchronized blocks with OS spinlocks",
+      "LongAdder runs exclusively on GPU shader units",
+      "AtomicLong has been deprecated due to memory corruption"
+    ],
+    a: 0,
+    e: "AtomicLong causes high cache-line bouncing because all threads hammer a single memory location with CAS loops. LongAdder stripes the counter across a Cells array, reducing contention to zero until sum() is queried."
+  },
+  {
+    q: "What concurrency issue does 'AtomicStampedReference' resolve that standard 'AtomicReference' cannot detect?",
+    o: [
+      "The ABA Problem (where a value changes from A to B and back to A without the CAS detecting the intermediate modification)",
+      "Deadlock between two worker threads",
+      "Garbage collection memory leaks",
+      "Out of stack memory errors"
+    ],
+    a: 0,
+    e: "The ABA problem occurs when a memory location is read as A, updated to B, and restored to A. AtomicStampedReference pairs the reference with an integer version/stamp that increments on every change."
+  }
+]);
+
+// ja34: ThreadPools & ThreadPoolExecutor
+QB.add("ja34", [
+  {
+    q: "When a new task is submitted to a ThreadPoolExecutor, in what order does the executor allocate resources?",
+    o: [
+      "1. If running threads < corePoolSize, spawn new thread; 2. Else try to offer to workQueue; 3. If workQueue is full and running < maxPoolSize, spawn thread; 4. Else invoke RejectedExecutionHandler",
+      "1. Fill workQueue; 2. Spawn corePool threads; 3. Spawn maxPool threads; 4. Throw exception",
+      "1. Spawn maxPool threads immediately; 2. Queue remaining tasks",
+      "1. Reject task if thread is busy; 2. Queue in database"
+    ],
+    a: 0,
+    e: "ThreadPoolExecutor first spawns up to corePoolSize threads. Once corePoolSize is reached, tasks are buffered into the workQueue. Only when the queue is 100% full will it spawn additional threads up to maximumPoolSize."
+  },
+  {
+    q: "What does the 'CallerRunsPolicy' rejection handler do when the ThreadPoolExecutor's queue is completely saturated?",
+    o: [
+      "It executes the task directly on the calling thread that submitted it, naturally throttling task submission rate (backpressure)",
+      "It discards the task silently without notification",
+      "It terminates the JVM with System.exit(1)",
+      "It reboots the server operating system"
+    ],
+    a: 0,
+    e: "CallerRunsPolicy runs the rejected task directly in the caller's thread. Because the caller is busy executing the task, it cannot submit further work, creating an elegant backpressure throttling mechanism."
+  }
+]);
+
+// ja35: CompletableFuture
+QB.add("ja35", [
+  {
+    q: "What is the difference between 'thenApply()' and 'thenCompose()' in CompletableFuture?",
+    o: [
+      "thenApply maps a value T -> U (synchronous mapping); thenCompose maps T -> CompletableFuture<U> and flattens the nested future (like flatMap)",
+      "thenCompose is synchronous; thenApply is asynchronous",
+      "thenApply is deprecated in Java 17",
+      "There is no difference; they are aliases"
+    ],
+    a: 0,
+    e: "thenApply(fn) takes a function returning a plain value (yielding CompletableFuture<U>). thenCompose(fn) takes a function returning another CompletableFuture<U> and unwraps/flattens it (monadic bind / flatMap)."
+  },
+  {
+    q: "Which static method waits for all provided CompletableFutures to finish before proceeding?",
+    o: [
+      "CompletableFuture.allOf(c1, c2, c3)",
+      "CompletableFuture.anyOf(c1, c2)",
+      "CompletableFuture.joinAll()",
+      "CompletableFuture.waitAll()"
+    ],
+    a: 0,
+    e: "CompletableFuture.allOf(f1, f2, ...) returns a CompletableFuture<Void> that completes only when every underlying future completes (either normally or exceptionally)."
+  }
+]);
+
+// ja36: Fork-Join Pool
+QB.add("ja36", [
+  {
+    q: "What is the core algorithmic mechanism that makes ForkJoinPool highly efficient for recursive divide-and-conquer tasks?",
+    o: [
+      "Work-stealing algorithm: idle worker threads steal tasks from the tail (deques) of busy worker threads",
+      "Round-robin time slicing on the Linux kernel",
+      "Preemptive priority scheduling",
+      "Lock-free circular ring buffers exclusively"
+    ],
+    a: 0,
+    e: "In ForkJoinPool, each worker thread has its own double-ended queue (deque). A thread pushes subtasks to the head of its deque and pops from the head. Idle threads steal tasks from the tail of other deques (work-stealing)."
+  }
+]);
+
+// ja37: Scheduled ThreadPool
+QB.add("ja37", [
+  {
+    q: "What is the critical behavioral difference between 'scheduleAtFixedRate' and 'scheduleWithFixedDelay' in ScheduledExecutorService?",
+    o: [
+      "scheduleAtFixedRate schedules periodic executions based on initial start times (ignoring task execution duration); scheduleWithFixedDelay measures the delay starting from the completion time of the previous execution",
+      "scheduleWithFixedDelay runs in parallel; scheduleAtFixedRate runs sequentially",
+      "scheduleAtFixedRate only runs once",
+      "scheduleWithFixedDelay requires an external cron parser"
+    ],
+    a: 0,
+    e: "scheduleAtFixedRate fires every N seconds regardless of execution length (if execution takes longer than period, consecutive runs follow immediately). scheduleWithFixedDelay guarantees N seconds of idle gap between runs."
+  }
+]);
+
+// ja38: Virtual Threads vs Platform Threads
+QB.add("ja38", [
+  {
+    q: "In Java 21 (Project Loom), how do Virtual Threads achieve massive scalability (millions of concurrent threads) compared to Platform Threads?",
+    o: [
+      "Virtual Threads are lightweight user-mode threads managed by the JVM rather than 1:1 OS kernel threads; their stack frames are stored on the JVM heap and unmounted when performing blocking I/O",
+      "Virtual Threads do not require RAM or CPU cycles",
+      "Virtual Threads run in native assembly code outside the JVM",
+      "Virtual Threads eliminate the need for Garbage Collection"
+    ],
+    a: 0,
+    e: "Platform threads wrap 1:1 OS threads with ~1MB reserved stack. Virtual threads are managed by the JVM runtime and mounted onto a small pool of Carrier Threads. During blocking I/O, the virtual thread unmounts from its carrier thread."
+  },
+  {
+    q: "What causes 'thread pinning' in Java 21 Virtual Threads, preventing the virtual thread from unmounting during blocking calls?",
+    o: [
+      "Executing inside a 'synchronized' block/method or calling native methods (JNI)",
+      "Using ReentrantLock",
+      "Calling Thread.sleep()",
+      "Reading from a network socket"
+    ],
+    a: 0,
+    e: "Currently, virtual threads are pinned to their carrier thread if blocking I/O occurs inside a synchronized block or native JNI call. Replace 'synchronized' with ReentrantLock to avoid carrier thread pinning."
+  }
+]);
+
+// ja39: Project Lombok
+QB.add("ja39", [
+  {
+    q: "Why can using Lombok's '@Data' or '@ToString' on JPA entities with bidirectional relationships cause a fatal StackOverflowError?",
+    o: [
+      "Lombok's generated equals(), hashCode(), and toString() traverse bidirectional references in an infinite recursive loop",
+      "Lombok disables Hibernate dirty checking",
+      "Lombok deletes getters and setters at runtime",
+      "Lombok modifies entity bytecode after class loading"
+    ],
+    a: 0,
+    e: "If Parent references Child and Child references Parent, Lombok's generated toString() or hashCode() will recursively call each other indefinitely until the JVM runs out of stack memory. Always use @ToString.Exclude."
+  }
+]);
+
+// ja40: Sequenced Collection (Java 21)
+QB.add("ja40", [
+  {
+    q: "What unified interface hierarchy was introduced in Java 21 to provide consistent access to first and last elements in collections with defined encounter orders?",
+    o: [
+      "SequencedCollection (with getFirst(), getLast(), addFirst(), addLast(), and reversed())",
+      "OrderedList",
+      "SortedCollection",
+      "IndexedIterable"
+    ],
+    a: 0,
+    e: "Prior to Java 21, getting the first/last element across List, Deque, LinkedHashSet, and SortedSet had different APIs (list.get(0), deque.peekFirst(), set.iterator().next()). SequencedCollection unifies this with getFirst() and reversed()."
+  }
+]);
+
+// ja41: Sealed Classes and Interfaces (Java 17)
+QB.add("ja41", [
+  {
+    q: "What keywords are used in Java 17 to define a Sealed Class and govern which subclasses can extend it?",
+    o: [
+      "'sealed' class with 'permits' specifying allowed subclasses, which must be declared 'final', 'sealed', or 'non-sealed'",
+      "'restricted' class with 'allows'",
+      "'locked' class with 'subclasses'",
+      "'private' class with 'package-private'"
+    ],
+    a: 0,
+    e: "A sealed class restricts inheritance: 'public sealed class Shape permits Circle, Square {}'. Every permitted subclass must reside in the same module/package and explicitly declare itself as final, sealed, or non-sealed."
+  }
+]);
+
+// ja42: Switch Expression (Java 14)
+QB.add("ja42", [
+  {
+    q: "What keyword is used in Java 14+ switch expressions to return a value from a multi-line case block?",
+    o: [
+      "yield",
+      "return",
+      "break",
+      "pass"
+    ],
+    a: 0,
+    e: "Inside a switch expression block (using 'case X -> { ... }'), the 'yield' keyword is used to produce a value for the expression, avoiding confusion with 'return' which exits the enclosing method."
+  }
+]);
+
+// ja43: Pattern Matching for instanceof (Java 16)
+QB.add("ja43", [
+  {
+    q: "How does Java 16's Pattern Matching for 'instanceof' improve code safety and conciseness?",
+    o: [
+      "It eliminates the redundant explicit cast: 'if (obj instanceof String s)' automatically casts and binds the variable 's' within the scope where the predicate is true",
+      "It allows instanceof to work on primitive types like int and double",
+      "It performs regex matching on class names",
+      "It makes the object immutable"
+    ],
+    a: 0,
+    e: "Instead of writing 'if (obj instanceof String) { String s = (String) obj; }', pattern matching allows 'if (obj instanceof String s) { s.length(); }', eliminating boilerplate and casting errors."
+  }
+]);
+
+// ja44: Pattern Matching for switch (Java 21)
+QB.add("ja44", [
+  {
+    q: "In Java 21, what keyword allows specifying conditional guard expressions in pattern matching switch statements?",
+    o: [
+      "when (e.g. 'case String s when s.length() > 5 -> ...')",
+      "if",
+      "where",
+      "given"
+    ],
+    a: 0,
+    e: "Java 21 uses the 'when' keyword for guarded pattern cases: 'case String s when s.startsWith(\\'ADMIN\\') -> handleAdmin(s);', providing expressive and type-safe pattern matching."
+  }
+]);
+
+// ja45: Record Class (Java 16)
+QB.add("ja45", [
+  {
+    q: "Which characteristic is strictly true of a Java 16 'record'?",
+    o: [
+      "Records are implicitly final, cannot extend any other class (since they implicitly extend java.lang.Record), and all components are private and final",
+      "Records cannot implement interfaces",
+      "Record fields can be modified using setters",
+      "Records can extend abstract classes"
+    ],
+    a: 0,
+    e: "Records are immutable data carriers. They are implicitly final, cannot extend other classes, automatically generate getters (name()), equals(), hashCode(), and toString(), but CAN implement interfaces."
+  }
+]);
+
+// ja46: Text Blocks (Java 15)
+QB.add("ja46", [
+  {
+    q: "How does the Java compiler determine incidental leading white space when stripping indentation from a Text Block (triple quotes)?",
+    o: [
+      "By calculating the common minimum indentation across all non-empty lines in the text block and stripping only that prefix",
+      "By deleting all spaces in the entire string",
+      "By converting all spaces to tabs",
+      "By requiring no leading indentation at all"
+    ],
+    a: 0,
+    e: "The compiler inspects every line, identifies the common leading whitespace offset (incidental white space), and strips it automatically, preserving essential relative indentation within SQL or JSON snippets."
+  }
+]);
+
+// ja47: Optionals (Java 8 to 11)
+QB.add("ja47", [
+  {
+    q: "What is the performance difference between 'optional.orElse(expensiveMethod())' and 'optional.orElseGet(() -> expensiveMethod())'?",
+    o: [
+      "orElse evaluates the argument eagerly regardless of whether the Optional has a value; orElseGet evaluates lazily only if the Optional is empty",
+      "orElse is lazy; orElseGet is eager",
+      "orElseGet cannot return null",
+      "There is no difference in execution semantics"
+    ],
+    a: 0,
+    e: "orElse() evaluates its parameter eagerly at call time. Even if the Optional already contains a present value, expensiveMethod() is executed! orElseGet() takes a Supplier and is only evaluated when the Optional is empty."
+  },
+  {
+    q: "Which practice is considered an anti-pattern when using Java 'Optional'?",
+    o: [
+      "Using Optional as method parameters, class fields, or returning 'null' from a method that returns Optional",
+      "Using Optional as a return type for queries that may not find a result",
+      "Using Optional.map() to transform values",
+      "Using Optional.filter() to validate contents"
+    ],
+    a: 0,
+    e: "Optional was designed strictly as a return type to represent absent values. Using it as fields wastes memory (it is not Serializable), and returning 'null' defeats the entire purpose of Optional."
+  }
+]);
+
+// ja48: Traditional File Handling
+QB.add("ja48", [
+  {
+    q: "Why is 'BufferedReader' wrapped around 'FileReader' when reading large text files in traditional java.io?",
+    o: [
+      "FileReader reads byte-by-byte from the disk; BufferedReader reads a large chunk into an internal 8KB memory buffer, drastically minimizing expensive disk I/O system calls",
+      "BufferedReader encrypts the file during reading",
+      "FileReader cannot read UTF-8 files",
+      "BufferedReader is mandatory to prevent compiler errors"
+    ],
+    a: 0,
+    e: "Direct disk reads incur high OS context-switch overhead per character. BufferedReader buffers data in an 8KB memory buffer, amortizing system call costs and offering convenient readLine() support."
+  }
+]);
+
+// ja49: Java NIO (Part 1)
+QB.add("ja49", [
+  {
+    q: "What are the three foundational core abstractions of Java NIO (java.nio)?",
+    o: [
+      "Channels, Buffers, and Selectors",
+      "Streams, Readers, and Writers",
+      "Sockets, Threads, and Fibers",
+      "Files, Paths, and Permissions"
+    ],
+    a: 0,
+    e: "Java NIO revolves around Channels (bidirectional conduits for data), Buffers (memory blocks holding data), and Selectors (multiplexing non-blocking channels onto a single thread)."
+  }
+]);
+
+// ja50: Java NIO (Part 2 and 3)
+QB.add("ja50", [
+  {
+    q: "How does 'FileChannel.transferTo()' achieve ultra-fast file transfer in high-performance network servers?",
+    o: [
+      "It leverages Zero-Copy OS system calls (e.g. Linux sendfile), copying data directly from kernel cache to socket buffer without transferring bytes into user space RAM",
+      "It compresses files with zip before sending",
+      "It bypasses the network interface card",
+      "It splits files across multiple satellite uplinks"
+    ],
+    a: 0,
+    e: "Zero-copy avoids copying data between OS kernel space and Java user space. FileChannel.transferTo invokes OS sendfile(), transferring file data directly from the page cache to the network socket buffer."
+  }
+]);
+
 </script>
   <script>
 /* --- js/bank/bank_spring.js --- */
@@ -3573,6 +4219,478 @@ QB.add("sb42", [
   }
 ]);
 
+// sb1_2: Spring Boot Intro (Original)
+QB.add("sb1_2", [
+  {
+    q: "How does Spring Boot's '@SpringBootApplication' annotation bootstrap an enterprise application?",
+    o: [
+      "It is a convenience meta-annotation combining @Configuration, @EnableAutoConfiguration, and @ComponentScan",
+      "It compiles Java source code directly to machine assembly",
+      "It starts a Docker container daemon in the background",
+      "It disables the Spring ApplicationContext to conserve memory"
+    ],
+    a: 0,
+    e: "@SpringBootApplication encapsulates @Configuration (defines bean sources), @EnableAutoConfiguration (imports auto-configuration beans based on classpath JARs), and @ComponentScan (scans the current package and sub-packages)."
+  }
+]);
+
+// sb2: Spring Boot Setup & Architecture
+QB.add("sb2", [
+  {
+    q: "In Spring Boot 3, how does the new auto-configuration registration mechanism differ from legacy 'spring.factories'?",
+    o: [
+      "Auto-configurations are now declared in 'META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports' as a plain list of class names",
+      "Auto-configurations must now be hardcoded in the pom.xml",
+      "Spring Boot 3 no longer supports auto-configuration",
+      "They must be registered via Windows Registry keys"
+    ],
+    a: 0,
+    e: "Starting in Spring Boot 2.7 and strictly enforced in Spring Boot 3+, auto-configuration classes must be listed in META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports, deprecating the legacy spring.factories key."
+  }
+]);
+
+// sb3: Maven Lifecycle
+QB.add("sb3", [
+  {
+    q: "In the default Maven build lifecycle, which phase executes immediately before 'package'?",
+    o: [
+      "compile",
+      "test",
+      "verify",
+      "install"
+    ],
+    a: 1,
+    e: "The standard default Maven build lifecycle sequence is: validate -> compile -> test -> package -> verify -> install -> deploy. Unit tests are executed during the 'test' phase before packaging the JAR."
+  },
+  {
+    q: "What is the key difference between 'mvn install' and 'mvn deploy'?",
+    o: [
+      "install installs dependencies to node_modules; deploy pushes to Heroku",
+      "install puts the artifact into the local repository (~/.m2/repository); deploy copies it to a remote artifact repository (e.g. Nexus / Artifactory)",
+      "install is for Docker; deploy is for Kubernetes",
+      "They are identical commands"
+    ],
+    a: 1,
+    e: "mvn install stores the built package into the developer's local ~/.m2 repository for local reuse. mvn deploy publishes the final package to a shared remote artifact repository for team or production consumption."
+  }
+]);
+
+// sb4_2: Annotations (Orig)
+QB.add("sb4_2", [
+  {
+    q: "What is the distinction between '@Component' and '@Bean' in Spring?",
+    o: [
+      "@Component is a class-level stereotype auto-detected via classpath scanning; @Bean is a method-level annotation used within @Configuration classes, ideal for configuring third-party libraries",
+      "@Bean can only be used on interfaces",
+      "@Component creates prototypes; @Bean only creates singletons",
+      "@Bean is deprecated in Spring Boot 3"
+    ],
+    a: 0,
+    e: "@Component marks your own classes for automatic detection and registration by @ComponentScan. @Bean is placed on factory methods in @Configuration classes, allowing full programmatic instantiation—especially when registering classes from external JARs."
+  }
+]);
+
+// sb5_2: Bean Lifecycle (Orig)
+QB.add("sb5_2", [
+  {
+    q: "Which Spring component allows custom modification of new bean instances before AND after initialization callbacks (such as @PostConstruct)?",
+    o: [
+      "BeanPostProcessor (postProcessBeforeInitialization & postProcessAfterInitialization)",
+      "BeanFactoryPostProcessor",
+      "ServletFilter",
+      "ApplicationEventPublisher"
+    ],
+    a: 0,
+    e: "BeanPostProcessor intercepts every bean instance created by the ApplicationContext. It runs before and after initialization callbacks, and is the core mechanism Spring uses to wrap beans with AOP dynamic proxies."
+  }
+]);
+
+// sb6_2: Dependency Injection (Orig)
+QB.add("sb6_2", [
+  {
+    q: "Why is Constructor Injection strongly recommended over Field Injection (@Autowired on private fields)?",
+    o: [
+      "Constructor injection promotes immutability (final fields), prevents NullPointerExceptions during unit testing without Spring, and prevents circular dependencies at startup",
+      "Constructor injection uses less JVM heap memory",
+      "Field injection is completely prohibited by the Java compiler",
+      "Constructor injection allows bypassing private access restrictions"
+    ],
+    a: 0,
+    e: "Constructor injection allows fields to be marked 'final' (guaranteeing immutability and thread safety), ensures required dependencies are supplied at instantiation time, and makes testing trivial with plain 'new MyService(mockRepo)'."
+  }
+]);
+
+// sb8: Dynamic Init Beans
+QB.add("sb8", [
+  {
+    q: "Which conditional annotation conditionally creates a Spring bean only when a specific property is set to a given value in application.yml?",
+    o: [
+      "@ConditionalOnProperty(name = 'feature.enabled', havingValue = 'true', matchIfMissing = false)",
+      "@ConditionalOnClass",
+      "@ConditionalOnMissingBean",
+      "@Profile"
+    ],
+    a: 0,
+    e: "@ConditionalOnProperty checks environment configuration. If feature.enabled matches havingValue (or matchIfMissing is true), the bean or @Configuration is instantiated; otherwise, it is skipped entirely."
+  }
+]);
+
+// sb10: Spring Profiles
+QB.add("sb10", [
+  {
+    q: "How does Spring Boot resolve configuration property precedence when 'application-prod.yml' is active alongside the base 'application.yml'?",
+    o: [
+      "The profile-specific 'application-prod.yml' overrides matching keys defined in the default 'application.yml'",
+      "application.yml overrides application-prod.yml",
+      "Spring Boot throws a DuplicatePropertyException and aborts",
+      "Properties are randomly merged"
+    ],
+    a: 0,
+    e: "Profile-specific property files (application-{profile}.yml) are loaded after default application.yml, giving them higher precedence to override base defaults."
+  }
+]);
+
+// sb13: Transactional (Part 2) - Propagation
+QB.add("sb13", [
+  {
+    q: "What happens when a method annotated with '@Transactional(propagation = Propagation.REQUIRES_NEW)' is called from inside an existing active transaction?",
+    o: [
+      "The outer transaction is suspended, and a completely new physical database transaction is started for the inner method",
+      "The inner method joins the existing transaction directly",
+      "An exception is thrown because nested transactions are disallowed",
+      "The outer transaction commits immediately before continuing"
+    ],
+    a: 0,
+    e: "Propagation.REQUIRES_NEW always starts an independent transaction, suspending any existing transaction. If the inner transaction fails and rolls back, the outer transaction can still catch the error and decide whether to commit."
+  },
+  {
+    q: "If Method A calls Method B in the SAME bean, and Method B has '@Transactional(propagation = Propagation.REQUIRES_NEW)', why does REQUIRES_NEW fail to create a new transaction?",
+    o: [
+      "Self-invocation bypasses the Spring AOP proxy; Method B is called directly on 'this' rather than through the transactional proxy",
+      "Database JDBC drivers do not support inner transactions",
+      "Spring only allows one transaction per Java thread forever",
+      "REQUIRES_NEW only works in XML configuration"
+    ],
+    a: 0,
+    e: "Spring's @Transactional uses dynamic proxies. Intra-class calls (this.methodB()) bypass the proxy interceptor entirely. To apply proxy advice, Method B must be moved to a separate bean or self-injected via ObjectProvider."
+  }
+]);
+
+// sb14: Transactional (Part 3) - Rollback Rules & Isolation
+QB.add("sb14", [
+  {
+    q: "By default, for which types of throwables will Spring's '@Transactional' roll back the transaction?",
+    o: [
+      "Only unchecked exceptions (subclasses of RuntimeException and Error); checked Exceptions do NOT trigger rollback by default",
+      "All throwables including checked exceptions",
+      "Only java.lang.NullPointerException",
+      "Only java.sql.SQLException"
+    ],
+    a: 0,
+    e: "By default, Spring rolls back transactions only on RuntimeException and Error. A checked exception (e.g. IOException, Exception) causes the transaction to commit unless explicitly configured: @Transactional(rollbackFor = Exception.class)."
+  }
+]);
+
+// sb15: Async Annotation (Part 1)
+QB.add("sb15", [
+  {
+    q: "What prerequisite is required to enable asynchronous method execution with '@Async' in a Spring Boot application?",
+    o: [
+      "Adding '@EnableAsync' on a @Configuration class",
+      "Inheriting from java.lang.Thread in all controllers",
+      "Installing an external RabbitMQ message broker",
+      "Compiling with the -async javac flag"
+    ],
+    a: 0,
+    e: "@EnableAsync activates Spring's AsyncAnnotationBeanPostProcessor, which wraps @Async-annotated beans with an advisor to run target methods in a separate TaskExecutor thread."
+  }
+]);
+
+// sb16: Async Annotation (Part 2) - Executor & Exceptions
+QB.add("sb16", [
+  {
+    q: "Why is it dangerous to use '@Async' without defining a custom ThreadPoolTaskExecutor bean?",
+    o: [
+      "By default, Spring may fall back to SimpleAsyncTaskExecutor, which spawns a new unpooled thread for every single task, risking OutOfMemoryError under load",
+      "The methods will execute synchronously on the main thread",
+      "Async execution will throw a NoSuchBeanDefinitionException",
+      "It locks all database tables"
+    ],
+    a: 0,
+    e: "SimpleAsyncTaskExecutor does not reuse threads; it creates a new operating system thread for each invocation. In production, always register a custom ThreadPoolTaskExecutor with bounded queueCapacity and maxPoolSize."
+  }
+]);
+
+// sb17: Custom Interceptors
+QB.add("sb17", [
+  {
+    q: "How does a Spring MVC 'HandlerInterceptor' differ from a standard Java Servlet 'Filter'?",
+    o: [
+      "Filters are part of the Servlet container and wrap the DispatcherServlet; HandlerInterceptors are part of Spring MVC and have access to the target HandlerMethod and ModelAndView",
+      "Filters run after the controller returns; Interceptors run before the request arrives at Tomcat",
+      "Filters can only be written in XML",
+      "Interceptors cannot read request headers"
+    ],
+    a: 0,
+    e: "Filters are servlet container level and process all requests before they hit DispatcherServlet. Interceptors sit inside Spring MVC, intercepting requests between DispatcherServlet and the Controller HandlerMethod."
+  }
+]);
+
+// sb19: HATEOAS
+QB.add("sb19", [
+  {
+    q: "What is the primary architectural principle of HATEOAS in RESTful web services?",
+    o: [
+      "The client interacts with the network application entirely through hypermedia links provided dynamically in server responses",
+      "All API endpoints must return HTML rather than JSON",
+      "The client hardcodes all URLs in a mobile app configuration file",
+      "APIs must use SOAP XML schemas"
+    ],
+    a: 0,
+    e: "HATEOAS (Hypermedia As The Engine Of Application State) means the REST client navigates available actions dynamically via hypermedia links (e.g. '_links': { 'self': ..., 'cancel': ... }) returned in the payload."
+  }
+]);
+
+// sb20: Response Entity & HTTP Status Codes
+QB.add("sb20", [
+  {
+    q: "When a RESTful resource is successfully created via POST, what HTTP status code and response header should be returned according to RFC 9110?",
+    o: [
+      "201 Created, accompanied by a 'Location' header containing the URI of the newly created resource",
+      "200 OK with no headers",
+      "204 No Content",
+      "302 Found redirecting to homepage"
+    ],
+    a: 0,
+    e: "A successful POST creation should respond with HTTP 201 Created and include the 'Location: /api/orders/123' header pointing to the new resource."
+  }
+]);
+
+// sb21: Exception Handling (HW)
+QB.add("sb21", [
+  {
+    q: "In Spring Boot 3 / Spring 6, what RFC standard is implemented by the 'ProblemDetail' specification for API error responses?",
+    o: [
+      "RFC 7807 (Problem Details for HTTP APIs)",
+      "RFC 2616 (HTTP 1.1)",
+      "RFC 7519 (JSON Web Tokens)",
+      "RFC 6749 (OAuth 2.0)"
+    ],
+    a: 0,
+    e: "ProblemDetail implements RFC 7807, providing a standardized JSON format for machine-readable errors with fields: type, title, status, detail, instance, and custom properties."
+  }
+]);
+
+// sb21_2: Exception Handling (Orig)
+QB.add("sb21_2", [
+  {
+    q: "How does '@ControllerAdvice' combined with '@ExceptionHandler' centralize error handling in Spring Web?",
+    o: [
+      "It intercepts exceptions thrown across all @RequestMapping controller methods, converting them into uniform error payloads without duplicating try-catch blocks",
+      "It catches OutOfMemoryErrors in the JVM",
+      "It catches compile-time syntax errors",
+      "It automatically retries failed database transactions"
+    ],
+    a: 0,
+    e: "@ControllerAdvice acts as an interceptor of exceptions thrown by any controller method, delegating to matching @ExceptionHandler methods to format consistent JSON error responses."
+  }
+]);
+
+// sb23: JPA Setup and Architecture
+QB.add("sb23", [
+  {
+    q: "What role does the 'PersistenceContext' play in Hibernate / JPA?",
+    o: [
+      "It acts as a first-level cache (L1 cache) and identity map ensuring each database row is represented by only one entity instance per transaction",
+      "It writes raw SQL logs to a remote file server",
+      "It handles TLS certificate encryption",
+      "It is an external distributed Redis cluster"
+    ],
+    a: 0,
+    e: "The PersistenceContext is an in-memory identity map and L1 cache managed by EntityManager. It tracks dirty entity state and flushes modifications to the database when the transaction commits."
+  }
+]);
+
+// sb25: JPA L2 Caching
+QB.add("sb25", [
+  {
+    q: "How does JPA's Second-Level Cache (L2 Cache) differ from the First-Level Cache (L1 Cache)?",
+    o: [
+      "L1 is bound to a single EntityManager/Session transaction; L2 is shared across all sessions and transactions throughout the entire ApplicationContext (or cluster)",
+      "L1 is stored on hard drive; L2 is in RAM",
+      "L2 cache is enabled by default in all Spring Boot apps without configuration",
+      "L1 cache caches SQL queries; L2 caches HTML files"
+    ],
+    a: 0,
+    e: "L1 cache is transaction-scoped and destroyed when the EntityManager closes. L2 cache (e.g. Ehcache, Hazelcast, Redisson) is SessionFactory-scoped, surviving across multiple user sessions and requests."
+  }
+]);
+
+// sb26: JPA DTO to Table
+QB.add("sb26", [
+  {
+    q: "What is the primary performance benefit of using constructor-based JPQL DTO projections ('SELECT new com.example.UserDTO(u.id, u.name) FROM User u')?",
+    o: [
+      "It fetches only the requested columns from the database, bypassing Hibernate dirty-checking and entity lifecycle tracking overhead",
+      "It automatically runs on multiple CPU cores",
+      "It encrypts the database columns on the wire",
+      "It stores the results in the browser's local storage"
+    ],
+    a: 0,
+    e: "DTO projections select only the required database columns, drastically reducing network I/O and memory usage while skipping the Hibernate persistence context entity-management overhead."
+  }
+]);
+
+// sb27: JPA One to One
+QB.add("sb27", [
+  {
+    q: "Why does '@OneToOne(fetch = FetchType.LAZY)' on the non-owning (inverse) side of a bidirectional relationship still trigger an eager SELECT query?",
+    o: [
+      "Hibernate bytecode proxy cannot determine whether the child reference should be 'null' or a proxy without querying the child foreign key column",
+      "FetchType.LAZY is not supported by MySQL",
+      "Spring Boot disables lazy loading for all OneToOne relationships",
+      "The Java garbage collector forces early initialization"
+    ],
+    a: 0,
+    e: "Because foreign keys live on the owning side, the parent table has no column indicating whether a child exists. Hibernate must execute a query to check for existence before deciding whether to assign null or a proxy."
+  }
+]);
+
+// sb29: JPA Derived Queries and JPQL
+QB.add("sb29", [
+  {
+    q: "How does 'JOIN FETCH' in a JPQL query resolve the classic 'N+1 Select Problem'?",
+    o: [
+      "It forces the persistence provider to retrieve the parent and associated child entities in a single SQL query using an INNER/LEFT JOIN",
+      "It caches all child records in the browser",
+      "It executes N parallel background threads to fetch each child",
+      "It converts the relational database into a graph database"
+    ],
+    a: 0,
+    e: "Without JOIN FETCH, accessing child collections on N parents triggers 1 initial query + N separate child queries (N+1 queries). JOIN FETCH pulls both parent and related entities in a single SQL JOIN query."
+  }
+]);
+
+// sb30: JPA Native & Criteria API
+QB.add("sb30", [
+  {
+    q: "What is the primary advantage of JPA Criteria API over raw Native SQL queries?",
+    o: [
+      "Criteria API provides compile-time type-safety and refactoring support for dynamic queries, eliminating runtime syntax errors",
+      "Criteria API is always 10x faster than native SQL",
+      "Criteria API bypasses database connection pools",
+      "Criteria API does not require a database schema"
+    ],
+    a: 0,
+    e: "The Criteria API uses Java Metamodel classes to construct queries programmatically with complete compile-time type safety, making it ideal for dynamic search filters with multiple optional parameters."
+  }
+]);
+
+// sb32: Attacks & Web Vulnerabilities
+QB.add("sb32", [
+  {
+    q: "How do PreparedStatement and Spring Data JPA repositories defend applications against SQL Injection (SQLi)?",
+    o: [
+      "By separating query structure from user parameters, transmitting variables via parameterized placeholders ('?') so input is treated strictly as literal data rather than executable code",
+      "By stripping all whitespace from user input",
+      "By encrypting the entire HTTP POST body with RSA",
+      "By running queries only inside Docker containers"
+    ],
+    a: 0,
+    e: "Prepared statements compile the SQL query template first on the database engine. User parameters are supplied separately across binary protocols, making it structurally impossible for malicious input to alter query syntax."
+  }
+]);
+
+// sb33: Spring Security Setup
+QB.add("sb33", [
+  {
+    q: "In modern Spring Security 6 (Spring Boot 3), how is security configuration declared without extending the deprecated 'WebSecurityConfigurerAdapter'?",
+    o: [
+      "By declaring a '@Bean public SecurityFilterChain securityFilterChain(HttpSecurity http)' method",
+      "By editing web.xml in the WEB-INF folder",
+      "By annotating every class with @SecureAll",
+      "By configuring iptables rules on Linux"
+    ],
+    a: 0,
+    e: "Spring Security 5.7+ deprecated WebSecurityConfigurerAdapter in favor of component-based configuration: registering a SecurityFilterChain bean using HttpSecurity fluent lambdas."
+  }
+]);
+
+// sb34: Spring Security Multiple Users
+QB.add("sb34", [
+  {
+    q: "Which Spring Security interface must be implemented to load user authentication credentials and granted authorities from a custom database?",
+    o: [
+      "UserDetailsService (method: loadUserByUsername(String username))",
+      "AuthenticationManagerBuilder",
+      "SecurityContextRepository",
+      "GrantedAuthorityFactory"
+    ],
+    a: 0,
+    e: "UserDetailsService has a single method: loadUserByUsername(String). Spring Security calls this during authentication to retrieve the UserDetails object (hashed password, roles, account lock flags)."
+  }
+]);
+
+// sb36: Spring Security Basic Auth
+QB.add("sb36", [
+  {
+    q: "How are credentials transmitted in the HTTP 'Authorization' header when using HTTP Basic Authentication?",
+    o: [
+      "'Basic ' followed by the Base64-encoded string of 'username:password'",
+      "A 256-bit SHA-2 hash of the username",
+      "An encrypted asymmetric RSA private key",
+      "A plain JSON payload in the request body"
+    ],
+    a: 0,
+    e: "Basic Auth encodes 'username:password' using Base64 (e.g. 'Authorization: Basic YWRtaW46c2VjcmV0'). Because Base64 is trivial to decode, Basic Auth must always be served over HTTPS/TLS."
+  }
+]);
+
+// sb39: Spring Security OAuth2 / OIDC
+QB.add("sb39", [
+  {
+    q: "Why is the Authorization Code Flow with PKCE (Proof Key for Code Exchange) recommended for modern single-page apps (SPAs) and mobile clients over the legacy Implicit Flow?",
+    o: [
+      "PKCE prevents authorization code interception attacks without requiring a client secret on public clients that cannot securely store secrets",
+      "PKCE eliminates the need for user passwords entirely",
+      "PKCE runs faster because it bypasses SSL/TLS",
+      "Implicit flow requires an enterprise hardware dongle"
+    ],
+    a: 0,
+    e: "Public clients cannot securely store a client_secret. PKCE uses a dynamically generated code_verifier and code_challenge hash to verify that the client requesting tokens is the exact same client that initiated authorization."
+  }
+]);
+
+// sb41: Spring Security Method Security
+QB.add("sb41", [
+  {
+    q: "What annotation enables method-level access control such as @PreAuthorize in Spring Boot 3?",
+    o: [
+      "@EnableMethodSecurity",
+      "@EnableGlobalMethodSecurity(prePostEnabled = true) [Legacy]",
+      "@SecuredMethodConfig",
+      "@EnableWebSecurity"
+    ],
+    a: 0,
+    e: "In Spring Security 6, @EnableMethodSecurity is the new standard (replacing @EnableGlobalMethodSecurity). It enables @PreAuthorize, @PostAuthorize, @PreFilter, and @PostFilter using Spring Expression Language (SpEL)."
+  }
+]);
+
+// sb43: ConfigurationProperties
+QB.add("sb43", [
+  {
+    q: "What is the primary benefit of '@ConfigurationProperties' over injecting individual properties using '@Value'?",
+    o: [
+      "It provides strong type-safety, hierarchical grouping of configuration, JSR-380 bean validation (@Validated), and relaxed property binding",
+      "It encrypts configuration files on disk",
+      "It allows properties to be downloaded from torrent trackers",
+      "It restarts the JVM whenever a property changes"
+    ],
+    a: 0,
+    e: "@ConfigurationProperties binds structured YAML/properties directly to POJOs with full type-safety, supports nested objects and collections, supports relaxed binding (kebab-case to camelCase), and works with Hibernate Validator."
+  }
+]);
+
 </script>
   <script>
 /* --- js/bank/bank_microservices.js --- */
@@ -3804,6 +4922,233 @@ QB.add("ms20", [
   }
 ]);
 
+// ms2: RestClient (Spring 6 / Boot 3)
+QB.add("ms2", [
+  {
+    q: "How do you configure custom error handling for 4xx and 5xx responses using Spring 6's fluent RestClient?",
+    o: [
+      "Using the .onStatus(predicate, errorHandler) fluent method on the response specification",
+      "By registering a legacy ResponseExtractor bean",
+      "By catching raw SocketException in a try-catch block",
+      "RestClient automatically ignores all HTTP errors by default"
+    ],
+    a: 0,
+    e: "RestClient provides .onStatus(HttpStatusCode::is4xxClientError, (req, res) -> { throw new CustomNotFoundException(res.getStatusText()); }), providing a clean and declarative way to handle error codes."
+  },
+  {
+    q: "How does RestClient achieve connection pooling and request timeouts under the hood?",
+    o: [
+      "By configuring an underlying ClientHttpRequestFactory (such as Apache HttpComponents or Java 11 HttpClient) when building the RestClient",
+      "RestClient uses Java Reflection to bypass OS network sockets",
+      "Timeouts are managed by operating system cron jobs",
+      "Connection pooling is not supported in synchronous REST clients"
+    ],
+    a: 0,
+    e: "RestClient.builder().requestFactory(new JdkClientHttpRequestFactory(...)) or HttpComponentsClientHttpRequestFactory configures connection pooling, connect timeouts, and read timeouts."
+  }
+]);
+
+// ms3: OpenFeign Client Advanced
+QB.add("ms3", [
+  {
+    q: "How can you dynamically propagate an incoming JWT Bearer token across downstream microservice calls using OpenFeign?",
+    o: [
+      "By implementing a RequestInterceptor bean that retrieves the SecurityContextHolder token and adds the 'Authorization: Bearer <token>' header to RequestTemplate",
+      "By passing the JWT token as a query parameter on every method",
+      "By storing the JWT in an environment variable",
+      "Feign automatically forwards all HTTP headers without configuration"
+    ],
+    a: 0,
+    e: "RequestInterceptor is invoked before each Feign request is sent. It inspects the current HttpServletRequest or SecurityContextHolder and injects the Authorization header into template.header('Authorization', token)."
+  },
+  {
+    q: "What Feign Logger Level provides the complete HTTP request and response headers, body payloads, and metadata for debugging?",
+    o: [
+      "Logger.Level.FULL",
+      "Logger.Level.BASIC",
+      "Logger.Level.NONE",
+      "Logger.Level.HEADERS"
+    ],
+    a: 0,
+    e: "Feign Logger.Level supports: NONE (default), BASIC (request method, URL, response status, execution time), HEADERS (basic + request/response headers), and FULL (headers, body, and metadata for both request and response)."
+  }
+]);
+
+// ms5: Client Side Load Balancer
+QB.add("ms5", [
+  {
+    q: "What replaced Netflix Ribbon as the standard client-side load balancer in modern Spring Cloud?",
+    o: [
+      "Spring Cloud LoadBalancer (reactive and non-reactive client-side load balancing built by the Spring team)",
+      "NGINX Ingress Controller only",
+      "Zuul 1 Proxy",
+      "Hardware F5 Big-IP routers"
+    ],
+    a: 0,
+    e: "Netflix Ribbon was put into maintenance mode. Spring Cloud introduced Spring Cloud LoadBalancer as the modern, lightweight replacement supporting round-robin, random, and custom caching load balancer algorithms."
+  }
+]);
+
+// ms8: Resilience4j Retry
+QB.add("ms8", [
+  {
+    q: "Why is 'Exponential Backoff with Jitter' strongly recommended when configuring Resilience4j Retry for inter-service calls?",
+    o: [
+      "Jitter introduces randomized delays to prevent the 'Thundering Herd' problem where all retrying instances hammer the recovering service at identical intervals",
+      "It disables retries when the server load is high",
+      "It converts HTTP requests to UDP packets",
+      "It doubles the CPU clock rate during retries"
+    ],
+    a: 0,
+    e: "Exponential backoff increases wait times (e.g. 1s, 2s, 4s, 8s). Adding randomized jitter spreads out incoming retries, allowing an overloaded downstream service or database to recover smoothly."
+  }
+]);
+
+// ms11: API Gateway Part 2 (Rate Limiting & Security Filters)
+QB.add("ms11", [
+  {
+    q: "In Spring Cloud Gateway, how is distributed Token Bucket rate limiting implemented across multiple gateway instances?",
+    o: [
+      "Using RequestRateLimiterGatewayFilterFactory backed by RedisRateLimiter and Redis Lua scripts",
+      "By storing counter integers in JVM static fields",
+      "By writing IP address counters to local text files",
+      "Using local Guava RateLimiter on each node"
+    ],
+    a: 0,
+    e: "Spring Cloud Gateway integrates with Redis via Lua scripts implementing the Token Bucket algorithm. Because Redis is centralized and atomic, all gateway instances share the exact same rate limit quota per user/IP."
+  }
+]);
+
+// ms13: Refresh Scope
+QB.add("ms13", [
+  {
+    q: "What does the @RefreshScope annotation do in a Spring Boot application connected to Spring Cloud Config?",
+    o: [
+      "It puts a CGLIB proxy around the bean; when /actuator/refresh is called, the bean instance is destroyed and lazily recreated with fresh property values on its next access",
+      "It reboots the JVM automatically",
+      "It clears the PostgreSQL database tables",
+      "It recompiles the Java source files at runtime"
+    ],
+    a: 0,
+    e: "Beans in @RefreshScope act as lazy proxies. Calling POST /actuator/refresh re-reads configuration from the Config Server, evicts the existing bean instance from the scope cache, and re-initializes it with updated values."
+  }
+]);
+
+// ms14: Cloud Bus
+QB.add("ms14", [
+  {
+    q: "How does Spring Cloud Bus eliminate the need to invoke /actuator/refresh individually on hundreds of microservice instances?",
+    o: [
+      "It connects all microservice instances via a shared message broker (Kafka or RabbitMQ); sending POST /actuator/busrefresh to one node broadcasts a RefreshRemoteApplicationEvent to all instances",
+      "It connects via SSH to all server instances and runs a bash script",
+      "It opens socket connections on port 80 to every node sequentially",
+      "It uses DNS TXT records to notify servers"
+    ],
+    a: 0,
+    e: "Spring Cloud Bus links nodes with a lightweight message broker. When configurations change in Git, a single webhook call to the bus broadcasts the refresh event across the entire fleet."
+  }
+]);
+
+// ms16, ms17, ms18, ms19: Distributed Logging & Tracing
+QB.add("ms16", [
+  {
+    q: "How does Mapped Diagnostic Context (MDC) assist in distributed logging within a single microservice?",
+    o: [
+      "It stores key-value pairs (such as traceId and userId) in ThreadLocal memory so logging frameworks (Logback/Log4j2) automatically append them to every log line printed by that thread",
+      "It uploads log files directly to S3 every 10 seconds",
+      "It parses SQL statements before execution",
+      "It converts log text into encrypted binary files"
+    ],
+    a: 0,
+    e: "SLF4J MDC binds contextual metadata to the current thread. When your logging pattern includes [%X{traceId}], all log statements automatically print the traceId without manually passing it to every logger method."
+  }
+]);
+
+QB.add("ms17", [
+  {
+    q: "In distributed tracing (Micrometer Tracing / OpenTelemetry), what is the difference between a TraceId and a SpanId?",
+    o: [
+      "TraceId represents the entire end-to-end request journey across all microservices; SpanId represents a single unit of work (e.g. one HTTP request or DB query) within that journey",
+      "TraceId is local to one service; SpanId is global across all services",
+      "TraceId is only used for error logs; SpanId is used for info logs",
+      "There is no difference; they are aliases for the same value"
+    ],
+    a: 0,
+    e: "A Trace is a tree of Spans. The TraceId remains constant across the entire transaction lifecycle across dozens of microservices, while each individual network call, database query, or internal task gets a unique SpanId."
+  }
+]);
+
+QB.add("ms18", [
+  {
+    q: "What protocol has become the industry standard for exporting metrics, logs, and distributed traces to backends like Jaeger, Zipkin, and Prometheus?",
+    o: [
+      "OTLP (OpenTelemetry Protocol), operating over gRPC or HTTP using Protocol Buffers",
+      "SNMP (Simple Network Management Protocol)",
+      "FTP upload of CSV records",
+      "Raw Telnet connections"
+    ],
+    a: 0,
+    e: "OpenTelemetry Protocol (OTLP) standardizes telemetry data models and transmission mechanisms across observability vendors, eliminating proprietary agent vendor lock-in."
+  }
+]);
+
+QB.add("ms19", [
+  {
+    q: "In an ELK (Elasticsearch, Logstash, Kibana) stack, what is the best practice for formatting application logs in high-throughput microservices?",
+    o: [
+      "Log in structured JSON format (e.g. using logstash-logback-encoder) to eliminate expensive regex string parsing in Logstash/Elasticsearch ingestion pipelines",
+      "Log in unformatted raw multiline plain text",
+      "Log everything in XML format",
+      "Write logs directly to an Excel spreadsheet"
+    ],
+    a: 0,
+    e: "Emitting structured JSON directly from the application makes ingestion blistering fast: Elasticsearch and Logstash ingest JSON fields directly without CPU-intensive regular expression parsing of multiline stack traces."
+  }
+]);
+
+// ms21, ms22, ms23: Distributed Scheduler
+QB.add("ms21", [
+  {
+    q: "In ShedLock, why are both 'lockAtMostFor' and 'lockAtLeastFor' parameters essential on @SchedulerLock?",
+    o: [
+      "lockAtMostFor guarantees the lock is released if a node crashes; lockAtLeastFor prevents another node from executing the job if the first node finishes in milliseconds before clock drift passes",
+      "They define the minimum and maximum heap memory allocated to the job",
+      "They configure HTTP socket timeouts",
+      "They set the number of database retries"
+    ],
+    a: 0,
+    e: "lockAtMostFor prevents deadlocks if a node dies mid-job. lockAtLeastFor ensures the lock is held for at least a short duration (e.g. 5s) so slight clock discrepancies don't allow a second node to run the same minute's job."
+  }
+]);
+
+QB.add("ms22", [
+  {
+    q: "What is the primary vulnerability of using a single Redis instance with 'SET key value NX PX timeout' as a distributed lock in safety-critical systems?",
+    o: [
+      "If the lock holder experiences a long GC pause exceeding the lock timeout, the lock auto-releases and another node acquires it, causing two nodes to execute the critical section concurrently",
+      "Redis does not support key expiration",
+      "Redis is multi-threaded and causes race conditions",
+      "SET NX PX is not supported in Redis 7"
+    ],
+    a: 0,
+    e: "Martin Kleppmann highlighted that unexpected GC pauses or network delays can cause TTL to expire while the client still thinks it holds the lock. Robust systems use Fencing Tokens (monotonically increasing IDs verified by the storage layer)."
+  }
+]);
+
+QB.add("ms23", [
+  {
+    q: "When implementing a distributed task worker queue using PostgreSQL or MySQL, what SQL clause prevents lock contention and worker blocking?",
+    o: [
+      "SELECT * FROM tasks WHERE status = 'PENDING' ORDER BY id LIMIT 10 FOR UPDATE SKIP LOCKED",
+      "SELECT * FROM tasks WHERE status = 'PENDING' FOR READ ONLY",
+      "SELECT ALL FROM tasks UNLOCKED",
+      "LOCK TABLE tasks IN EXCLUSIVE MODE"
+    ],
+    a: 0,
+    e: "FOR UPDATE SKIP LOCKED locks selected rows while instructing other concurrent worker transactions to skip locked rows and immediately fetch the next unlocked batch, enabling highly scalable parallel task queues."
+  }
+]);
+
 </script>
   <script>
 /* --- js/bank/bank_eda.js --- */
@@ -4013,6 +5358,47 @@ QB.add("eda15", [
     ],
     a: 0,
     e: "The default is read_uncommitted. Setting isolation.level=read_committed instructs the consumer's fetcher to buffer transactional messages up to the Last Stable Offset (LSO) and discard aborted messages."
+  }
+]);
+
+// eda12: Kafka Consumer Advanced & Rebalance Listeners
+QB.add("eda12", [
+  {
+    q: "Why should you implement ConsumerRebalanceListener.onPartitionsRevoked() when manually managing Kafka consumer offsets?",
+    o: [
+      "To commit in-flight processed offsets to Kafka synchronously before partition ownership is transferred to another consumer during a rebalance",
+      "To delete all messages stored in the partitions",
+      "To trigger a JVM garbage collection",
+      "To restart the Kafka broker node"
+    ],
+    a: 0,
+    e: "When a rebalance occurs, your consumer loses ownership of its partitions. onPartitionsRevoked() is your last chance to flush state and commit offsets synchronously to prevent duplicate message processing by the new owner."
+  },
+  {
+    q: "How does manual asynchronous commit (commitAsync()) differ from synchronous commit (commitSync()) in KafkaConsumer?",
+    o: [
+      "commitAsync() is non-blocking and does not retry on failure (to prevent committing stale offsets out of order); commitSync() blocks the thread until broker ACK is received and retries retriable errors",
+      "commitSync() sends messages via UDP",
+      "commitAsync() only works when Kafka is running in ZooKeeper mode",
+      "commitSync() deletes the topic offsets permanently"
+    ],
+    a: 0,
+    e: "commitAsync() does not retry because if commit #1 fails and commit #2 succeeds, retrying commit #1 would overwrite the newer offset with an older one. Best practice: commitAsync() in poll loop, commitSync() in shutdown."
+  }
+]);
+
+// eda16: Kafka Consumer Transactions & Exactly Once
+QB.add("eda16", [
+  {
+    q: "How does Kafka's Transaction Coordinator prevent 'Zombie Instances' (split-brain producers) from corrupting partition logs?",
+    o: [
+      "Using an Epoch Number associated with the transactional.id; when a new producer initializes with the same ID, the coordinator bumps the epoch and rejects requests from older epochs with a ProducerFencedException",
+      "By rebooting the server operating system",
+      "By revoking SSL certificates",
+      "By deleting the producer's hard drive log"
+    ],
+    a: 0,
+    e: "Each transactional producer registers with a static transactional.id. The transaction coordinator issues an epoch. If an old producer experiences a network partition and wakes up, any write attempt is rejected with ProducerFencedException."
   }
 ]);
 
@@ -4278,6 +5664,614 @@ QB.add("lld31", [
   }
 ]);
 
+// lld7: Tic Tac Toe Game
+QB.add("lld7", [
+  {
+    q: "In an N x N Tic Tac Toe game, what is the most optimal time complexity to verify if a player has won after making a move?",
+    o: [
+      "O(N^2) by scanning the entire grid",
+      "O(N) by checking only the row, column, and diagonals of the placed piece",
+      "O(1) by maintaining row, column, and diagonal counter arrays per player",
+      "O(log N) using a binary search tree of moves"
+    ],
+    a: 2,
+    e: "By tracking score tallies per row, col, and the two diagonals (+1 for Player 1, -1 for Player 2), checking if |count| == N takes O(1) time and O(N) space, avoiding scanning the grid."
+  },
+  {
+    q: "When designing the classes for Tic Tac Toe, which design principle is upheld by modeling Piece as an abstract class (or enum) with PieceX and PieceO?",
+    o: [
+      "Open/Closed Principle (OCP), allowing support for new piece types or 3+ players without rewriting Board logic",
+      "Single Responsibility Principle only",
+      "Interface Segregation Principle only",
+      "Liskov Substitution Principle is violated"
+    ],
+    a: 0,
+    e: "Separating Piece into an abstraction (or strategy) ensures the Board and Game engine depend on Piece rather than hardcoded char literals, adhering to OCP."
+  }
+]);
+
+// lld8: Elevator System
+QB.add("lld8", [
+  {
+    q: "In an Elevator System LLD, which scheduling algorithm is typically used by an individual elevator car to serve floor requests efficiently?",
+    o: [
+      "First Come First Served (FCFS)",
+      "LOOK / SCAN algorithm (Elevator Algorithm), serving all requests in the current direction before reversing",
+      "Shortest Job Next (SJN)",
+      "Round Robin with a 10-second quantum"
+    ],
+    a: 1,
+    e: "The SCAN/LOOK algorithm moves the elevator in one direction, stopping at all requested floors in path, then reverses once no further requests exist in that direction. This prevents starvation and minimizes mechanical wear."
+  },
+  {
+    q: "How should an external floor call button (Up/Down) be routed to multiple elevator cars in a high-rise building?",
+    o: [
+      "Randomly assign to any idle elevator",
+      "Via an ElevatorController / Dispatcher applying an optimization strategy (e.g. proximity, current direction, load capacity)",
+      "Broadcast to all elevators and let the fastest motor respond",
+      "Keep floor buttons hardwired to a single dedicated elevator shaft"
+    ],
+    a: 1,
+    e: "An ElevatorController acts as the central coordinator (Mediator / Strategy pattern), evaluating each car's state (direction, current floor, queue depth) to dispatch the optimal car."
+  }
+]);
+
+// lld9: Car Rental System
+QB.add("lld9", [
+  {
+    q: "In a Car Rental System LLD (like Zoomcar or Hertz), how do you prevent double-booking when two concurrent users attempt to book the same vehicle for overlapping time slots?",
+    o: [
+      "By relying on client-side JavaScript validation",
+      "Using pessimistic DB row locking (SELECT FOR UPDATE) or an atomic reservation lock in Redis with TTL during checkout",
+      "By having the user re-enter credit card details",
+      "Double booking cannot happen in object-oriented systems"
+    ],
+    a: 1,
+    e: "Concurrent reservations require transactional safety. Using database pessimistic locks or distributed Redis mutexes (Redlock) ensures that only one checkout thread can hold the vehicle reservation for the requested time range."
+  },
+  {
+    q: "Which design pattern is best suited for calculating dynamic car rental pricing based on base rate, duration, weekend surcharge, and insurance add-ons?",
+    o: [
+      "Singleton Pattern",
+      "Decorator Pattern or Strategy Pattern",
+      "Prototype Pattern",
+      "Flyweight Pattern"
+    ],
+    a: 1,
+    e: "The Strategy Pattern lets you swap pricing algorithms (seasonal, weekend, hourly), while the Decorator Pattern allows dynamic stacking of billable features (GPS, infant seat, comprehensive insurance)."
+  }
+]);
+
+// lld10: Chain of Responsibility Pattern
+QB.add("lld10", [
+  {
+    q: "In the Chain of Responsibility design pattern, how does a request pass through the chain?",
+    o: [
+      "Every handler in the chain must always execute in parallel using threads",
+      "A handler either processes the request or delegates it to the next successor handler in the chain",
+      "The client invokes all handlers directly via reflection",
+      "The request is broadcast via JMS topic to all consumers"
+    ],
+    a: 1,
+    e: "The Chain of Responsibility decouples the sender of a request from its receivers by giving multiple objects a chance to handle the request along a sequential successor chain."
+  },
+  {
+    q: "Which standard Java / Spring framework feature is a classic real-world example of Chain of Responsibility?",
+    o: [
+      "Java StringBuilder",
+      "Spring Security FilterChain and Servlet Filters (javax.servlet.Filter / FilterChain.doFilter)",
+      "Spring @Autowired dependency injection",
+      "Java Collections.sort()"
+    ],
+    a: 1,
+    e: "Servlet FilterChain (and Spring SecurityFilterChain) is the textbook implementation: each filter inspects the request and either writes a response or invokes chain.doFilter(req, res)."
+  }
+]);
+
+// lld11: Snake and Ladder Game
+QB.add("lld11", [
+  {
+    q: "In an LLD for Snake and Ladder, what is the cleanest object-oriented way to represent snakes and ladders on the Board?",
+    o: [
+      "Hardcode an if-else chain inside the GameLoop class",
+      "Model a 'Jump' class with 'start' and 'end' coordinates; a snake has start > end, while a ladder has start < end",
+      "Store two parallel integer arrays in a static global class",
+      "Use SQL triggers on an in-memory SQLite table"
+    ],
+    a: 1,
+    e: "Modeling Snake and Ladder as instances of a polymorphic or unified 'Jump' entity (where start > end is a snake and start < end is a ladder) simplifies board logic: cell.getJump() ? jump.getEnd() : position."
+  },
+  {
+    q: "Which data structure is ideal for managing the turn sequence of players in a multiplayer Snake and Ladder game?",
+    o: [
+      "Stack (LIFO)",
+      "Queue or Deque (FIFO: poll player, take turn, add back to end of queue)",
+      "Binary Search Tree",
+      "HashSet"
+    ],
+    a: 1,
+    e: "A FIFO Queue (like ArrayDeque) allows round-robin turn management: player = queue.poll(); int roll = dice.roll(); move(player, roll); queue.offer(player)."
+  }
+]);
+
+// lld13: Proxy Design Pattern
+QB.add("lld13", [
+  {
+    q: "What is the primary architectural difference between a Proxy Pattern and a Decorator Pattern?",
+    o: [
+      "A Proxy controls access to the underlying object (e.g. lazy loading, security, caching, remote invocation), whereas a Decorator adds new responsibilities/behavior dynamically",
+      "Proxy cannot implement the same interface as the target",
+      "Decorator always creates remote network sockets",
+      "There is no difference; they are exact synonyms"
+    ],
+    a: 0,
+    e: "While both wrap a target object and share its interface, a Proxy controls the lifecycle or access to the real subject (lazy loading, virtual proxy, auth check), while a Decorator enhances or adds responsibilities."
+  },
+  {
+    q: "How does Spring Boot create AOP proxies for classes that do NOT implement any interface?",
+    o: [
+      "JDK Dynamic Proxies (java.lang.reflect.Proxy)",
+      "CGLIB (Code Generation Library) byte-code subclassing",
+      "Java Native Interface (JNI)",
+      "Spring cannot proxy classes without interfaces"
+    ],
+    a: 1,
+    e: "JDK Dynamic Proxy requires interfaces. For concrete classes without interfaces, Spring utilizes CGLIB to generate a subclass proxy at runtime, overriding public methods to inject advice."
+  }
+]);
+
+// lld15: Null Object Pattern
+QB.add("lld15", [
+  {
+    q: "What problem does the Null Object Pattern solve in low-level object-oriented design?",
+    o: [
+      "It eliminates the need for repetitive 'if (obj != null)' checks by providing a default do-nothing implementation of an interface",
+      "It allows Java pointers to bypass JVM memory allocation",
+      "It forces the garbage collector to immediately purge unreferenced objects",
+      "It replaces Java Optional with raw primitives"
+    ],
+    a: 0,
+    e: "The Null Object Pattern provides a concrete object that conforms to the expected interface but does nothing (or provides sensible no-op defaults), eliminating NullPointerExceptions and null-checking boilerplate."
+  }
+]);
+
+// lld17: LLD of ATM (Automated Teller Machine)
+QB.add("lld17", [
+  {
+    q: "Which design pattern is best suited for modeling an ATM's lifecycle (Idle -> CardInserted -> PinValidated -> CashDispensing)?",
+    o: [
+      "State Pattern",
+      "Observer Pattern",
+      "Builder Pattern",
+      "Visitor Pattern"
+    ],
+    a: 0,
+    e: "The State Pattern encapsulates ATM state-specific behaviors into dedicated state classes (IdleState, HasCardState, PinEnteredState, DispensingState), avoiding massive switch/if-else logic."
+  },
+  {
+    q: "Which pattern should be used inside the ATM to dispense cash using denominations like $2000, $500, and $100 notes?",
+    o: [
+      "Chain of Responsibility Pattern",
+      "Flyweight Pattern",
+      "Adapter Pattern",
+      "Prototype Pattern"
+    ],
+    a: 0,
+    e: "Each CashDispenser (TwoThousandDispenser -> FiveHundredDispenser -> HundredDispenser) is linked in a Chain of Responsibility to dispense its quota and pass the remaining balance down the chain."
+  }
+]);
+
+// lld18: Chess Mock Interview
+QB.add("lld18", [
+  {
+    q: "In an LLD for Chess, how should piece-specific movement validation be implemented according to SOLID principles?",
+    o: [
+      "A single giant switch statement in the Board class checking every piece type",
+      "An abstract 'Piece' class with an abstract boolean canMove(Board, Spot start, Spot end) method overridden by Pawn, Knight, Bishop, etc.",
+      "By storing move rules inside a JSON database file",
+      "Using regex pattern matching on algebraic chess notation"
+    ],
+    a: 1,
+    e: "Polymorphic movement validation: each subclass of Piece (Knight, Rook, etc.) encapsulates its own movement invariants, adhering to Single Responsibility and Open/Closed principles."
+  },
+  {
+    q: "How should special moves like Castling and En Passant be validated in an object-oriented Chess engine?",
+    o: [
+      "They cannot be modeled in OOP",
+      "By maintaining move history (e.g. piece hasMoved flag, and lastMove state on the Board)",
+      "By restarting the chess game if a pawn moves two squares",
+      "By using multi-threading to compute moves in advance"
+    ],
+    a: 1,
+    e: "Castling requires knowing neither King nor Rook has moved and intermediate squares are clear; En Passant requires knowing the opponent's adjacent pawn advanced two squares on the immediately preceding turn."
+  }
+]);
+
+// lld19: File System (Composite Pattern)
+QB.add("lld19", [
+  {
+    q: "Which design pattern is the textbook solution for modeling a hierarchical File System containing Files and Folders?",
+    o: [
+      "Composite Pattern",
+      "Abstract Factory Pattern",
+      "Memento Pattern",
+      "Bridge Pattern"
+    ],
+    a: 0,
+    e: "The Composite Pattern allows treating individual objects (File) and compositions of objects (Directory containing Files/Directories) uniformly via a common FileSystemNode interface."
+  },
+  {
+    q: "In a Composite File System, how is the total size of a Directory calculated?",
+    o: [
+      "The Directory stores a static fixed constant",
+      "The Directory recursively iterates over its child FileSystemNode elements, summing their getSize() results",
+      "By querying the Linux kernel /proc filesystem directly",
+      "Directories cannot have a size"
+    ],
+    a: 1,
+    e: "Polymorphic recursion: Directory.getSize() iterates over List<FileSystemNode> children calling child.getSize(), where File returns its byte length and subdirectories recursively sum their contents."
+  }
+]);
+
+// lld20: Adapter Pattern
+QB.add("lld20", [
+  {
+    q: "When should an engineer apply the Adapter Pattern in production code?",
+    o: [
+      "When adding caching to an existing slow database query",
+      "When integrating an incompatible third-party or legacy class whose interface does not match the client's expected target interface",
+      "When creating a deep copy of a complex object graph",
+      "When restricting a class to a single global instance"
+    ],
+    a: 1,
+    e: "The Adapter acts as a translator/wrapper between two incompatible interfaces, enabling collaboration without modifying the client code or the third-party legacy library."
+  }
+]);
+
+// lld21: Splitwise LLD
+QB.add("lld21", [
+  {
+    q: "In a Splitwise LLD, which graph algorithm can be applied to simplify group debt balances and minimize the total number of cash transactions?",
+    o: [
+      "Dijkstra's Shortest Path",
+      "Min-Cash Flow Algorithm (Greedy matching of max net debtor and max net creditor)",
+      "Kruskal's Minimum Spanning Tree",
+      "Breadth-First Search (BFS)"
+    ],
+    a: 1,
+    e: "The Min-Cash Flow algorithm computes net balances for all members (Credit - Debit), finds the largest creditor and largest debtor, settles the minimum of the two, and repeats until all balances reach zero."
+  },
+  {
+    q: "How should different expense splitting strategies (EQUAL, EXACT, PERCENTAGE) be modeled in Splitwise?",
+    o: [
+      "Strategy Pattern, with a common ExpenseSplitStrategy interface implementing validate() and calculateSplits()",
+      "Single massive switch statement in User class",
+      "Copy-pasting the Expense class for each split variation",
+      "By letting users write SQL queries directly"
+    ],
+    a: 0,
+    e: "The Strategy Pattern isolates the algorithms for validating and dividing expenses (e.g. checking that percentages sum to 100% or exact amounts equal total cost) into distinct interchangeable strategy classes."
+  }
+]);
+
+// lld23: Builder Design Pattern
+QB.add("lld23", [
+  {
+    q: "What anti-pattern does the Builder Pattern solve when constructing complex domain entities?",
+    o: [
+      "Telescoping Constructor anti-pattern (multiple overloaded constructors with many confusing parameters)",
+      "Deadlock in multi-threading",
+      "Memory leaks from static collections",
+      "N+1 query problem in ORMs"
+    ],
+    a: 0,
+    e: "Telescoping constructors (e.g. Car(engine, wheels, seats, gps, sunroof, color)) lead to error-prone calls. Builder provides a fluent API, step-by-step construction, and creates immutable objects."
+  },
+  {
+    q: "Why is the target class constructor typically made 'private' when paired with a static inner Builder class?",
+    o: [
+      "To prevent reflection attacks",
+      "To force clients to instantiate the object exclusively through the Builder, guaranteeing validation invariants",
+      "To improve garbage collection speed",
+      "Java does not allow public constructors in classes with inner classes"
+    ],
+    a: 1,
+    e: "A private constructor prevents callers from bypassing the builder's validation rules and ensures mandatory fields are validated before the immutable object is instantiated via builder.build()."
+  }
+]);
+
+// lld24: Cricbuzz / ESPN LLD
+QB.add("lld24", [
+  {
+    q: "In a Cricbuzz LLD, which design pattern should be used to update live commentary, scoreboard UI, and mobile notifications whenever a new ball is bowled?",
+    o: [
+      "Observer Pattern (Publish-Subscribe)",
+      "Flyweight Pattern",
+      "Singleton Pattern",
+      "Adapter Pattern"
+    ],
+    a: 0,
+    e: "The Match acts as the Subject/Observable; commentary services, push notification dispatchers, and live scoreboard webhooks subscribe as Observers to receive automatic event updates per ball."
+  }
+]);
+
+// lld25: Facade Design Pattern
+QB.add("lld25", [
+  {
+    q: "What is the primary objective of the Facade Design Pattern?",
+    o: [
+      "To provide a simplified, high-level unified interface to a complex subsystem of classes",
+      "To allow subclasses to override part of an algorithm without changing its structure",
+      "To ensure thread-safe singleton initialization",
+      "To convert an interface of a class into another interface"
+    ],
+    a: 0,
+    e: "A Facade defines a simple interface that masks the complexity of a complex subsystem (e.g. an OrderPlacementFacade orchestrating InventoryService, PaymentGateway, ShippingService, and EmailService)."
+  }
+]);
+
+// lld26: Bridge Design Pattern
+QB.add("lld26", [
+  {
+    q: "When should the Bridge Pattern be chosen over class inheritance?",
+    o: [
+      "When you have two orthogonal dimensions of variation (e.g. Shape hierarchy and DrawingAPI hierarchy) and want to avoid an M x N combinatorial explosion of subclasses",
+      "When an object needs to undo its previous state changes",
+      "When you need to serialize objects to JSON",
+      "When only a single instance of a class must exist"
+    ],
+    a: 0,
+    e: "The Bridge Pattern decouples an abstraction from its implementation by replacing deep inheritance with object composition: Shape holds a reference to a DrawingAPI, letting both hierarchies evolve independently."
+  }
+]);
+
+// lld27: All Creational Patterns
+QB.add("lld27", [
+  {
+    q: "Which creational pattern creates new objects by cloning an existing configured instance rather than instantiating via 'new'?",
+    o: [
+      "Prototype Pattern",
+      "Abstract Factory Pattern",
+      "Builder Pattern",
+      "Factory Method Pattern"
+    ],
+    a: 0,
+    e: "The Prototype Pattern uses Java's clone() or copy constructors to duplicate existing pre-configured objects, which is especially useful when object creation is computationally costly."
+  },
+  {
+    q: "How does Abstract Factory differ from Factory Method?",
+    o: [
+      "Factory Method creates a single product via inheritance; Abstract Factory produces families of related/dependent products via composition",
+      "Abstract Factory can only produce singleton objects",
+      "Factory Method is obsolete in modern Java",
+      "They are identical patterns with different names"
+    ],
+    a: 0,
+    e: "Factory Method uses an inheritance method to return one product (e.g. createButton()). Abstract Factory is an interface with multiple methods creating a family of related products (e.g. createButton(), createCheckbox())."
+  }
+]);
+
+// lld29: Inventory Management System
+QB.add("lld29", [
+  {
+    q: "In an e-commerce Inventory Management System LLD, how should an item reserve be handled during checkout to avoid stock depletion without blocking concurrent shoppers?",
+    o: [
+      "Reserve inventory with a temporary TTL lease (e.g. 10 minutes) in Redis or a DB reservation table; auto-release if payment is not finalized",
+      "Deduct stock permanently as soon as a user clicks 'Add to Cart'",
+      "Synchronize the entire web application using a static synchronized method",
+      "Stock should only be checked after payment confirmation"
+    ],
+    a: 0,
+    e: "A temporary reservation lease (hold) protects stock while the customer enters payment credentials. If the checkout succeeds, the hold converts to sold; if it times out or fails, the hold expires automatically."
+  }
+]);
+
+// lld30: Word Processor (Flyweight Pattern)
+QB.add("lld30", [
+  {
+    q: "In designing a Word Processor handling millions of characters, how does the Flyweight Pattern minimize memory footprint?",
+    o: [
+      "By separating character state into intrinsic state (shared glyph/font family stored once) and extrinsic state (position, color passed by caller)",
+      "By compressing the entire document with gzip in RAM",
+      "By loading only one paragraph into RAM at a time",
+      "By converting all text to ASCII bytecode"
+    ],
+    a: 0,
+    e: "Intrinsic state (e.g. character glyph 'A', font style) is immutable and shared across all instances via a FlyweightFactory. Extrinsic state (X, Y coordinates, line number) is stored externally in the document layout."
+  }
+]);
+
+// lld32: All Structural Patterns
+QB.add("lld32", [
+  {
+    q: "Which structural design pattern is used to attach new responsibilities to an object dynamically without modifying its existing code or breaking other instances?",
+    o: [
+      "Decorator Pattern",
+      "Adapter Pattern",
+      "Facade Pattern",
+      "Proxy Pattern"
+    ],
+    a: 0,
+    e: "The Decorator Pattern wraps the original object with decorator classes that conform to the same interface, layering on additional behaviors (e.g. Java I/O BufferedInputStream wrapping FileInputStream)."
+  }
+]);
+
+// lld33: Iterator Pattern
+QB.add("lld33", [
+  {
+    q: "What causes a ConcurrentModificationException when iterating over a standard java.util.ArrayList?",
+    o: [
+      "The underlying collection was modified structurally (added/removed) without using the iterator's own remove() method, causing modCount != expectedModCount",
+      "The CPU ran out of thread registers",
+      "The list contained null elements",
+      "The elements were not comparable"
+    ],
+    a: 0,
+    e: "Fail-fast iterators verify that modCount == expectedModCount on every next() call. Any structural modification to the list outside the Iterator's methods throws ConcurrentModificationException immediately."
+  }
+]);
+
+// lld34: Mediator Pattern
+QB.add("lld34", [
+  {
+    q: "How does the Mediator Pattern reduce chaotic dependencies between communicating objects?",
+    o: [
+      "By preventing objects from referring to each other directly; instead, they communicate through a central mediator object",
+      "By forcing all classes to inherit from a single superclass",
+      "By converting all method calls into HTTP REST endpoints",
+      "By storing all object variables as public static fields"
+    ],
+    a: 0,
+    e: "The Mediator encapsulates how a set of objects interact, fostering loose coupling by keeping objects from referring to each other explicitly (e.g. Air Traffic Control tower coordinating airplanes)."
+  }
+]);
+
+// lld35: Apply Coupon App
+QB.add("lld35", [
+  {
+    q: "When building an Apply Coupon feature with stackable rules (Percentage off, Flat $ off, Category specific), which pattern combination provides the cleanest extensibility?",
+    o: [
+      "Decorator Pattern (wrapping base cart with discount decorators) or Strategy Pattern (discount evaluation pipeline)",
+      "Singleton and Prototype",
+      "Flyweight and Memento",
+      "Visitor and Interpreter exclusively"
+    ],
+    a: 0,
+    e: "Decorator allows stacking discounts (PercentageDiscountDecorator wrapping FlatDiscountDecorator). Alternatively, a Chain of Responsibility / Strategy pipeline evaluates coupon eligibility and computes net totals."
+  }
+]);
+
+// lld36: Visitor Pattern
+QB.add("lld36", [
+  {
+    q: "What fundamental problem does the Visitor Pattern solve?",
+    o: [
+      "It allows adding new operations to existing class hierarchies without modifying their source code, utilizing Double Dispatch",
+      "It provides faster database connections",
+      "It caches expensive method returns",
+      "It makes private variables public at runtime"
+    ],
+    a: 0,
+    e: "Double dispatch allows element.accept(visitor) to call visitor.visit(this). New operations (e.g. exportToXml, calculateTax) can be introduced simply by creating new Visitor implementations without touching the Element classes."
+  }
+]);
+
+// lld37: MVC Pattern
+QB.add("lld37", [
+  {
+    q: "In the Model-View-Controller architecture, what is the strict responsibility of the Controller?",
+    o: [
+      "Handling user input/requests, invoking business logic on the Model, and selecting the appropriate View for presentation",
+      "Directly rendering HTML canvas pixels",
+      "Managing database table schema migrations",
+      "Storing persistent records on disk"
+    ],
+    a: 0,
+    e: "The Controller acts as the orchestrator: it parses incoming requests, coordinates business models / services, and returns view representations or data payloads (DSO/JSON) to the client."
+  }
+]);
+
+// lld38: Memento Pattern
+QB.add("lld38", [
+  {
+    q: "Which three roles constitute the Memento Pattern to implement Undo/Redo capability without violating encapsulation?",
+    o: [
+      "Originator (creates snapshot), Memento (stores state privately), and Caretaker (safekeeps history/snapshots)",
+      "Model, View, Controller",
+      "Client, Adapter, Adaptee",
+      "Subject, Observer, ConcreteObserver"
+    ],
+    a: 0,
+    e: "Originator creates a Memento holding its private state. The Caretaker stores the list of Mementos without inspecting their internal contents, returning a Memento to the Originator to restore state during Undo."
+  }
+]);
+
+// lld39: Template Method Pattern
+QB.add("lld39", [
+  {
+    q: "How does the Template Method Pattern enforce algorithm structure while allowing customization?",
+    o: [
+      "The base class defines the algorithm skeleton in a 'final' method and calls primitive abstract hook methods that subclasses override",
+      "By using Java dynamic proxies on interface methods",
+      "By declaring all class fields as volatile",
+      "By passing lambda functions to constructors"
+    ],
+    a: 0,
+    e: "Template Method defines the immutable steps of an algorithm in a templateMethod() (often declared final), delegating individual steps (hooks or abstract methods) to concrete subclasses ('Hollywood Principle')."
+  }
+]);
+
+// lld41: Interpreter Pattern
+QB.add("lld41", [
+  {
+    q: "In what scenario is the Interpreter Pattern specifically designed to be used?",
+    o: [
+      "When evaluating sentences or expressions in a formal domain-specific grammar (e.g. math expression evaluators, SQL WHERE clause parsers)",
+      "When translating Java bytecode to native C++ code",
+      "When rendering UI components on mobile screens",
+      "When hashing passwords with bcrypt"
+    ],
+    a: 0,
+    e: "The Interpreter Pattern defines a grammar representation for a language along with an interpreter that uses the representation to evaluate expressions (composed of TerminalExpression and NonTerminalExpression nodes)."
+  }
+]);
+
+// lld42: Payment Gateway LLD
+QB.add("lld42", [
+  {
+    q: "Why is an 'Idempotency-Key' HTTP header essential in Payment Gateway integration LLD?",
+    o: [
+      "To prevent double-charging the customer if a network timeout occurs and the client retries the payment request",
+      "To encrypt credit card numbers",
+      "To bypass two-factor authentication (2FA)",
+      "To speed up database indexing"
+    ],
+    a: 0,
+    e: "Network drops can cause clients to retry payment requests. If the gateway receives a duplicate request with the same Idempotency-Key, it returns the cached result of the original transaction rather than processing a second charge."
+  },
+  {
+    q: "Which design pattern is best for switching seamlessly between payment aggregators like Stripe, Razorpay, and PayPal?",
+    o: [
+      "Strategy Pattern",
+      "Memento Pattern",
+      "Composite Pattern",
+      "Flyweight Pattern"
+    ],
+    a: 0,
+    e: "Strategy defines a common PaymentService interface (processPayment(), refund()). Concrete strategies (StripeStrategy, RazorpayStrategy) encapsulate vendor-specific APIs, allowing seamless runtime routing."
+  }
+]);
+
+// lld43: Object Pool Pattern
+QB.add("lld43", [
+  {
+    q: "What problem does the Object Pool Pattern (e.g. HikariCP database connection pool) address?",
+    o: [
+      "The excessive overhead of repeatedly instantiating and destroying heavyweight resources (like TCP sockets and DB connections)",
+      "Garbage collection fragmentation for small short-lived objects",
+      "Replacing multi-threading with asynchronous callbacks",
+      "Converting relational tables into NoSQL documents"
+    ],
+    a: 0,
+    e: "Instantiating network connections and threads is expensive. An Object Pool manages a pool of reusable initialized objects: borrowing an object, using it, and returning it to the pool instead of destroying it."
+  }
+]);
+
+// lld44: Meeting Scheduler LLD
+QB.add("lld44", [
+  {
+    q: "In a Meeting Scheduler LLD (like Google Calendar / Outlook), what data structure or algorithm is most efficient for detecting time slot conflicts?",
+    o: [
+      "Interval Tree or Segment Tree, or checking overlapping intervals with [startA < endB && startB < endA]",
+      "Breadth-First Search on a sparse graph",
+      "Hashing intervals into an MD5 checksum",
+      "Sorting all meetings by room name alphabetically"
+    ],
+    a: 0,
+    e: "Two time intervals [s1, e1] and [s2, e2] overlap if and only if s1 < e2 and s2 < e1. An Interval Tree enables O(log N) lookup to find all existing booked meetings that conflict with a proposed meeting interval."
+  }
+]);
+
 </script>
   <script>
 /* --- js/bank/bank_hld.js --- */
@@ -4509,6 +6503,302 @@ QB.add("hld33", [
   }
 ]);
 
+// hld3: Microservices Patterns
+QB.add("hld3", [
+  {
+    q: "How does the 'Transactional Outbox Pattern' ensure atomic database updates and event publishing without distributed 2PC transactions?",
+    o: [
+      "The business entity update and outgoing event message are saved inside the SAME local relational database transaction into an 'outbox' table; a separate CDC process (e.g. Debezium) asynchronously publishes outbox records to Kafka",
+      "The application calls Kafka first, and if Kafka succeeds, it commits the database",
+      "It uses Two-Phase Commit across Postgres and Kafka",
+      "Events are saved in browser local storage"
+    ],
+    a: 0,
+    e: "Dual writes to a database and a message broker always risk partial failure. The Outbox pattern relies on local ACID transactions to write business data and outbox events together, followed by reliable log tailing (CDC) to publish to Kafka."
+  },
+  {
+    q: "What is the primary trade-off between Orchestration-based Sagas and Choreography-based Sagas in distributed systems?",
+    o: [
+      "Orchestration centralizes workflow logic in a saga coordinator service (clearer state, easier testing, but central dependency); Choreography uses event-driven pub/sub between services (loose coupling, but complex debugging and cyclic dependency risks)",
+      "Orchestration uses UDP; Choreography uses TCP",
+      "Choreography requires a relational database; Orchestration does not",
+      "Orchestration is only supported in Java"
+    ],
+    a: 0,
+    e: "In Choreography, services react to each other's events. When flows grow to 8+ steps, tracking state becomes difficult. Orchestration provides a stateful coordinator (e.g. Temporal, Camunda, AWS Step Functions) that explicitly commands each step."
+  }
+]);
+
+// hld5: Scale from 0 to Million
+QB.add("hld5", [
+  {
+    q: "When scaling an application from 10,000 to 1,000,000 daily active users, what architectural transition is crucial for the web/application tier?",
+    o: [
+      "Making the web tier completely stateless so user sessions are stored in an external distributed cache (Redis) or JWTs, allowing horizontal autoscaling behind a load balancer",
+      "Upgrading the server to a 128-core mainframe with 2TB of RAM",
+      "Storing all user sessions on the web server's local file system",
+      "Disabling all database indexes"
+    ],
+    a: 0,
+    e: "Stateful servers require 'sticky sessions', preventing elastic horizontal scaling. Stateless servers treat instances as cattle: any node can service any request, enabling seamless auto-scaling up and down based on traffic."
+  }
+]);
+
+// hld8: Back of the envelope estimation
+QB.add("hld8", [
+  {
+    q: "If a system handles 100 Million daily active users, with each user generating 5 requests per day, what is the approximate average Queries Per Second (QPS)?",
+    o: [
+      "~5,800 QPS (100M * 5 = 500M requests / 86,400 seconds ~= 5,787 QPS; with peak factor of 2-3x = ~15,000 QPS)",
+      "~500,000 QPS",
+      "~50 QPS",
+      "~1,000,000 QPS"
+    ],
+    a: 0,
+    e: "A standard interview shortcut is rounding a day to ~86,400 -> 100,000 seconds. 500,000,000 / 86,400 ~= 5,800 average QPS. System capacity should typically be planned for 2x-3x peak traffic (~12,000 - 18,000 peak QPS)."
+  }
+]);
+
+// hld10: SQL vs NoSQL
+QB.add("hld10", [
+  {
+    q: "Under what workload characteristics is an Apache Cassandra (Wide-Column NoSQL) database superior to PostgreSQL?",
+    o: [
+      "Massive write-heavy append workloads (e.g. IoT telemetry, chat messages) distributed across multi-datacenter clusters requiring high availability with linear write scaling and no single point of failure",
+      "Complex multi-table financial transactions requiring ACID joins and foreign keys",
+      "Systems with small datasets under 10 Gigabytes",
+      "Applications requiring dynamic arbitrary SQL ad-hoc queries"
+    ],
+    a: 0,
+    e: "Cassandra's masterless LSM-tree architecture delivers blistering write throughput and zero-downtime multi-datacenter replication. However, it sacrifices ACID joins, foreign keys, and arbitrary ad-hoc filtering."
+  }
+]);
+
+// hld12: Rate Limiter
+QB.add("hld12", [
+  {
+    q: "Why is the Sliding Window Counter algorithm generally preferred over Fixed Window in production rate limiters?",
+    o: [
+      "Fixed Window allows double the allowed traffic burst at the boundary edge (e.g. 100 requests at 00:59 and 100 requests at 01:00); Sliding Window smooths traffic across overlapping window boundaries",
+      "Sliding Window uses 10x less memory than Fixed Window",
+      "Fixed Window requires atomic clocks",
+      "Sliding Window can only run in C++"
+    ],
+    a: 0,
+    e: "Fixed Window resets at minute marks, allowing a burst of 2x the limit across the boundary. Sliding Window Counter weights the previous window's requests with the current window's elapsed percentage, preventing boundary spikes."
+  }
+]);
+
+// hld15: High Availability System
+QB.add("hld15", [
+  {
+    q: "In high availability distributed clustering, what is 'Split-Brain' and how is it prevented?",
+    o: [
+      "When a network partition divides a cluster and both halves believe the other is dead, electing their own leaders; prevented by requiring a Strict Quorum (majority vote: N/2 + 1) for any leader election",
+      "When a CPU dual-core processor overheats",
+      "When an engineer deploys two different code versions simultaneously",
+      "When database tables have duplicated primary keys"
+    ],
+    a: 0,
+    e: "If two nodes both think they are leader, data diverges irreversibly. Quorum consensus ensures that only the network partition containing more than 50% of the nodes can elect a leader, rendering the minority partition read-only."
+  }
+]);
+
+// hld16: Distributed Messaging Queue
+QB.add("hld16", [
+  {
+    q: "What is the architectural difference in message consumption between RabbitMQ (AMQP) and Apache Kafka?",
+    o: [
+      "RabbitMQ uses a broker-centric 'smart broker / dumb consumer' push model where messages are deleted once acknowledged; Kafka uses a 'dumb broker / smart consumer' pull model where immutable logs persist on disk",
+      "RabbitMQ only runs on Windows; Kafka only runs on Linux",
+      "Kafka does not support consumer groups",
+      "RabbitMQ stores messages for 7 years by default"
+    ],
+    a: 0,
+    e: "RabbitMQ tracks per-message ACK states and deletes consumed messages. Kafka is an append-only commit log: consumers track their own offsets and pull messages at their own pace, enabling replayability and high throughput."
+  }
+]);
+
+// hld17: Proxy vs Reverse Proxy
+QB.add("hld17", [
+  {
+    q: "What is the difference between a Forward Proxy and a Reverse Proxy?",
+    o: [
+      "A Forward Proxy sits in front of clients and intercepts outbound requests to the internet (providing anonymity, filtering, caching); a Reverse Proxy sits in front of servers and intercepts inbound requests (providing load balancing, SSL termination, and caching)",
+      "Forward proxies only handle HTTP; Reverse proxies only handle FTP",
+      "Reverse proxies are hardware only",
+      "Forward proxies protect backend servers from DDoS attacks"
+    ],
+    a: 0,
+    e: "Forward proxies protect and represent clients (e.g. corporate internet egress proxy). Reverse proxies protect and represent servers (e.g. NGINX, Cloudflare, HAProxy)."
+  }
+]);
+
+// hld18: Load Balancers (L4 vs L7)
+QB.add("hld18", [
+  {
+    q: "How does a Layer 4 (Transport) Load Balancer differ from a Layer 7 (Application) Load Balancer?",
+    o: [
+      "Layer 4 routes packets based on IP and TCP/UDP ports without inspecting payload; Layer 7 terminates the HTTP connection and routes based on URL paths, HTTP headers, cookies, and body content",
+      "Layer 4 is slower than Layer 7",
+      "Layer 7 cannot terminate SSL certificates",
+      "Layer 4 only works with IPv6"
+    ],
+    a: 0,
+    e: "L4 load balancers (e.g. AWS NLB, IPVS) are ultra-fast packet forwarders with low CPU overhead. L7 load balancers (e.g. AWS ALB, NGINX, Envoy) can make intelligent routing decisions (e.g. /api/orders -> order service) by inspecting HTTP content."
+  }
+]);
+
+// hld20: Distributed Transactions (2PC vs Sagas)
+QB.add("hld20", [
+  {
+    q: "Why is Two-Phase Commit (2PC) considered an anti-pattern in modern cloud-native distributed microservices?",
+    o: [
+      "2PC is a blocking protocol: all participating nodes lock resources during the prepare phase; if the coordinator crashes, locks remain held indefinitely, destroying system availability and scalability",
+      "2PC does not support relational databases",
+      "2PC requires quantum computing hardware",
+      "2PC only works on a single computer"
+    ],
+    a: 0,
+    e: "2PC prioritizes strict consistency over availability. In distributed networks with latency and node crashes, 2PC causes cascading lock delays and timeouts. Modern architectures use Sagas with compensating transactions."
+  }
+]);
+
+// hld22: Concurrency Control
+QB.add("hld22", [
+  {
+    q: "When designing a ticket booking platform (e.g. BookMyShow, Ticketmaster), how does Optimistic Concurrency Control (OCC) prevent seat double-booking?",
+    o: [
+      "By maintaining a version/status column on the seat row; when booking, execute 'UPDATE seats SET status = 'BOOKED', version = version + 1 WHERE id = :id AND version = :readVersion'; if 0 rows update, reject as conflict",
+      "By acquiring a database-wide write lock on the entire tablespace",
+      "By disabling multithreading on the web server",
+      "By using random thread sleep delays"
+    ],
+    a: 0,
+    e: "OCC assumes conflicts are infrequent. By checking that the version hasn't changed since it was read, the atomic database UPDATE guarantees that only the first transaction commits, while concurrent attempts detect 0 rows updated and abort."
+  }
+]);
+
+// hld23: Two-Phase Locking (2PL)
+QB.add("hld23", [
+  {
+    q: "In database transaction theory, what is 'Strict Two-Phase Locking' (Strict 2PL)?",
+    o: [
+      "A protocol where all exclusive (write) locks acquired during transaction execution are held until the transaction commits or aborts, completely preventing cascading aborts",
+      "A protocol where transactions can only execute 2 SQL queries",
+      "A locking mechanism that uses two physical hard drives",
+      "A protocol that eliminates deadlocks completely"
+    ],
+    a: 0,
+    e: "Standard 2PL has a growing phase (acquiring locks) and shrinking phase (releasing locks). If a transaction releases a write lock before committing, other transactions can read uncommitted data, causing cascading rollbacks. Strict 2PL holds write locks until commit."
+  }
+]);
+
+// hld24: OAuth 2.0 Security
+QB.add("hld24", [
+  {
+    q: "Why is PKCE (Proof Key for Code Exchange) mandatory for public clients (Single-Page Apps, Mobile Apps) using OAuth 2.0 Authorization Code grant?",
+    o: [
+      "Public clients cannot safely store a client_secret; PKCE creates a dynamic one-time cryptographic code_verifier and code_challenge, preventing authorization code interception attacks",
+      "PKCE compresses the access token to 16 bytes",
+      "PKCE bypasses the need for HTTPS",
+      "PKCE replaces user passwords with biometric face scans"
+    ],
+    a: 0,
+    e: "Mobile apps and SPAs can be decompiled to extract hardcoded secrets. PKCE generates a random code_verifier, hashes it into code_challenge, and sends it to the auth server. Intercepted authorization codes cannot be redeemed without the original verifier."
+  }
+]);
+
+// hld25: Symmetric vs Asymmetric Encryption
+QB.add("hld25", [
+  {
+    q: "How does the TLS 1.3 handshake combine Asymmetric and Symmetric encryption to provide secure, high-performance HTTPS communications?",
+    o: [
+      "Asymmetric encryption (Elliptic Curve Diffie-Hellman) is used during the handshake to authenticate identity and negotiate a shared session key; fast Symmetric encryption (AES-GCM or ChaCha20) encrypts all subsequent data transfer",
+      "It uses only RSA 4096-bit encryption for every HTTP packet",
+      "It uses AES-128 for authentication and RSA for data transfer",
+      "It runs plaintext HTTP over UDP"
+    ],
+    a: 0,
+    e: "Asymmetric cryptography solves key distribution but is computationally expensive. Symmetric cryptography is blistering fast (hardware-accelerated AES-NI). Hybrid encryption gives you the best of both worlds."
+  }
+]);
+
+// hld27: Thundering Herd & Cache Stampede
+QB.add("hld27", [
+  {
+    q: "When a popular cached item (e.g. homepage breaking news) expires in Redis, thousands of concurrent requests can simultaneously miss cache and crash the database. What strategy prevents this Cache Stampede?",
+    o: [
+      "Mutex locking / Singleflight (only one thread acquires a distributed lock to query the DB and repopulate cache while others wait) or Probabilistic Early Expiration (XFetch)",
+      "Deleting the database indexes",
+      "Setting cache TTL to 0 seconds",
+      "Restarting the Redis cluster"
+    ],
+    a: 0,
+    e: "Mutex locking ensures only 1 worker hits the DB. Probabilistic Early Expiration (XFetch algorithm) proactively re-caches the item in the background based on a random probability before the TTL strictly expires."
+  }
+]);
+
+// hld28: API Gateway Architecture
+QB.add("hld28", [
+  {
+    q: "What is the 'Backend for Frontend' (BFF) architectural pattern when implemented with API Gateways?",
+    o: [
+      "Creating dedicated gateway instances tailored specifically to the needs of individual frontend client types (e.g. mobile app BFF, desktop web BFF, public 3rd-party API BFF)",
+      "Combining frontend HTML and backend SQL into a single file",
+      "Hosting the database on mobile devices",
+      "Eliminating all API gateways entirely"
+    ],
+    a: 0,
+    e: "Mobile apps need compact payloads and aggregated calls over cellular networks, while desktop web apps can handle richer data. BFF provides separate lightweight gateways tailored to each client's specific UI requirements."
+  }
+]);
+
+// hld29: Service Mesh
+QB.add("hld29", [
+  {
+    q: "In an enterprise Kubernetes cluster, what functionality does a Service Mesh (e.g. Istio with Envoy sidecars) provide that an API Gateway typically does not?",
+    o: [
+      "East-West (service-to-service) traffic management, automatic mutual TLS (mTLS) zero-trust encryption between pods, distributed traffic splitting (canary releases), and transparent observability without changing application code",
+      "Hosting the static frontend HTML files",
+      "Managing MySQL database migrations",
+      "Replacing Kubernetes DNS"
+    ],
+    a: 0,
+    e: "API Gateways handle North-South ingress traffic entering the cluster from the internet. Service Meshes handle East-West internal communication between microservices transparently via sidecar network proxies."
+  }
+]);
+
+// hld30: DNS Architecture
+QB.add("hld30", [
+  {
+    q: "What is the difference between an 'A' record and a 'CNAME' record in DNS?",
+    o: [
+      "An 'A' record maps a hostname directly to an IPv4 address; a 'CNAME' (Canonical Name) record aliases one domain name to another domain name",
+      "An 'A' record is for email; CNAME is for web",
+      "CNAME records resolve faster than A records",
+      "An 'A' record can only point to Amazon AWS IP addresses"
+    ],
+    a: 0,
+    e: "A records map host -> IP (e.g. api.example.com -> 192.0.2.1). CNAME maps alias -> target domain (e.g. www.example.com -> example.com). Note: DNS RFC prohibits CNAME records at the root/apex domain (@)."
+  }
+]);
+
+// hld32: Common Security Attacks
+QB.add("hld32", [
+  {
+    q: "How does the 'SameSite=Strict' or 'SameSite=Lax' cookie attribute defend web applications against Cross-Site Request Forgery (CSRF) attacks?",
+    o: [
+      "The browser refuses to send the cookie along with cross-site requests initiated by third-party malicious sites, preventing unauthorized actions on behalf of authenticated users",
+      "It encrypts the cookie with a 256-bit AES key",
+      "It prevents JavaScript from reading document.cookie (that is HttpOnly)",
+      "It forces cookies to expire after 5 seconds"
+    ],
+    a: 0,
+    e: "CSRF exploits the browser's behavior of automatically sending cookies to target domains. SameSite=Lax or Strict blocks cookies from cross-site POSTs, neutralizing CSRF for all modern browsers."
+  }
+]);
+
 </script>
   <script>
 /* --- js/bank/bank_junit.js --- */
@@ -4702,6 +6992,260 @@ QB.add("ju18", [
     ],
     a: 0,
     e: "When a method constructs an internal object and passes it to a collaborator, the test cannot inspect it directly. ArgumentCaptor captures the instance passed to the mock for detailed assertion."
+  }
+]);
+
+// ju5: JUnit 5 Extension Model
+QB.add("ju5", [
+  {
+    q: "How does JUnit 5's Extension model (@ExtendWith) improve upon JUnit 4's @Rule and @ClassRule?",
+    o: [
+      "It unifies all extension points (parameter resolution, lifecycle interception, exception handling, test execution condition) into a cohesive interface model that supports multiple extensions per test class",
+      "It requires all tests to be written in Groovy",
+      "It eliminates the need for test assertions",
+      "It compiles tests into native C++ binaries"
+    ],
+    a: 0,
+    e: "JUnit 4 rules suffered from limited composability and strict method signature constraints. JUnit 5 extensions implement specific callback interfaces (BeforeEachCallback, ParameterResolver, etc.) and compose seamlessly."
+  }
+]);
+
+// ju6: Repeated Tests
+QB.add("ju6", [
+  {
+    q: "In JUnit 5, what annotation and parameter resolver allows running a flaky or non-deterministic test multiple times while inspecting the current iteration?",
+    o: [
+      "@RepeatedTest(value = 5) and injecting RepetitionInfo into the test method",
+      "@Loop(count = 5)",
+      "@RetryableTest",
+      "@Test(repetition = 5)"
+    ],
+    a: 0,
+    e: "@RepeatedTest(10) repeats the test 10 times. You can declare RepetitionInfo in the method signature to inspect repetitionInfo.getCurrentRepetition() and repetitionInfo.getTotalRepetitions()."
+  }
+]);
+
+// ju9: Assumptions
+QB.add("ju9", [
+  {
+    q: "What happens when an assumption fails (e.g. Assumptions.assumeTrue(isLinux())) in a JUnit 5 test?",
+    o: [
+      "The test execution is aborted, and the test is marked as SKIPPED/IGNORED (not failed)",
+      "The test fails with an AssertionError and breaks the build",
+      "The entire test suite terminates immediately",
+      "The JVM throws an OutOfMemoryError"
+    ],
+    a: 0,
+    e: "Assumptions evaluate preconditions (like running on a specific OS, database availability, or CI environment). If an assumption fails, TestAbortedException is thrown, causing test runners to mark the test skipped, not failed."
+  }
+]);
+
+// ju10: Tagging and Filtering
+QB.add("ju10", [
+  {
+    q: "What is the purpose of @Tag in JUnit 5 when running automated builds in Maven or Gradle?",
+    o: [
+      "It allows categorizing tests (e.g. @Tag('fast'), @Tag('integration')) so build tools can selectively execute or exclude test groups in different CI/CD pipeline stages",
+      "It sets the color of the console output",
+      "It compresses the test classes into ZIP archives",
+      "It encrypts the test class names"
+    ],
+    a: 0,
+    e: "Using maven-surefire-plugin <groups>integration</groups> or <excludedGroups>slow</excludedGroups>, teams run fast unit tests on PR commit and execute slow integration tests on nightly builds."
+  }
+]);
+
+// ju11: Test Suites
+QB.add("ju11", [
+  {
+    q: "How do you create a structured test suite in JUnit 5 to discover and run specific packages or tag groups?",
+    o: [
+      "By annotating a class with @Suite and combining it with @SelectPackages or @SelectClasses and @IncludeTags",
+      "By creating a shell script named suite.sh",
+      "By listing class names in a text file in src/main/resources",
+      "By creating multiple main() methods in test classes"
+    ],
+    a: 0,
+    e: "JUnit Platform Suite engine provides @Suite, @SelectPackages('com.example.service'), @SelectClasses(...), and @IncludeTags('smoke') to package and execute test suites programmatically."
+  }
+]);
+
+// ju12: Dynamic Tests (@TestFactory)
+QB.add("ju12", [
+  {
+    q: "What is a Dynamic Test in JUnit 5 and what must a @TestFactory method return?",
+    o: [
+      "Tests generated at runtime based on external data or streams; the @TestFactory method must return a Stream, Collection, or Iterable of DynamicNode / DynamicTest",
+      "A test that rewrites its own bytecode while executing",
+      "A test that can only run inside a Docker container",
+      "A test that returns void"
+    ],
+    a: 0,
+    e: "Unlike standard @Test methods compiled statically, @TestFactory produces dynamic test cases at runtime. For example, reading 100 test cases from a JSON file and mapping each to dynamicTest(name, executable)."
+  }
+]);
+
+// ju13: Mockito Introduction
+QB.add("ju13", [
+  {
+    q: "What default return value does a Mockito mock provide for a method returning an int, boolean, or Object if no stubbing (when().thenReturn()) is defined?",
+    o: [
+      "int: 0, boolean: false, Object: null, Collections: empty collection",
+      "It throws a NullPointerException on every unstubbed invocation",
+      "It executes the real production method",
+      "It returns a random non-zero value"
+    ],
+    a: 0,
+    e: "Mockito adheres to 'nice mocks': unstubbed method invocations do not fail; they return standard defaults: 0 for numeric primitives, false for booleans, null for objects, and empty instances for Collections/Optionals."
+  }
+]);
+
+// ju14: Mockito Architecture & ByteBuddy
+QB.add("ju14", [
+  {
+    q: "How does Mockito's modern 'inline-mock-maker' mock final classes, final methods, and static methods without bytecode transformation at classload time?",
+    o: [
+      "Using ByteBuddy and Java Instrumentation API to modify existing class bytecode in memory (hot-swapping method bodies)",
+      "By generating dynamic subclasses using legacy CGLIB",
+      "By executing code in a simulated JavaScript runtime",
+      "By recompiling source files using javac"
+    ],
+    a: 0,
+    e: "Historically Mockito subclassed target classes, preventing mocking of final classes. The inline mock-maker uses Java Instrumentation and ByteBuddy to transform the bytecode of the class directly in memory."
+  }
+]);
+
+// ju16: Constructor Injection in Tests
+QB.add("ju16", [
+  {
+    q: "Why is Constructor Injection strongly preferred over @Autowired field injection when writing unit tests for Spring service components?",
+    o: [
+      "Classes with constructor injection can be instantiated in plain unit tests using 'new Service(mockA, mockB)' without needing reflection, Mockito annotations, or starting a Spring ApplicationContext",
+      "Constructor injection is faster because it bypasses the JVM classloader",
+      "Field injection causes memory leaks in all Spring versions",
+      "Constructor injection eliminates the need for unit tests entirely"
+    ],
+    a: 0,
+    e: "Constructor injection guarantees testability: your class declares its dependencies explicitly in its public contract. You can instantiate it in standard pure Java unit tests in milliseconds without Spring container overhead."
+  }
+]);
+
+</script>
+  <script>
+/* --- js/bank/bank_cloud_ai.js --- */
+'use strict';
+/* =========================================================
+   DevPath Question Bank: Git, AWS Cloud & Spring AI
+   ========================================================= */
+
+// git1: Git Mastery
+QB.add("git1", [
+  {
+    q: "How does 'git rebase' differ fundamentally from 'git merge' when incorporating upstream changes into a feature branch?",
+    o: [
+      "Rebase replays local commits on top of the upstream base to produce a clean linear commit history; merge creates a 2-parent merge commit preserving exact branch chronology",
+      "Rebase deletes all commit messages permanently",
+      "Merge only works with local repositories and cannot push to GitHub",
+      "Rebase automatically resolves all merge conflicts without human input"
+    ],
+    a: 0,
+    e: "git rebase unwinds your feature branch commits, updates the base to the latest upstream commit, and replays each feature commit one by one. This keeps git log linear without cluttering history with merge commits."
+  },
+  {
+    q: "If an engineer accidentally executes 'git reset --hard HEAD~3' and loses 3 unpushed commits, how can they recover those commits?",
+    o: [
+      "Run 'git reflog' to find the SHA of the commit prior to the reset, then run 'git reset --hard <SHA>' or 'git cherry-pick <SHA>'",
+      "It is impossible; git reset --hard permanently purges data from the disk immediately",
+      "By cloning the remote repository again",
+      "By restarting the terminal"
+    ],
+    a: 0,
+    e: "Git maintains a Reference Log (reflog) of every time HEAD moves. Orphaned commits remain in the Git object database until garbage collection (git gc, usually 30 days), allowing trivial recovery via reflog."
+  },
+  {
+    q: "What is the purpose of 'git cherry-pick' in a multi-branch workflow?",
+    o: [
+      "To selectively apply the changes introduced by a specific existing commit from another branch onto the current working branch",
+      "To delete all untracked files in the working directory",
+      "To compare the performance of two branches",
+      "To create a shallow clone of a large repository"
+    ],
+    a: 0,
+    e: "Cherry-pick is commonly used for hotfixing: picking a critical bugfix commit from a development branch and applying it directly onto a production release branch without merging unready feature code."
+  }
+]);
+
+// aws1: AWS Cloud Architecture
+QB.add("aws1", [
+  {
+    q: "What data consistency model does Amazon S3 offer for PUT and DELETE requests of objects across all regions?",
+    o: [
+      "Strong read-after-write consistency for PUTs and DELETEs of objects in all buckets",
+      "Eventual consistency with a guaranteed 15-minute lag",
+      "Weak consistency where reads only succeed after 5 minutes",
+      "Strong consistency for PUTs, but eventual consistency for DELETEs"
+    ],
+    a: 0,
+    e: "Since December 2020, Amazon S3 provides strong read-after-write consistency for PUT and DELETE requests of objects in all AWS regions with no change to performance or latency."
+  },
+  {
+    q: "In Amazon SQS, what is the 'Visibility Timeout' mechanism?",
+    o: [
+      "The duration during which SQS prevents other consumers from receiving and processing a message that has already been retrieved by one consumer",
+      "The time a message remains stored in SQS before being permanently deleted",
+      "The latency between sending a message and it becoming readable",
+      "The timeout before SQS scales down consumer EC2 instances"
+    ],
+    a: 0,
+    e: "When a consumer receives a message, the visibility timeout starts (default 30s). If the consumer processes and deletes the message, it is gone. If the consumer crashes, the timeout expires and another consumer can process it."
+  },
+  {
+    q: "How does DynamoDB distribute read and write throughput across physical storage partitions?",
+    o: [
+      "DynamoDB hashes the Partition Key (PK) attribute to determine the physical partition that stores the item",
+      "It stores all items in a single MySQL table",
+      "Items are round-robined randomly across all partitions",
+      "It uses consistent hashing based on the item's creation timestamp"
+    ],
+    a: 0,
+    e: "DynamoDB uses the partition key as input to an internal hash function. Designing a high-cardinality partition key (e.g. userId, orderId) avoids 'hot partitions' and evenly balances I/O across partitions."
+  }
+]);
+
+// ai1: Spring AI & Generative AI Engineering
+QB.add("ai1", [
+  {
+    q: "In Spring AI, what is the role of the VectorStore abstraction?",
+    o: [
+      "To store, index, and query text embeddings using vector similarity algorithms (e.g. Cosine, Euclidean) for Retrieval-Augmented Generation (RAG)",
+      "To compress high-resolution PNG images for web delivery",
+      "To execute matrix multiplication on local CPUs",
+      "To serialize Java objects to binary JSON"
+    ],
+    a: 0,
+    e: "VectorStore (supporting PGvector, Milvus, Chroma, Pinecone, Redis) stores vector embeddings generated from documents. It performs similarity searches to retrieve context relevant to user prompts before sending them to LLMs."
+  },
+  {
+    q: "How does 'Function Calling' (Tool Calling) work in Spring AI with models like GPT-4 or Claude?",
+    o: [
+      "The developer registers a Java @Bean implementing Function<Request, Response>; the model decides when to invoke it based on the user's prompt and receives the function output to formulate its final answer",
+      "The model downloads and compiles the raw Java bytecode inside its neural network",
+      "The user must write Python scripts inside the prompt",
+      "The model makes direct unrestricted calls to the client database"
+    ],
+    a: 0,
+    e: "Spring AI lets you define standard Java functions (e.g. getWeather(city), queryOrder(id)). The LLM identifies that it needs external data, generates JSON arguments, Spring AI executes your Java function locally, and passes the result back to the LLM."
+  },
+  {
+    q: "What is the core problem addressed by Retrieval-Augmented Generation (RAG) in enterprise AI applications?",
+    o: [
+      "LLM hallucinations and lack of domain-specific/private enterprise data without requiring expensive and slow model fine-tuning",
+      "Reducing GPU power consumption by 90%",
+      "Eliminating the need for internet access",
+      "Replacing relational databases with raw text files"
+    ],
+    a: 0,
+    e: "Pre-trained models don't know private enterprise data and can hallucinate. RAG searches private knowledge bases for relevant snippets and injects them into the prompt as verified context for accurate answers."
   }
 ]);
 
@@ -6657,9 +9201,9 @@ const Battle = {
         idx,
         q: src.q,
         k: src.k,
-        opts: order.map(o => src.opts[o]),
+        opts: order.map(o => (src.o || src.opts)[o]),
         a: order.indexOf(src.a),
-        exp: src.exp
+        exp: src.e || src.exp || ''
       };
     });
 
